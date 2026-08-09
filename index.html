@@ -19,6 +19,16 @@
   .desc{font-size:12.5px;color:var(--sub)}
   .tag{float:right;font-size:10.5px;color:var(--gold);border:1px solid var(--gold);border-radius:10px;padding:2px 9px;margin-top:3px;letter-spacing:1px}
   footer{margin-top:36px;color:#55555e;font-size:11px;text-align:center;letter-spacing:1px}
+  /* 모바일 폴리시 — 데스크톱(640px 단일 컬럼) 불변 */
+  @media(max-width:768px){
+    body{padding:32px 16px}
+    .sub{font-size:13px;margin-bottom:24px}
+    a.card{padding:16px;margin-bottom:10px}
+    a.card:hover{transform:none}              /* 터치 후 hover 고착 방지 */
+    .name{font-size:16px;line-height:1.4}
+    .desc{font-size:13px;line-height:1.5}
+    .tag{font-size:11px;padding:3px 10px;margin-top:2px;margin-left:8px}
+  }
 </style>
 </head>
 <body>
