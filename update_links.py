@@ -20,6 +20,13 @@ SERVICES = [
      "/Users/bk/orca/workspaces/sales-agent/메타ad-자동화/meta-ad-admin/data/public_url.txt"),
 ]
 
+# Tailscale Funnel 주소는 Quick Tunnel과 달리 재시작해도 그대로다. 이 값이
+# 바뀌더라도 카톡/즐겨찾기에는 아래 고정 wrapper 경로만 공유한다.
+STATIC_SERVICES = [
+    ("scout", "SCOUT/IG 인스타 계정 판독기",
+     "https://bk-macmini.tail738f1c.ts.net:8443"),
+]
+
 PAGE = """<!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -41,6 +48,14 @@ def main():
             continue
         if not url.startswith("https://"):
             continue
+        dest = os.path.join(HERE, slug, "index.html")
+        html = PAGE.format(title=title, url=url)
+        old = open(dest, encoding="utf-8").read() if os.path.exists(dest) else ""
+        if html != old:
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            open(dest, "w", encoding="utf-8").write(html)
+            changed = True
+    for slug, title, url in STATIC_SERVICES:
         dest = os.path.join(HERE, slug, "index.html")
         html = PAGE.format(title=title, url=url)
         old = open(dest, encoding="utf-8").read() if os.path.exists(dest) else ""
