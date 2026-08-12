@@ -38,6 +38,32 @@ PAGE = """<!DOCTYPE html>
 </head><body><p>{title} 으로 이동 중… <a href="{url}">바로 열기</a></p></body></html>
 """
 
+# 회전(quick tunnel) 서비스용 동적 리졸버. index.html은 주소를 담지 않아
+# 절대 바뀌지 않으므로(→ 한 번 캐시되면 영구 유효), 회전해도 재배포 불필요.
+# 실제 주소는 옆의 url.txt에 두고, 매 로드마다 캐시버스터로 새로 읽어
+# 최신 허브로 보낸다. GitHub Pages 10분 캐시·브라우저 히스토리와 무관하게
+# 항상 현재 허브로 접속된다(2026-08-12 접속 장애 재발방지).
+RESOLVER = """<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{title}</title>
+<style>body{{background:#101014;color:#c9a961;font-family:-apple-system,sans-serif;display:grid;place-items:center;height:100vh;margin:0;text-align:center}}a{{color:#c9a961}}</style>
+</head><body>
+<p>{title} 으로 이동 중…</p>
+<script>
+(async function(){{
+  try{{
+    var r = await fetch('url.txt?cb=' + Date.now() + '_' + Math.random(), {{cache:'no-store'}});
+    var u = (await r.text()).trim();
+    if(u.indexOf('https://')===0){{ location.replace(u); return; }}
+  }}catch(e){{}}
+  document.body.insertAdjacentHTML('beforeend','<p style="color:#f87171">주소를 불러오지 못했습니다. 새로고침(⌘⇧R) 해주세요.</p>');
+}})();
+</script>
+</body></html>
+"""
+
 
 def main():
     changed = False
@@ -48,11 +74,19 @@ def main():
             continue
         if not url.startswith("https://"):
             continue
-        dest = os.path.join(HERE, slug, "index.html")
-        html = PAGE.format(title=title, url=url)
+        slug_dir = os.path.join(HERE, slug)
+        os.makedirs(slug_dir, exist_ok=True)
+        # 1) 실제 주소는 url.txt에만 둔다(회전 시 이 파일만 바뀜).
+        url_dest = os.path.join(slug_dir, "url.txt")
+        old_url = open(url_dest, encoding="utf-8").read() if os.path.exists(url_dest) else ""
+        if url != old_url:
+            open(url_dest, "w", encoding="utf-8").write(url)
+            changed = True
+        # 2) index.html은 주소 없는 고정 리졸버(내용 불변 → 재배포 거의 없음).
+        dest = os.path.join(slug_dir, "index.html")
+        html = RESOLVER.format(title=title)
         old = open(dest, encoding="utf-8").read() if os.path.exists(dest) else ""
         if html != old:
-            os.makedirs(os.path.dirname(dest), exist_ok=True)
             open(dest, "w", encoding="utf-8").write(html)
             changed = True
     for slug, title, url in STATIC_SERVICES:
