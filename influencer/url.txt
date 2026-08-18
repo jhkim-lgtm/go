@@ -1,1 +1,1 @@
-https://api.trycloudflare.com
+https://min-fin-topic-rings.trycloudflare.com
