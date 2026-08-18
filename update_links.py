@@ -18,14 +18,13 @@ SERVICES = [
      "/Users/bk/orca/workspaces/sales-agent/인플루언서찾기/webapp/public_url.txt"),
     ("ads", "1%CLUB 광고 관리자",
      "/Users/bk/orca/workspaces/sales-agent/메타ad-자동화/meta-ad-admin/data/public_url.txt"),
+    ("scout", "SCOUT/IG 인스타 계정 판독기",
+     "/Users/bk/orca/workspaces/sales-agent/인스타-계정-판독기/instagram-audit/public_url.txt"),
 ]
 
-# Tailscale Funnel 주소는 Quick Tunnel과 달리 재시작해도 그대로다. 이 값이
-# 바뀌더라도 카톡/즐겨찾기에는 아래 고정 wrapper 경로만 공유한다.
-STATIC_SERVICES = [
-    ("scout", "SCOUT/IG 인스타 계정 판독기",
-     "https://bk-macmini.tail738f1c.ts.net:8443"),
-]
+# 2026-08-18: Tailscale Funnel이 일부 사내망/통신망에서 차단돼(직원 접속 불가)
+# 모든 서비스를 trycloudflare 동적 리졸버로 전환. 고정 주소가 다시 생기면 여기에 추가.
+STATIC_SERVICES = []
 
 PAGE = """<!DOCTYPE html>
 <html lang="ko"><head><meta charset="utf-8">
