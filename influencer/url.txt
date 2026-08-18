@@ -1,1 +1,1 @@
-https://wheels-dem-stick-tab.trycloudflare.com
+https://api.trycloudflare.com
