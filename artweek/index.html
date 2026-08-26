@@ -352,7 +352,7 @@
 "use strict";
 
 /* ── 기본 데이터 (첫 버전) ─────────────────────────────── */
-const SEED = [
+const SEED_BASE = [
  {id:"e01",date:"2026-08-27",time:"10:00–18:00",title:"호암미술관 《아트스펙트럼 2026》 오프닝",cat:"Kiaf VIP 프로그램",place:"호암미술관 · 용인",type:"fair",press:"미정",roster:"해당없음",rsvp:"미회신",todo:1,contact:"Kiaf 사무국 press@kiaf.org · 이희은 010-3087-1158",key:"Kiaf VIP 패스 소지자 대상 사전 오프닝. 아트위크의 첫 출발점입니다",note:"서울에서 왕복 3시간 — 참석 여부를 먼저 판단해야 합니다"},
  {id:"e02",date:"2026-08-31",time:"14:00–15:00",title:"디자인마이애미 서울 2026 기자간담회",cat:"기자간담회",place:"DDP 디자인랩 2층 서울-온",type:"fair",press:"취재 가능 (매체 등록)",roster:"해당없음",rsvp:"미신청",todo:1,contact:"MAG PR 예지희 jh@mag-pr.com · 010-9067-3227",key:"차강희 서울디자인재단 대표, 젠 로버츠 디자인마이애미 CEO 참석. 전시 투어 포함",note:"신청 링크 form.typeform.com/to/Udq6XULp — 오늘 중 신청해야 합니다"},
  {id:"e03",date:"2026-08-31",time:"시간 미정",sort:"18:00",title:"디자인마이애미 서울 2026 VIP 프리뷰",cat:"페어 프리뷰",place:"DDP 디자인랩 1층 쇼룸",type:"fair",press:"검토",roster:"해당없음",rsvp:"미회신",todo:1,contact:"MAG PR 예지희 jh@mag-pr.com",up:"디자인마이애미 서울 콘텐츠",due:"ASAP · MAG 요청",key:"주제 ‘함께, 울림 (Resonance: Design in Dialogue)’. 갤러리 6곳·작가 17명, 인 시추 36팀, 삼성전자·알로소 파트너 프로그램",note:"같은 날 저녁 8시에 지영 교수님 예원 일정이 있습니다"},
@@ -362,16 +362,16 @@ const SEED = [
  {id:"e03a",date:"2026-08-31",time:"14:00",title:"글래드스톤 서울 — 에드 앳킨스 《1 day in space》 기자간담회",cat:"기자간담회",place:"글래드스톤 서울 · 용산구 이태원로55가길 1",type:"other",press:"취재 가능",roster:"해당없음",rsvp:"미회신 · 메일 회신 필요",todo:1,contact:"VIBE 김지영 jy.kim@vibecompany.co.kr · 010-9021-0611",key:"에드 앳킨스 한국 첫 개인전이자 글래드스톤 한남 새 공간 개관전. 프리즈 부스 C20에도 참가",note:"디자인마이애미 기자간담회(같은 날 14:00 DDP)와 시간이 정확히 겹칩니다 — 택일 필요"},
 
  {id:"e04",date:"2026-09-01",time:"10:00–18:00",title:"리움미술관 《구정아: 우스모스》 오프닝",cat:"Kiaf VIP 프로그램",place:"리움미술관 · 한남",type:"fair",press:"미정",roster:"해당없음",rsvp:"미회신",todo:0,contact:"Kiaf 사무국 press@kiaf.org",key:"아트위크 개막일 오전 코스. 저녁 한남 나잇과 동선이 자연스럽게 이어집니다",note:""},
- {id:"e05a",date:"2026-09-01",time:"18:00–24:00",title:"KIAF FRIEZE HANNAM NIGHT PARTY — MBGM (Madam Butterfly Going Mad)",cat:"외부 초청 파티 (VIP)",place:"PROCESS ITW (프로세스 이태원) · 용산구 우사단로 42",type:"night",press:"검토",roster:"해당없음",rsvp:"RSVP 미회신 · 구글폼 응답 필요",todo:1,contact:"정형섭 010-8986-1107 · @worksworks_seoul",key:"워크스워크스 × 캐치업소스 매거진 공동 개최. 홍현준(WORKSWORKS)과 YUKINO YAMANAKA(CON TOKYO) 전시로 시작해 FRAME SEOUL DJ SET과 네트워킹 파티로 이어집니다",note:"RSVP forms.gle/h9JLTsPfPjBV4DWe7 · 18시부터 6시간짜리라 9/1 저녁 네 건의 베이스캠프로 쓰기 좋습니다. 파운드리 서울·원사이즈바와 모두 한남·이태원 권"},
+ {id:"e05a",confirmed:1,cal:1,date:"2026-09-01",time:"18:00–24:00",title:"KIAF FRIEZE HANNAM NIGHT PARTY — MBGM (Madam Butterfly Going Mad)",cat:"외부 초청 파티 (VIP)",place:"PROCESS ITW (프로세스 이태원) · 용산구 우사단로 42",type:"night",press:"검토",roster:"해당없음",rsvp:"RSVP 미회신 · 구글폼 응답 필요",todo:1,contact:"정형섭 010-8986-1107 · @worksworks_seoul",key:"워크스워크스 × 캐치업소스 매거진 공동 개최. 홍현준(WORKSWORKS)과 YUKINO YAMANAKA(CON TOKYO) 전시로 시작해 FRAME SEOUL DJ SET과 네트워킹 파티로 이어집니다",note:"캘린더에는 23:30 도착으로 넣으셨습니다 — 저녁의 마지막 코스. RSVP forms.gle/h9JLTsPfPjBV4DWe7 는 아직 응답 전입니다"},
  {id:"e05",date:"2026-09-01",time:"19:00",title:"KORI Gin at FOUNDRY SEOUL — Frieze Seoul Hannam Night",cat:"외부 초청 파티",place:"파운드리 서울 · 한남",type:"night",press:"검토",roster:"해당없음",rsvp:"미회신",todo:1,contact:"안지원 박사 (호텔관광경영학) · 카카오톡",key:"파운드리 서울 × 코리진 두 번째 협업. 런던 기반 작가 줄리아 아이오실존의 《Zero Gravity》와 연계한 칵테일",note:"안지원 박사가 직접 초청 — 회신 필요. HANNAM NIGHT(18시~)에서 넘어오면 되고, 파운드리↔프로세스 이태원은 차로 10분 거리"},
- {id:"e06",date:"2026-09-01",time:"20:00–24:00",title:"SAM 파티",cat:"지인 파티",place:"이태원 원사이즈바",type:"night",press:"취재 없음",roster:"동반 1명 미정",rsvp:"참석 확정",todo:1,contact:"SAM",key:"프리즈 위크 전야 네트워킹",note:"동반 1명 확정 필요. 프로세스 이태원·파운드리 서울과 모두 같은 한남·이태원 권이라 순차 이동 가능"},
- {id:"e07",date:"2026-09-01",time:"21:30",title:"바카라 바 방문 이벤트",cat:"브랜드 이벤트",place:"바카라 바 서울",type:"night",press:"검토",roster:"동반 1명 미정",rsvp:"참석 확정 (동반 1 가능)",todo:1,contact:"—",key:"럭셔리 브랜드 접점 — 세일즈 리드로 이어질 수 있습니다",note:"시간 21:30 확정. 캘린더도 21:30으로 고쳐뒀습니다. 동반 1명 미정 · 바카라 바가 강남권이면 이동에 20~30분 더 잡아야 합니다"},
+ {id:"e06",confirmed:1,cal:1,date:"2026-09-01",time:"20:00–21:30",title:"SAM 파티",cat:"지인 파티",place:"이태원 원사이즈바",type:"night",press:"취재 없음",roster:"동반 1명 미정",rsvp:"참석 확정",todo:1,contact:"SAM",key:"프리즈 위크 전야 네트워킹",note:"동반 1명 확정 필요. 프로세스 이태원·파운드리 서울과 모두 같은 한남·이태원 권이라 순차 이동 가능"},
+ {id:"e07",confirmed:1,cal:1,date:"2026-09-01",time:"18:00–19:30",title:"바카라 바 방문 이벤트",cat:"브랜드 이벤트",place:"바카라 바 서울",type:"night",press:"검토",roster:"동반 1명 미정",rsvp:"참석 확정 (동반 1 가능)",todo:1,contact:"—",key:"럭셔리 브랜드 접점 — 세일즈 리드로 이어질 수 있습니다",note:"⚠️ 대표님이 캘린더에서 18:00–19:30으로 옮기셨습니다 (기존 21:30). 9/1 저녁의 첫 자리가 됩니다. 동반 1명 미정"},
 
- {id:"e08",date:"2026-09-02",time:"11:00–15:00",title:"Kiaf SEOUL 2026 — Kiaf VIP Only",cat:"페어 본행사",place:"코엑스 1층 홀 A·B, 그랜드볼룸",type:"fair",press:"취재 있음 (바터 계약)",roster:"VIP 패스 5매 (동반권 포함) 확정",rsvp:"진행 확정",todo:0,contact:"Kiaf 사무국 press@kiaf.org · 이희은 010-3087-1158",up:"현장취재 릴스 1회 + 현장 스토리 1회",due:"릴스 행사 직후 / 스토리 당일",key:"오전은 VIP 전용 슬롯이라 가장 한산합니다. 25주년, 18개국 175개 갤러리, 주제 ‘공존’",note:"오전 Kiaf → 14:30 DDP 런웨이 → 복귀 후 루이나 → 프리즈 순서로 움직여야 합니다"},
- {id:"e09",date:"2026-09-02",time:"11:00–19:00",sort:"11:01",title:"Frieze Seoul 2026 VIP 프리뷰",cat:"페어 본행사",place:"코엑스 3층 홀 C·D",type:"fair",press:"취재 있음 (MAG 협업)",roster:"VIP 패스 확보 · 동반 1인 포함 (변경 가능)",rsvp:"등록 이메일 주소 전달 필요",todo:1,contact:"MAG PR 예지희 jh@mag-pr.com · 010-9067-3227",up:"프리즈 서울 Galleries 콘텐츠",due:"9/2 노출",key:"초청 전용 프리뷰 데이. 일반 공개는 9/3 15시부터. 가고시안·하우저앤워스·페이스·화이트큐브·타데우스 로팍 중심 촬영 가이드를 MAG가 보내왔습니다",note:"VIP 라운지 앵글은 MAG가 리스크로 제외했습니다. 등록할 분의 이메일을 jh@mag-pr.com으로 보내야 패스가 나옵니다"},
+ {id:"e08",confirmed:1,cal:1,date:"2026-09-02",time:"10:40–15:00",title:"Kiaf SEOUL 2026 — Kiaf VIP Only",cat:"페어 본행사",place:"코엑스 1층 홀 A·B, 그랜드볼룸",type:"fair",press:"취재 있음 (바터 계약)",roster:"VIP 패스 5매 (동반권 포함) 확정",rsvp:"진행 확정",todo:0,contact:"Kiaf 사무국 press@kiaf.org · 이희은 010-3087-1158",up:"현장취재 릴스 1회 + 현장 스토리 1회",due:"릴스 행사 직후 / 스토리 당일",key:"오전은 VIP 전용 슬롯이라 가장 한산합니다. 25주년, 18개국 175개 갤러리, 주제 ‘공존’",note:"오전 Kiaf → 14:30 DDP 런웨이 → 복귀 후 루이나 → 프리즈 순서로 움직여야 합니다"},
+ {id:"e09",confirmed:1,cal:1,date:"2026-09-02",time:"11:00–19:00",sort:"11:01",title:"Frieze Seoul 2026 VIP 프리뷰",cat:"페어 본행사",place:"코엑스 3층 홀 C·D",type:"fair",press:"취재 있음 (MAG 협업)",roster:"VIP 패스 확보 · 동반 1인 포함 (변경 가능)",rsvp:"등록 이메일 주소 전달 필요",todo:1,contact:"MAG PR 예지희 jh@mag-pr.com · 010-9067-3227",up:"프리즈 서울 Galleries 콘텐츠",due:"9/2 노출",key:"초청 전용 프리뷰 데이. 일반 공개는 9/3 15시부터. 가고시안·하우저앤워스·페이스·화이트큐브·타데우스 로팍 중심 촬영 가이드를 MAG가 보내왔습니다",note:"VIP 라운지 앵글은 MAG가 리스크로 제외했습니다. 등록할 분의 이메일을 jh@mag-pr.com으로 보내야 패스가 나옵니다"},
  {id:"e10",date:"2026-09-02",time:"11:00–22:00",sort:"11:02",title:"송은 《SONGEUN × Unboxing Project: Generative Forms》",cat:"Kiaf VIP 프로그램",place:"송은 · 청담",type:"fair",press:"미정",roster:"해당없음",rsvp:"미회신",todo:0,contact:"Kiaf 사무국 press@kiaf.org",key:"야간 도슨트 투어와 아이스크림 증정 이벤트. 22시까지 운영합니다",note:"저녁 현대백화점 일정(19:00) 이후 늦게 방문 가능"},
- {id:"e11",date:"2026-09-02",time:"14:30",title:"얼킨(ULKIN) 서울패션위크 런웨이 쇼 — 모비데이즈",cat:"패션쇼",place:"DDP 동대문디자인플라자",type:"fair",press:"취재 있음 (광고 없음)",roster:"박성연 + 김준형 확정",rsvp:"미회신 · 캘린더 응답 필요",todo:1,contact:"박성연 sw.park@1percentclub.kr",key:"이날 동선의 최대 난제 — 강남 코엑스와 동대문 DDP를 왕복해야 합니다",note:"코엑스에서 DDP까지 40~50분. 13:30 출발을 권합니다"},
- {id:"e12",date:"2026-09-02",time:"권장 15:00 · 시간 내 자유",sort:"14:50",title:"루이나(Ruinart) 방문",cat:"브랜드 초청",place:"장소 미확인 — 프리즈 연계, 코엑스 추정",type:"night",press:"검토",roster:"동반 1명 가능 · 동반자 미정",rsvp:"참석 확정",todo:1,contact:"카카오톡 (이메일 이력 없음 — 담당자 확인 필요)",key:"간단한 케이터링을 준비한다고 합니다. 루이나는 프리즈의 공식 샴페인 파트너로 8/31–9/5 참여합니다",note:"권장 15:00은 런웨이 쇼와 겹칩니다. “시간 내 편하실 때”라 했으니 복귀 직후 16:20–16:50을 권합니다. 장소를 확인해 주세요"},
+ {id:"e11",confirmed:1,cal:1,date:"2026-09-02",time:"14:30",title:"얼킨(ULKIN) 서울패션위크 런웨이 쇼 — 모비데이즈",cat:"패션쇼",place:"DDP 동대문디자인플라자",type:"fair",press:"취재 있음 (광고 없음)",roster:"박성연 + 김준형 확정",rsvp:"미회신 · 캘린더 응답 필요",todo:1,contact:"박성연 sw.park@1percentclub.kr",key:"이날 동선의 최대 난제 — 강남 코엑스와 동대문 DDP를 왕복해야 합니다",note:"코엑스에서 DDP까지 40~50분. 13:30 출발을 권합니다"},
+ {id:"e12",confirmed:1,cal:1,date:"2026-09-02",time:"16:30–17:30",sort:"16:30",title:"루이나(Ruinart) 방문",cat:"브랜드 초청",place:"장소 미확인 — 프리즈 연계, 코엑스 추정",type:"night",press:"검토",roster:"동반 1명 가능 · 동반자 미정",rsvp:"참석 확정",todo:1,contact:"카카오톡 (이메일 이력 없음 — 담당자 확인 필요)",key:"간단한 케이터링을 준비한다고 합니다. 루이나는 프리즈의 공식 샴페인 파트너로 8/31–9/5 참여합니다",note:"캘린더에 16:30–17:30 ‘프리즈 VIP & 루이나’로 확정하셨습니다. 장소는 아직 미확인 — 코엑스 안이 아니면 이동 시간을 더 잡아야 합니다"},
  {id:"e13",date:"2026-09-02",time:"15:00–20:00",title:"Kiaf & Frieze VIP 통합 관람",cat:"페어 본행사",place:"코엑스",type:"fair",press:"취재 있음 (바터 계약)",roster:"VIP 패스 5매",rsvp:"진행 확정",todo:0,contact:"Kiaf 사무국 press@kiaf.org",up:"현장취재 릴스 1회",due:"행사 직후",key:"프리즈는 19시 마감, Kiaf는 20시까지. 복귀 후 프리즈를 먼저 소화하세요",note:"16:20 복귀 → 루이나 30분 → 16:50부터 프리즈에 2시간 10분"},
  {id:"e14",date:"2026-09-02",time:"15:30–16:10",title:"Museum Tour — 박서보 뮤지엄",cat:"Kiaf VIP 프로그램",place:"박서보 뮤지엄",type:"skip",press:"—",roster:"해당없음",rsvp:"불참 권장",todo:0,contact:"Kiaf 사무국",key:"런웨이 쇼와 정면 충돌합니다",note:"참석 불가"},
  {id:"e15",date:"2026-09-02",time:"18:10–18:40",title:"Museum Tour — 롯데 뮤지엄",cat:"Kiaf VIP 프로그램",place:"롯데 뮤지엄",type:"skip",press:"—",roster:"해당없음",rsvp:"불참 권장",todo:0,contact:"Kiaf 사무국",key:"현대백화점 아트 이브닝과 충돌합니다",note:"원문 시간표에 ‘18:10–16:40’ 오타가 있어 사무국 확인이 필요합니다"},
@@ -386,17 +386,17 @@ const SEED = [
  {id:"e22",date:"2026-09-03",time:"13:00–17:00",sort:"13:01",title:"마리끌레르 × Kiaf 《Where Art Connects》 A-DAY",cat:"VIP 초청 행사 · 바터",place:"서울공예박물관 (SeMoCA)",type:"fair",press:"취재 있음",roster:"초대권 6매 확정 · 참석자 명단 미확정",rsvp:"진행 확정",todo:1,contact:"Kiaf 사무국 press@kiaf.org",key:"K-미디어아트 전시, 수상 작가 아트 토크, 라이브 퍼포먼스",note:"A-DAY와 A-NIGHT 통합 초대권 6매입니다. 어느 세션에 갈지 정해야 합니다"},
  {id:"e23",date:"2026-09-03",time:"14:00–18:00",title:"디자인마이애미 서울 — 디자인 토크",cat:"컨퍼런스",place:"DDP 디자인랩 3층 디자인홀",type:"fair",press:"검토",roster:"해당없음",rsvp:"미회신",todo:0,contact:"MAG PR 예지희 jh@mag-pr.com",key:"제시 리 체어맨, 젠 로버츠 CEO, 마우로 포르치니 삼성전자 CDO 패널",note:"프리미엄패스(8만원)에 입장권이 포함됩니다. 마리끌레르 A-DAY와 충돌"},
  {id:"e23a",date:"2026-09-03",time:"14:00–19:00",sort:"14:01",title:"XLIM(엑슬림) EP.10 PRIVATE PREVIEW",cat:"프라이빗 프리뷰",place:"XLIM 한남 플래그십 · 용산구 한남동 726-82",type:"other",press:"취재 가능",roster:"해당없음",rsvp:"미회신 · 구글폼 응답 필요",todo:1,contact:"FABRICA 정소윤 010-7764-3276 · 샤르카 010-5101-5023",key:"테마 ‘Layered Composition’. 초청자에 한해 진행되는 프라이빗 행사",note:"RSVP forms.gle/DQUic5sayBk97gTp8 · 마리끌레르 A-DAY(13:00–17:00)와 겹칩니다. 다만 19시까지 열려 있어 A-DAY 후 들르는 것도 가능"},
- {id:"e23b",date:"2026-09-03",time:"17:00–18:00 (클린샷 15:30 · 사전세션 14:00)",sort:"15:30",title:"시몬스 Beautyrest BLACK 아트 퍼포먼스 《The breath before inspiration》",cat:"VIP 초청 · 💰 유가 제안",place:"레이어41 · 성동구 아차산로9길 41",type:"night",press:"취재 있음 (유가 협의 중)",roster:"착석 좌석 제한 · 참석 확인 요청받음",rsvp:"🔴 참석 여부 회신 대기 · 에디터 배정 필요",todo:1,contact:"블랑 커뮤니케이션 박경난 차장 · 카카오톡",key:"💰 시몬스가 유가 집행을 희망합니다. 취재·업로드 가능한 에디터를 배정하면 박경난 차장이 info@1percentclub.kr로 설명 메일을 보내기로 했습니다 — 실제 매출로 이어질 수 있는 건",note:"클린샷 15:30 / 본행사 17:00. 같은 세션이 14:00에 다른 그룹 대상으로도 열려서 촬영 소스 확보용으로 14:00부터 권장받았습니다. 셀럽 참석 세션이고 좌석은 제한. 드레스코드 Black with White Accent, 발렛 가능"},
+ {id:"e23b",confirmed:1,cal:1,date:"2026-09-03",time:"17:00–19:00 (클린샷 15:30)",sort:"17:00",title:"시몬스 Beautyrest BLACK 아트 퍼포먼스 《The breath before inspiration》",cat:"VIP 초청 · 💰 유가 제안",place:"레이어41 · 성동구 아차산로9길 41",type:"night",press:"취재 있음 (유가 협의 중)",roster:"착석 좌석 제한 · 참석 확인 요청받음",rsvp:"🔴 참석 여부 회신 대기 · 에디터 배정 필요",todo:1,contact:"블랑 커뮤니케이션 박경난 차장 · 카카오톡",key:"💰 시몬스가 유가 집행을 희망합니다. 취재·업로드 가능한 에디터를 배정하면 박경난 차장이 info@1percentclub.kr로 설명 메일을 보내기로 했습니다 — 실제 매출로 이어질 수 있는 건",note:"클린샷 15:30 / 본행사 17:00. 같은 세션이 14:00에 다른 그룹 대상으로도 열려서 촬영 소스 확보용으로 14:00부터 권장받았습니다. 셀럽 참석 세션이고 좌석은 제한. 드레스코드 Black with White Accent, 발렛 가능"},
  {id:"e24",date:"2026-09-03",time:"15:30–17:20",title:"Museum Tour — 퐁피두 센터",cat:"Kiaf VIP 프로그램",place:"퐁피두 센터",type:"skip",press:"—",roster:"해당없음",rsvp:"불참 권장",todo:0,contact:"Kiaf 사무국",key:"마리끌레르 A-DAY와 충돌합니다",note:"참석 어려움"},
  {id:"e25",date:"2026-09-03",time:"18:00–21:00",title:"마리끌레르 × Kiaf 《Where Art Connects》 A-NIGHT",cat:"VIP 초청 행사 · 바터",place:"서울공예박물관 (SeMoCA)",type:"night",press:"취재 있음",roster:"초대권 6매 확정 · 참석자 명단 미확정",rsvp:"진행 확정",todo:1,contact:"Kiaf 사무국 press@kiaf.org",key:"오프닝 파티, K 미디어아트 전시, Marie Next 시상식, 한영애 공연과 라이브 퍼포먼스",note:"아트선재 삼청 나잇(19:00)과 겹치지만 서울공예박물관에서 아트선재까지 도보 10분이라 이어서 이동할 수 있습니다"},
- {id:"e26",date:"2026-09-03",time:"19:00–22:00",title:"아트선재센터 2026 삼청 나잇 파티 (VOSS 공동주최)",cat:"협업 행사 · 콘텐츠 계약",place:"아트선재센터 · 종로구 율곡로3길 87",type:"night",press:"취재 있음 (현장 스토리 확정)",roster:"우리 초청 10명 · 명단 미확정",rsvp:"진행 확정",todo:1,contact:"남서원 nam@artsonje.org · 조희현 heehyun.cho2@gmail.com",up:"① 사전 피드 1회 ② 당일 현장 영상 스토리 1회",due:"① 8/26 (지연 중) ② 9/3 당일",key:"바 티센트 앤디윤, 소코 박주성의 시그니처 칵테일. 21:00–21:21 함양아·김무영 스크리닝. DJ 정후·키티·머미 라이브 세트",note:"최우선 과제입니다. 피드 시안 최종 컨펌을 받아 8/26 안에 올려야 하고, 초청 10명의 성함·연락처를 넘겨야 RSVP가 자동 처리됩니다"},
+ {id:"e26",confirmed:1,cal:1,date:"2026-09-03",time:"19:00–22:00 (캘린더 19:00–20:00)",title:"아트선재센터 2026 삼청 나잇 파티 (VOSS 공동주최)",cat:"협업 행사 · 콘텐츠 계약",place:"아트선재센터 · 종로구 율곡로3길 87",type:"night",press:"취재 있음 (현장 스토리 확정)",roster:"우리 초청 10명 · 명단 미확정",rsvp:"진행 확정",todo:1,contact:"남서원 nam@artsonje.org · 조희현 heehyun.cho2@gmail.com",up:"① 사전 피드 1회 ② 당일 현장 영상 스토리 1회",due:"① 8/26 (지연 중) ② 9/3 당일",key:"바 티센트 앤디윤, 소코 박주성의 시그니처 칵테일. 21:00–21:21 함양아·김무영 스크리닝. DJ 정후·키티·머미 라이브 세트",note:"최우선 과제입니다. 피드 시안 최종 컨펌을 받아 8/26 안에 올려야 하고, 초청 10명의 성함·연락처를 넘겨야 RSVP가 자동 처리됩니다"},
 
  {id:"e27",date:"2026-09-04",time:"10:00–13:00",title:"Museum Tour — MMCA 과천 → K&L 뮤지엄",cat:"Kiaf VIP 프로그램",place:"MMCA 과천 · K&L 뮤지엄",type:"fair",press:"—",roster:"해당없음",rsvp:"미회신",todo:0,contact:"Kiaf 사무국",key:"MMCA 과천 40주년 연계 투어",note:"과천 왕복에 반나절이 듭니다"},
  {id:"e28",date:"2026-09-04",time:"11:00–19:00",title:"Kiaf SEOUL / Frieze Seoul — VIP 통합",cat:"페어 본행사",place:"코엑스",type:"fair",press:"취재 있음",roster:"—",rsvp:"진행 확정",todo:0,contact:"Kiaf 사무국",key:"GA First Access 11:00–15:00 / GA Afternoon 15:00–19:00",note:""},
  {id:"e29",date:"2026-09-04",time:"시간 확인 중",sort:"19:00",title:"Kiaf Classic — 조성진 특별공연 《Resonance of Coexistence》",cat:"공연 · 바터 티켓",place:"코엑스 오디토리움",type:"night",press:"검토",roster:"티켓 2매 확정 · 동반 1명 미정",rsvp:"진행 확정",todo:1,contact:"Kiaf 사무국 press@kiaf.org",key:"키아프 최초의 클래식 프로그램. 주제 ‘공존’을 청각의 언어로 풀어냅니다",note:"공연 시간과 좌석은 대표님이 직접 확인하시기로 했습니다"},
 
  {id:"e30",date:"2026-09-05",time:"11:00–19:00",title:"Kiaf SEOUL / Frieze Seoul",cat:"페어 본행사",place:"코엑스",type:"fair",press:"—",roster:"—",rsvp:"—",todo:0,contact:"—",key:"두 페어가 함께 운영되는 마지막 날 (프리즈 최종일)",note:""},
- {id:"e31",date:"2026-09-05",time:"17:00–18:00",title:"설해냄 청모 — 중국성 반포본점",cat:"개인 일정",place:"잠원로3길 40",type:"other",press:"취재 없음",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:""},
+ {id:"e31",confirmed:1,cal:1,date:"2026-09-05",time:"17:00–18:00",title:"설해냄 청모 — 중국성 반포본점",cat:"개인 일정",place:"잠원로3길 40",type:"other",press:"취재 없음",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:""},
  {id:"e32",date:"2026-09-06",time:"11:00–18:00",title:"Kiaf SEOUL — Kiaf Only (최종일)",cat:"페어 본행사",place:"코엑스 1층 홀 A·B",type:"fair",press:"—",roster:"—",rsvp:"—",todo:0,contact:"—",key:"프리즈 종료 후 키아프 단독 운영",note:"디자인마이애미도 이날 10:00–18:00로 마무리됩니다"},
  {id:"e33",date:"2026-09-02",time:"9/2–9/6 · 시간 변동",sort:"23:59",title:"Kiaf SEOUL 공식 도슨트 프로그램",cat:"Kiaf VIP 프로그램",place:"도슨트 부스 A1 게이트 앞",type:"fair",press:"—",roster:"해당없음",rsvp:"—",todo:0,contact:"Kiaf VIP APP으로 신청",key:"참여 갤러리 작품 및 작가 소개",note:"Kiaf VIP APP에서 사전 신청이 필요합니다"},
 
@@ -405,9 +405,29 @@ const SEED = [
  {id:"e33c",date:"2026-09-08",time:"18:00–21:00",title:"버거킹 Flameground 프리 오프닝 파티",cat:"프리 오프닝",place:"성수동 · 성동구 성수이로7길 28",type:"other",press:"취재 가능",roster:"동반 1인 가능 · 동반자 미정",rsvp:"미회신 · 구글폼 응답 필요",todo:1,contact:"오프닝 추재연 010-7674-7819",key:"세계 최초 버거킹 플래그십. 사전 등록 게스트만 입장, 드레스코드는 레드 계열 포인트",note:"RSVP forms.gle/dQr6wFwqjwFjJykt8 · 원래 8/26이었다가 9/8로 변경됐습니다. 회신하면 전화 RSVP는 생략해 줍니다"},
  {id:"e33d",date:"2026-09-10",time:"11:00–15:00",title:"더바넷 한남 플래그십 그랜드 오픈",cat:"플래그십 오픈",place:"용산구 이태원로 268 (한남동 682-1)",type:"other",press:"취재 가능",roster:"동반인 여부 회신 필요",rsvp:"미회신 · 회신 필요",todo:1,contact:"비엔비엔 박소연 010-7104-6842 · 장유나 010-3600-2865",key:"26 FALL COLLECTION 첫 공개",note:"참석자 성함·동반인 여부·방문 시간·연락처를 함께 회신해야 합니다. 같은 날 13시 더라인 한남 쇼룸과 겹칩니다 (둘 다 한남이라 연달아 가능)"},
  {id:"e33e",date:"2026-09-10",time:"13:00",sort:"13:00",title:"더라인 한남 쇼룸 오프닝 이벤트",cat:"쇼룸 오프닝",place:"THE LINE SHOWROOM · 용산구 한남대로20길 47-26",type:"other",press:"취재 가능",roster:"해당없음",rsvp:"미회신 · 메일 회신 필요",todo:1,contact:"더레이어 이지안 e@the-layer.com · 02-545-3934",key:"허먼밀러·놀·웬델보 아이코닉 피스와 더라인 셀렉션. 럭키드로우 진행",note:"더바넷(11:00–15:00)과 시간이 겹치지만 둘 다 한남이라 순차 방문 가능. 주차 혼잡 예상, 대중교통 권장"},
- {id:"e34",date:"2026-09-09",time:"18:00–21:30",title:"캘리포니아관광청 행사",cat:"취재 (광고 없음)",place:"장소 미정",type:"other",press:"취재 있음",roster:"손문정 + 김준형",rsvp:"미회신 · 캘린더 응답 필요",todo:1,contact:"손문정 mj.son@1percentclub.kr",key:"관광청 네트워크 — MyFirstKorea와 연결할 수 있습니다",note:"캘린더 초대 수락이 필요합니다"},
- {id:"e35",date:"2026-09-12",time:"종일",sort:"09:00",title:"여의도 크루즈 행사",cat:"행사",place:"여의도",type:"other",press:"—",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:""}
+ {id:"e34",confirmed:1,cal:1,date:"2026-09-09",time:"18:00–21:30",title:"캘리포니아관광청 행사",cat:"취재 (광고 없음)",place:"장소 미정",type:"other",press:"취재 있음",roster:"손문정 + 김준형",rsvp:"미회신 · 캘린더 응답 필요",todo:1,contact:"손문정 mj.son@1percentclub.kr",key:"관광청 네트워크 — MyFirstKorea와 연결할 수 있습니다",note:"캘린더 초대 수락이 필요합니다"},
+ {id:"e35",confirmed:1,cal:1,date:"2026-09-12",time:"종일",sort:"09:00",title:"여의도 크루즈 행사",cat:"행사",place:"여의도",type:"other",press:"—",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:""}
 ];
+
+/* 구글 캘린더에 BK가 직접 넣은 일정 (2026-08-26 조회) — 전부 확정으로 취급 */
+const CAL_SEED = [
+ {id:"g01",date:"2026-08-27",time:"09:00–10:15",title:"테니스",cat:"개인",place:"",type:"other",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"—",todo:0,contact:"—",key:"",note:""},
+ {id:"g02",date:"2026-08-27",time:"12:30–14:00",title:"조성관 피어클럽 점심",cat:"미팅",place:"",type:"other",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"—",todo:0,contact:"—",key:"",note:""},
+ {id:"g03",date:"2026-08-27",time:"19:15–19:45",title:"본연디너 (현우 +1)",cat:"디너",place:"본연",type:"other",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"—",todo:0,contact:"—",key:"본연은 우리 리드 클라이언트입니다 (PILOT 250만 / WAVE 700만 제안 중)",note:""},
+ {id:"g04",date:"2026-08-28",time:"14:00–16:00",title:"[롤스로이스] 성과 보고 미팅",cat:"클라이언트 미팅",place:"코오롱모빌리티그룹 · 송파구 오금로 132",type:"other",cal:1,confirmed:1,press:"—",roster:"김준형·이경준·이규리",rsvp:"캘린더 응답 대기",todo:1,contact:"이경준 kj.lee@1percentclub.kr",key:"운영대행 최대 계약처 (1.65억)",note:"⚠️ 같은 날 GRAFF 11시, 골드윈 18시, 최선상회 디너 20시 — 하루가 꽉 찹니다"},
+ {id:"g05",date:"2026-08-28",time:"20:00–23:45",title:"최선상회 VIP 디너 (28명)",cat:"1%CLUB 행사",place:"최선상회 · 성동구 장터길 38-1",type:"night",cal:1,confirmed:1,press:"—",roster:"28명",rsvp:"참석 확정",todo:0,contact:"이경준 kj.lee@1percentclub.kr",key:"우리가 주최하는 VIP 디너",note:""},
+ {id:"g06",date:"2026-08-30",time:"19:30–22:15",title:"리북방 모차르트 (동행 1 가능)",cat:"초청",place:"리북방",type:"night",cal:1,confirmed:1,press:"—",roster:"동반 1명 가능",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:""},
+ {id:"g07",date:"2026-08-31",time:"11:00–12:00",title:"훈호님 정기미팅 (13F)",cat:"정기미팅",place:"13F",type:"other",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"—",todo:0,contact:"—",key:"",note:""},
+ {id:"g08",date:"2026-08-31",time:"16:00–17:00",title:"글래드스톤 이태원 with 심준섭",cat:"갤러리 방문",place:"글래드스톤 서울 · 이태원",type:"other",cal:1,confirmed:1,press:"검토",roster:"심준섭 컬렉터",rsvp:"참석 확정",todo:0,contact:"—",key:"같은 공간 기자간담회(14:00)와 별개로 컬렉터 동행 방문",note:"기자간담회에 못 가더라도 이 방문으로 커버됩니다"},
+ {id:"g09",date:"2026-08-31",time:"20:00–23:30",title:"지영 교수님 예원 (서부청기와감자탕)",cat:"개인",place:"서부청기와감자탕",type:"other",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:""},
+ {id:"g10",date:"2026-09-01",time:"22:00–23:00",title:"문파티 with 박민규",cat:"파티",place:"",type:"night",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"참석 확정",todo:0,contact:"박민규",key:"",note:"9/1 저녁 네 번째 자리"},
+ {id:"g11",date:"2026-09-07",time:"11:00–12:00",title:"훈호님 정기미팅 (13F)",cat:"정기미팅",place:"13F",type:"other",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"—",todo:0,contact:"—",key:"",note:""},
+ {id:"g12",date:"2026-09-07",time:"19:30–22:00",title:"유영석 토니형 집",cat:"개인",place:"",type:"other",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:""},
+ {id:"g13",date:"2026-09-10",time:"19:30–20:30",title:"정도환 저녁 — 맛나 숯불",cat:"디너",place:"맛나 숯불",type:"other",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:"같은 날 낮 더바넷(11시)·더라인(13시) 한남 일정과는 시간이 안 겹칩니다"},
+ {id:"g14",date:"2026-09-12",time:"20:30–23:30",title:"조현진 (사테) — 김현 소개",cat:"미팅",place:"",type:"other",cal:1,confirmed:1,press:"—",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:"낮 여의도 크루즈 행사 이후"}
+];
+
+const SEED = SEED_BASE.concat(CAL_SEED);
 
 const TICKETS = [
  {n:"Kiaf VIP 패스",q:"5매",d:"9/2 – 9/6",s:"확정",hot:0,m:"1매당 동반인 1명 포함 — 실질 10명 입장 가능"},
@@ -515,7 +535,7 @@ const DOW = ["일","월","화","수","목","금","토"];
 
 /* ── 상태 ─────────────────────────────────────────────── */
 /* BK가 8/26 '응답완료'로 표시했던 2건 — 새 3단계 체계에서 참가확정으로 이관 */
-const SEED_RSVP = { r01:{s:"go"}, r02:{s:"go"} };
+const SEED_RSVP = { r01:{s:"go"}, r02:{s:"go"}, r06:{s:"go"}, r07:{s:"go"} };
 
 function loadState(){
   const tag = document.getElementById("data");
@@ -537,7 +557,7 @@ function loadState(){
 }
 let state = loadState();
 let filter = "all";
-let view = "list";
+let view = "cal";
 let rsvpView = "open";
 let calWeek = 0;
 let calAll = false;
@@ -612,6 +632,7 @@ function evCard(e){
   let cls = e.type==="skip" ? "ev skip" : "ev";
   if(e.hidden) cls += " isHidden";
   let pills = "";
+  if(e.cal) pills += '<span class="pill b">📅 구글 캘린더 확정</span>';
   if(hasPress(e)) pills += '<span class="pill g">'+esc(e.press)+'</span>';
   else if(e.press && e.press!=="—") pills += '<span class="pill n">취재 '+esc(e.press)+'</span>';
   if(e.up) pills += '<span class="pill b">업로드 · '+esc(e.up)+'</span>';
@@ -732,10 +753,19 @@ function calendarHTML(){
     ? '<p class="empty">아직 최종확인한 일정이 없습니다. 목록에서 카드 오른쪽 위 ‘최종확인’을 누르면 여기에 쌓입니다.</p>'
     : '';
 
+  const gaps = '<div class="note red" style="margin-top:20px"><h3>캘린더에 아직 안 들어간 것 — 확인이 필요합니다</h3><ul>'+
+    '<li><b>현대백화점 《아트 이브닝》 9/2 19:00</b> — 바터 계약이 걸린 자리인데 캘린더에 없습니다. 초대권 6매도 배분 전입니다</li>'+
+    '<li><b>마리끌레르 《Where Art Connects》 9/3</b> — A-DAY(13:00) · A-NIGHT(18:00) 둘 다 미등록. 초대권 6매를 받아둔 상태입니다</li>'+
+    '<li><b>조성진 Kiaf Classic 9/4</b> — 티켓 2매 확보. 공연 시간을 확인하셔야 캘린더에 넣을 수 있습니다</li>'+
+    '<li><b>KORI Gin at FOUNDRY 9/1 19:00</b> — 안지원 박사 직접 초청. 캘린더상 18:00 바카라 바와 20:00 SAM 사이가 비어 있어 들를 수 있습니다</li>'+
+    '<li><b>GRAFF 8/28 11:00 · 골드윈 8/28 18:00</b> — 그날 14시 롤스로이스 미팅, 20시 최선상회 디너가 이미 있습니다</li>'+
+    '</ul></div>';
+
   return nav + empty +
     '<div class="calwrap"><div class="calgrid">'+head+allday+
     '<div class="calrow calbody">'+gut+cols+'</div></div></div>'+
-    '<p class="calnote">시간이 정해지지 않은 일정은 맨 위 ‘종일’ 줄에 표시됩니다. 오전 9시 이전 일정은 9시 칸에 붙습니다.</p>';
+    '<p class="calnote">📅 표시는 대표님이 구글 캘린더에 직접 넣으신 일정입니다. 시간이 정해지지 않은 것은 맨 위 ‘종일’ 줄에 붙습니다.</p>'+
+    gaps;
 }
 
 function uploadRowsHTML(){
