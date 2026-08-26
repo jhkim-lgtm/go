@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="pubbar">
-  <span><b>공유용 읽기 전용 사본</b> · 숨기기는 이 화면에서만 적용되고 새로고침하면 돌아옵니다</span>
+  <span><b>공유용 읽기 전용 사본</b> · 최종확인·숨기기는 이 화면에서만 적용되고 새로고침하면 돌아옵니다</span>
 </div>
 <style>
 .pubbar{
@@ -117,7 +117,7 @@
   .ev{background:var(--panel); border-radius:var(--r-l); padding:17px 19px; position:relative;}
   .ev.skip{background:var(--line-soft);}
   .ev.skip .evtitle{color:var(--tx-2);}
-  .evhead{display:flex; gap:12px; align-items:flex-start; padding-right:88px;}
+  .evhead{display:flex; gap:12px; align-items:flex-start; padding-right:172px;}
   .evtools{position:absolute; top:0; right:0; display:flex; overflow:hidden; border-radius:0 var(--r-l) 0 10px;}
   .evtools button{
     border:0; cursor:pointer; background:var(--panel-2); color:var(--tx-3);
@@ -167,6 +167,61 @@
   .leg.move .legt{color:var(--amber);}
   .legh{font-size:14.5px; font-weight:700; line-height:1.4;}
   .legn{font-size:12.5px; color:var(--tx-3); line-height:1.55;}
+
+  /* 탭 */
+  .tabs{display:flex; background:var(--panel); border-radius:100px; padding:3px; gap:2px; margin-right:6px;}
+  .tab{
+    border:0; cursor:pointer; background:transparent; color:var(--tx-3);
+    font-size:13.5px; font-weight:700; padding:7px 15px; border-radius:100px;
+    font-family:inherit; letter-spacing:inherit; transition:background .15s, color .15s;
+  }
+  .tab:hover{color:var(--tx);}
+  .tab.on{background:var(--panel-3); color:var(--tx);}
+  .chip.okc[aria-pressed="true"]{background:var(--green); color:#06210f;}
+  .chip.paidc[aria-pressed="true"]{background:var(--amber); color:#241700;}
+
+  /* 최종확인 카드 */
+  .ev.isOK{box-shadow:inset 0 0 0 1.5px var(--green);}
+  .evtools button.ok{background:var(--panel-2);}
+  .evtools button.ok.on{background:var(--green); color:#06210f;}
+  .evtools button.ok.on:hover{background:var(--green); filter:brightness(1.08); color:#06210f;}
+
+  /* 주간 캘린더 */
+  .calnav{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:14px;}
+  .calrange{font-size:14px; font-weight:700; font-variant-numeric:tabular-nums;}
+  .calnote{margin:12px 0 0; font-size:12.5px; color:var(--tx-3);}
+  .calwrap{overflow-x:auto; background:var(--panel); border-radius:var(--r-l); padding:0 0 8px;}
+  .calgrid{min-width:760px;}
+  .calrow{display:grid; grid-template-columns:58px repeat(7,1fr);}
+  .calgut{font-size:11.5px; color:var(--tx-3); text-align:right; padding-right:9px;}
+  .calhead .calday{
+    padding:14px 8px 12px; text-align:center; border-left:1px solid var(--line-soft);
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .calhead .calday.hot .cdn{color:var(--blue);}
+  .cdn{font-size:19px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums;}
+  .cdw{font-size:11.5px; color:var(--tx-3);}
+  .calall{border-top:1px solid var(--line); border-bottom:1px solid var(--line); min-height:34px;}
+  .calall .calgut{padding-top:8px;}
+  .callcell{border-left:1px solid var(--line-soft); padding:5px 4px; display:flex; flex-direction:column; gap:3px;}
+  .cchip{
+    background:var(--panel-3); color:var(--tx-2); font-size:11px; border-radius:5px;
+    padding:3px 6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .cchip.paid{background:var(--amber-dim); color:var(--amber);}
+  .calbody .calgut.hours{padding-top:0;}
+  .hr{height:46px; position:relative;}
+  .hr span{position:absolute; top:-7px; right:9px; font-variant-numeric:tabular-nums;}
+  .calcol{position:relative; border-left:1px solid var(--line-soft);}
+  .hline{height:46px; border-top:1px solid var(--line-soft);}
+  .cev{
+    position:absolute; background:var(--blue); color:#fff; border-radius:6px;
+    padding:4px 6px; font-size:11px; line-height:1.3; overflow:hidden; cursor:default;
+    display:flex; flex-direction:column; gap:1px; box-shadow:0 1px 3px rgba(0,0,0,.35);
+  }
+  .cev b{font-size:10.5px; opacity:.85; font-variant-numeric:tabular-nums;}
+  .cev span{overflow:hidden; text-overflow:ellipsis;}
+  .cev.paid{background:var(--amber); color:#241700;}
 
   /* RSVP 대기함 */
   .rgroup{margin-bottom:26px;}
@@ -452,7 +507,9 @@ function loadState(){
 }
 let state = loadState();
 let filter = "all";
-let showHidden = false;
+let view = "list";
+let calWeek = 0;
+let calAll = false;
 let canWrite = false;
 let artifactNs = null;
 
@@ -476,15 +533,47 @@ function dowOf(iso){
 function isTodo(e){ return e.todo===1 || e.todo===true; }
 function hasPress(e){ return /취재 있음|취재 가능/.test(e.press||""); }
 
+function isPaid(e){ return /유가|💰/.test((e.cat||"")+(e.press||"")+(e.key||"")); }
+
 function matches(e){
-  if(showHidden) return !!e.hidden;
+  if(filter==="hidden") return !!e.hidden;
+  if(filter==="allinc") return true;
   if(e.hidden) return false;
   if(filter==="all") return true;
+  if(filter==="ok") return !!e.confirmed;
+  if(filter==="paid") return isPaid(e);
   if(filter==="fair") return e.type==="fair";
   if(filter==="party") return e.type==="night";
   if(filter==="press") return hasPress(e);
   if(filter==="todo") return isTodo(e);
   return true;
+}
+
+/* ── 주간 캘린더 ──────────────────────────────────────── */
+const HOUR0 = 9, HOUR1 = 24, HPX = 46;
+const DAYN = ["월","화","수","목","금","토","일"];
+
+function ymd(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function mondayOf(iso){
+  const p = iso.split("-").map(Number);
+  const d = new Date(p[0], p[1]-1, p[2]);
+  const wd = (d.getDay()+6)%7;          // 월=0
+  d.setDate(d.getDate()-wd);
+  return d;
+}
+function parseSpan(e){
+  const hits = String(e.time||"").match(/\d{1,2}:\d{2}/g);
+  if(!hits) return null;                 // 종일 취급
+  const toMin = s => { const a=s.split(":"); return (+a[0])*60 + (+a[1]); };
+  let st = toMin(hits[0]);
+  let en = hits.length>1 ? toMin(hits[1]) : 0;
+  if(!(en>st)) en = st + 90;
+  return {st, en};
+}
+function calPool(){
+  return state.events.filter(e => !e.hidden && (calAll || e.confirmed));
 }
 
 /* ── 렌더 ─────────────────────────────────────────────── */
@@ -508,8 +597,10 @@ function evCard(e){
   const meta = rows.length ? '<dl class="meta">'+rows.map(r =>
     '<div class="mrow '+r[2]+'"><dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd></div>').join("")+'</dl>' : "";
 
+  if(e.confirmed) cls += " isOK";
   const tools = '<div class="evtools">'+
     (canWrite ? '<button class="dl" data-del="'+esc(e.id)+'" aria-label="일정 삭제" title="영구 삭제">×</button>' : '')+
+    '<button class="ok'+(e.confirmed?" on":"")+'" data-ok="'+esc(e.id)+'">'+(e.confirmed?"✓ 확인됨":"최종확인")+'</button>'+
     (e.hidden
       ? '<button class="un" data-show="'+esc(e.id)+'">다시 표시</button>'
       : '<button data-hide="'+esc(e.id)+'">숨기기</button>')+
@@ -526,8 +617,9 @@ function evCard(e){
 
 function timelineHTML(){
   const list = ordered(state.events).filter(matches);
-  if(!list.length) return '<p class="empty">'+(showHidden
-    ? '숨긴 일정이 없습니다. 카드 오른쪽 위 ‘숨기기’를 누르면 여기로 옵니다.'
+  if(!list.length) return '<p class="empty">'+(
+      filter==="hidden" ? '숨긴 일정이 없습니다. 카드 오른쪽 위 ‘숨기기’를 누르면 여기로 옵니다.'
+    : filter==="ok"     ? '아직 최종확인한 일정이 없습니다. 카드 오른쪽 위 ‘최종확인’을 눌러보세요.'
     : '이 조건에 해당하는 일정이 없습니다.')+'</p>';
   let out = "", cur = null;
   list.forEach((e,i) => {
@@ -546,6 +638,73 @@ function timelineHTML(){
     if(i===list.length-1) out += '</div></div>';
   });
   return out;
+}
+
+function calendarHTML(){
+  const base = mondayOf("2026-09-02");
+  base.setDate(base.getDate() + calWeek*7);
+  const days = [];
+  for(let i=0;i<7;i++){ const d=new Date(base); d.setDate(d.getDate()+i); days.push(ymd(d)); }
+  const pool = calPool();
+  const total = state.events.filter(e=>!e.hidden && e.confirmed).length;
+
+  const head = '<div class="calrow calhead"><div class="calgut"></div>'+
+    days.map(iso=>{
+      const dd=+iso.slice(8,10), mm=+iso.slice(5,7), i=days.indexOf(iso);
+      const hot = DAYTAG[iso] ? " hot" : "";
+      return '<div class="calday'+hot+'"><span class="cdn">'+dd+'</span>'+
+             '<span class="cdw">'+mm+'월 '+DAYN[i]+'</span></div>';
+    }).join("")+'</div>';
+
+  // 종일 / 시간 미정
+  const allday = '<div class="calrow calall"><div class="calgut">종일</div>'+
+    days.map(iso=>{
+      const items = pool.filter(e=>e.date===iso && !parseSpan(e));
+      return '<div class="callcell">'+items.map(e=>
+        '<div class="cchip'+(isPaid(e)?" paid":"")+'" title="'+esc(e.title)+'">'+esc(e.title)+'</div>').join("")+'</div>';
+    }).join("")+'</div>';
+
+  // 시간 그리드
+  let gut = '<div class="calgut hours">';
+  for(let h=HOUR0;h<HOUR1;h++) gut += '<div class="hr"><span>'+h+':00</span></div>';
+  gut += '</div>';
+
+  const cols = days.map(iso=>{
+    const items = pool.filter(e=>e.date===iso).map(e=>({e, s:parseSpan(e)})).filter(x=>x.s);
+    items.sort((a,b)=> a.s.st-b.s.st || a.s.en-b.s.en);
+    const ends=[];
+    items.forEach(it=>{ let c=0; while(c<ends.length && ends[c]>it.s.st) c++; it.col=c; ends[c]=it.s.en; });
+    const n = Math.max(1, ends.length);
+    let lines=""; for(let h=HOUR0;h<HOUR1;h++) lines += '<div class="hline"></div>';
+    const blocks = items.map(it=>{
+      const top = (Math.max(it.s.st, HOUR0*60) - HOUR0*60) / 60 * HPX;
+      const hgt = Math.max(26, (Math.min(it.s.en, HOUR1*60) - Math.max(it.s.st, HOUR0*60)) / 60 * HPX - 3);
+      const w = 100/n, left = it.col*w;
+      const hh = m => String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+      return '<div class="cev'+(isPaid(it.e)?" paid":"")+'" style="top:'+top.toFixed(1)+'px;height:'+hgt.toFixed(1)+
+        'px;left:'+left.toFixed(2)+'%;width:calc('+w.toFixed(2)+'% - 3px)" title="'+esc(it.e.title+" · "+it.e.place)+'">'+
+        '<b>'+hh(it.s.st)+'</b><span>'+esc(it.e.title)+'</span></div>';
+    }).join("");
+    return '<div class="calcol">'+lines+blocks+'</div>';
+  }).join("");
+
+  const nav = '<div class="calnav">'+
+    '<button class="ghost" id="wprev">← 이전 주</button>'+
+    '<span class="calrange">'+days[0].slice(5).replace("-","/")+' – '+days[6].slice(5).replace("-","/")+'</span>'+
+    '<button class="ghost" id="wnext">다음 주 →</button>'+
+    '<span class="grow"></span>'+
+    '<button class="chip" id="caltoggle" aria-pressed="'+(calAll?"false":"true")+'">'+
+      (calAll ? "전체 일정 보는 중" : "최종확인만 보는 중")+'</button>'+
+  '</div>';
+
+  const empty = (!calAll && total===0)
+    ? '<p class="empty">아직 최종확인한 일정이 없습니다. 목록에서 카드 오른쪽 위 ‘최종확인’을 누르면 여기에 쌓입니다.</p>'
+    : '';
+
+  return nav + empty +
+    '<div class="calwrap"><div class="calgrid">'+head+allday+
+    '<div class="calrow calbody">'+gut+cols+'</div></div></div>'+
+    '<p class="calnote">시간이 정해지지 않은 일정은 맨 위 ‘종일’ 줄에 표시됩니다. 오전 9시 이전 일정은 9시 칸에 붙습니다.</p>';
 }
 
 function uploadRowsHTML(){
@@ -656,17 +815,26 @@ function render(){
     RSVP_DONE.map(x=>'<li>'+esc(x)+'</li>').join("")+
     '</ul><p style="margin-top:10px">회신은 됐지만 대표님 참석 여부는 별도 판단이 필요합니다.</p></div>'+
   '<div class="bar">'+
-    '<button class="chip" data-f="all">전체</button>'+
-    '<button class="chip" data-f="fair">페어·공식</button>'+
-    '<button class="chip" data-f="party">파티·나잇</button>'+
-    '<button class="chip" data-f="press">취재 있음</button>'+
-    '<button class="chip warn" data-f="todo">내 액션 필요</button>'+
-    '<button class="chip hid" id="hidchip">숨긴 일정 '+state.events.filter(e=>e.hidden).length+'</button>'+
+    '<div class="tabs">'+
+      '<button class="tab'+(view==="list"?" on":"")+'" data-v="list">목록</button>'+
+      '<button class="tab'+(view==="cal"?" on":"")+'" data-v="cal">주간 캘린더</button>'+
+    '</div>'+
+    (view==="list" ? (
+      '<button class="chip" data-f="all">전체</button>'+
+      '<button class="chip okc" data-f="ok">✓ 최종확인 '+state.events.filter(e=>e.confirmed&&!e.hidden).length+'</button>'+
+      '<button class="chip paidc" data-f="paid">💰 유가</button>'+
+      '<button class="chip" data-f="fair">페어·공식</button>'+
+      '<button class="chip" data-f="party">파티·나잇</button>'+
+      '<button class="chip" data-f="press">취재 있음</button>'+
+      '<button class="chip warn" data-f="todo">내 액션 필요</button>'+
+      '<button class="chip hid" data-f="hidden">숨긴 일정 '+state.events.filter(e=>e.hidden).length+'</button>'+
+      '<button class="chip hid" data-f="allinc">전체보기 (숨김 포함)</button>'
+    ) : '')+
     '<span class="grow"></span>'+
     '<span class="tally" id="tally"></span>'+
     '<button class="cta" id="addbtn" hidden>＋ 일정 추가</button>'+
   '</div>'+
-  '<section id="timeline">'+timelineHTML()+'</section>'+
+  '<section id="timeline">'+(view==="cal" ? calendarHTML() : timelineHTML())+'</section>'+
   '<div class="sec"><h2>9월 1일 저녁 — 한남·이태원에서 네 자리</h2>'+
     '<p>HANNAM NIGHT, KORI Gin, SAM 파티, 바카라 바가 저녁 하나에 몰립니다</p></div>'+
   '<div class="route">'+ROUTE1.map(l=>'<div class="leg'+(l.move?" move":"")+'">'+
@@ -710,24 +878,36 @@ function render(){
   '</form></dialog>'+
   '<div id="toast"></div>';
 
-  document.querySelectorAll(".chip[data-f]").forEach(c => {
-    c.setAttribute("aria-pressed", (!showHidden && c.dataset.f===filter) ? "true" : "false");
-    c.addEventListener("click", () => { showHidden = false; filter = c.dataset.f; render(); });
-  });
-  const hc = document.getElementById("hidchip");
-  hc.setAttribute("aria-pressed", showHidden ? "true" : "false");
-  hc.addEventListener("click", () => { showHidden = !showHidden; render(); });
+  document.querySelectorAll(".tab").forEach(t =>
+    t.addEventListener("click", () => { view = t.dataset.v; render(); }));
 
-  const shown = ordered(state.events).filter(matches).length;
+  document.querySelectorAll(".chip[data-f]").forEach(c => {
+    c.setAttribute("aria-pressed", c.dataset.f===filter ? "true" : "false");
+    c.addEventListener("click", () => { filter = c.dataset.f; render(); });
+  });
+
   const hid = state.events.filter(e=>e.hidden).length;
-  document.getElementById("tally").textContent = showHidden
-    ? "숨긴 일정 " + shown + "개"
-    : shown + "개 표시 중" + (hid ? " · " + hid + "개 숨김" : "");
+  const okn = state.events.filter(e=>e.confirmed && !e.hidden).length;
+  if(view==="cal"){
+    document.getElementById("tally").textContent = "최종확인 " + okn + "개";
+    const wp=document.getElementById("wprev"), wn=document.getElementById("wnext"),
+          ct=document.getElementById("caltoggle");
+    if(wp) wp.addEventListener("click", ()=>{ calWeek--; render(); });
+    if(wn) wn.addEventListener("click", ()=>{ calWeek++; render(); });
+    if(ct) ct.addEventListener("click", ()=>{ calAll=!calAll; render(); });
+  }else{
+    const shown = ordered(state.events).filter(matches).length;
+    document.getElementById("tally").textContent = filter==="hidden"
+      ? "숨긴 일정 " + shown + "개"
+      : shown + "개 표시 중" + (hid ? " · " + hid + "개 숨김" : "");
+  }
 
   document.querySelectorAll("[data-hide]").forEach(b =>
     b.addEventListener("click", () => setHidden(b.dataset.hide, true)));
   document.querySelectorAll("[data-show]").forEach(b =>
     b.addEventListener("click", () => setHidden(b.dataset.show, false)));
+  document.querySelectorAll("[data-ok]").forEach(b =>
+    b.addEventListener("click", () => toggleOK(b.dataset.ok)));
 
   if(canWrite){
     document.getElementById("addbtn").hidden = false;
@@ -772,6 +952,18 @@ function onSubmit(ev){
   item.todo = /미회신|미정|미확정|필요|미신청/.test((item.rsvp||"")+(item.roster||"")) ? 1 : 0;
   state.events.push(item);
   setTimeout(() => save(item.title + " 추가됨"), 0);
+}
+
+function toggleOK(id){
+  const e = state.events.find(x => x.id === id);
+  if(!e) return;
+  if(e.confirmed) delete e.confirmed; else e.confirmed = true;
+  if(!canWrite){
+    render();
+    toast(e.confirmed ? "이 화면에서만 확인 표시했습니다" : "확인을 해제했습니다");
+    return;
+  }
+  save(e.confirmed ? "최종확인" : "확인 해제");
 }
 
 function setHidden(id, on){
