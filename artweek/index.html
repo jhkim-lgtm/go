@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026 아트위크 일정 마스터 — Frieze · Kiaf | 1%CLUB</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Frieze Seoul · Kiaf SEOUL · 디자인마이애미 서울 기간 일정과 RSVP 대기함">
+<style>html,body{margin:0;padding:0}</style>
+</head>
+<body>
+<div class="pubbar">
+  <span><b>공유용 읽기 전용 사본</b> · 일정 추가·삭제는 대표님 전용 편집본에서만 됩니다</span>
+</div>
+<style>
+.pubbar{
+  background:#1C222B; color:#A7B1BE; font-size:13px; text-align:center;
+  padding:11px 18px; border-bottom:1px solid #2C3541; line-height:1.5;
+  font-family:"Pretendard","Apple SD Gothic Neo",system-ui,sans-serif; letter-spacing:-.01em;
+}
+.pubbar b{color:#4A95FF;}
+</style>
+<style id="css">
+  :root{
+    --bg:#11151B;
+    --panel:#1C222B;
+    --panel-2:#232B36;
+    --panel-3:#2A3340;
+    --line:#2C3541;
+    --line-soft:#232A34;
+    --tx:#EAEEF4;
+    --tx-2:#A7B1BE;
+    --tx-3:#6E7A88;
+    --blue:#4A95FF;
+    --blue-dim:rgba(74,149,255,.14);
+    --green:#2AC769;
+    --green-dim:rgba(42,199,105,.13);
+    --amber:#FFB020;
+    --amber-dim:rgba(255,176,32,.13);
+    --red:#FF6B6B;
+    --red-dim:rgba(255,107,107,.13);
+    --r-s:8px; --r-m:12px; --r-l:16px; --r-xl:20px;
+    --sans:"Pretendard","Pretendard Variable","Apple SD Gothic Neo","Malgun Gothic",system-ui,-apple-system,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--tx);
+    font-family:var(--sans); font-size:15px; line-height:1.62;
+    -webkit-font-smoothing:antialiased; letter-spacing:-.01em;
+  }
+  #root{max-width:1160px; margin:0 auto; padding:0 20px 120px;}
+  h1,h2,h3{margin:0; font-weight:700; letter-spacing:-.025em; text-wrap:balance;}
+  button{font-family:inherit; letter-spacing:inherit;}
+  :focus-visible{outline:2px solid var(--blue); outline-offset:2px; border-radius:6px;}
+
+  /* masthead */
+  .mast{padding:52px 0 26px;}
+  .kicker{
+    display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600;
+    color:var(--blue); background:var(--blue-dim); padding:5px 11px; border-radius:100px; margin-bottom:14px;
+  }
+  .mast h1{font-size:clamp(27px,4.2vw,40px); line-height:1.24;}
+  .mast p{margin:12px 0 0; color:var(--tx-2); font-size:15px; max-width:62ch;}
+  .stampline{margin-top:16px; font-size:12.5px; color:var(--tx-3); display:flex; flex-wrap:wrap; gap:6px 18px;}
+
+  /* counters */
+  .counters{display:grid; grid-template-columns:repeat(auto-fit,minmax(148px,1fr)); gap:10px; margin:26px 0 0;}
+  .ct{background:var(--panel); border-radius:var(--r-l); padding:17px 18px 15px; display:flex; flex-direction:column; gap:3px;}
+  .ct b{font-size:27px; font-weight:700; line-height:1.15; font-variant-numeric:tabular-nums; letter-spacing:-.03em;}
+  .ct span{font-size:12.5px; color:var(--tx-3); font-weight:500;}
+  .ct.blue b{color:var(--blue);} .ct.red b{color:var(--red);} .ct.green b{color:var(--green);}
+
+  /* controls */
+  .bar{
+    position:sticky; top:0; z-index:40; background:var(--bg);
+    padding:20px 0 14px; margin:26px 0 4px;
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    box-shadow:0 12px 16px -14px var(--bg);
+  }
+  .chip{
+    font-size:13.5px; font-weight:600; cursor:pointer; border:0;
+    background:var(--panel); color:var(--tx-2);
+    border-radius:100px; padding:9px 15px; transition:background .15s, color .15s;
+  }
+  .chip:hover{background:var(--panel-2); color:var(--tx);}
+  .chip[aria-pressed="true"]{background:var(--blue); color:#fff;}
+  .chip.warn[aria-pressed="true"]{background:var(--red); color:#fff;}
+  .grow{flex:1 1 auto;}
+  .cta{
+    font-size:13.5px; font-weight:700; cursor:pointer; border:0;
+    background:var(--blue); color:#fff; border-radius:100px; padding:10px 17px;
+    display:inline-flex; align-items:center; gap:6px; transition:filter .15s;
+  }
+  .cta:hover{filter:brightness(1.1);}
+  .cta[disabled]{opacity:.45; cursor:not-allowed;}
+  .tally{font-size:12.5px; color:var(--tx-3); font-variant-numeric:tabular-nums; padding-right:4px;}
+
+  /* section */
+  .sec{margin:56px 0 18px;}
+  .sec h2{font-size:21px;}
+  .sec p{margin:6px 0 0; color:var(--tx-3); font-size:13.5px;}
+
+  /* day rail */
+  .day{display:grid; grid-template-columns:96px 1fr; gap:0;}
+  .daymark{padding:22px 16px 22px 0; position:sticky; top:74px; align-self:start;}
+  .daynum{font-size:30px; font-weight:700; line-height:1; letter-spacing:-.035em; font-variant-numeric:tabular-nums;}
+  .daydow{display:block; margin-top:5px; font-size:12.5px; color:var(--tx-3); font-weight:500;}
+  .daytag{display:inline-block; margin-top:10px; font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:100px;}
+  .daytag.peak{background:var(--red-dim); color:var(--red);}
+  .daytag.fair{background:var(--blue-dim); color:var(--blue);}
+  .dayevents{padding:14px 0 22px; display:flex; flex-direction:column; gap:9px; min-width:0;}
+
+  /* event card */
+  .ev{background:var(--panel); border-radius:var(--r-l); padding:17px 19px; position:relative;}
+  .ev.skip{background:var(--line-soft);}
+  .ev.skip .evtitle{color:var(--tx-2);}
+  .evhead{display:flex; gap:12px; align-items:flex-start;}
+  .evtime{
+    font-size:13px; font-weight:600; color:var(--blue); font-variant-numeric:tabular-nums;
+    white-space:nowrap; padding-top:2px; flex:0 0 auto; max-width:180px;
+  }
+  .ev.skip .evtime{color:var(--tx-3);}
+  .evbody{flex:1 1 auto; min-width:0;}
+  .evtitle{font-size:16.5px; font-weight:700; line-height:1.4;}
+  .evsub{margin-top:5px; font-size:13.5px; color:var(--tx-3);}
+  .evsub b{color:var(--tx-2); font-weight:500;}
+  .del{
+    flex:0 0 auto; width:28px; height:28px; border-radius:8px; border:0; cursor:pointer;
+    background:transparent; color:var(--tx-3); font-size:17px; line-height:1;
+    transition:background .15s, color .15s;
+  }
+  .del:hover{background:var(--red-dim); color:var(--red);}
+  .pills{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+  .pill{font-size:12px; font-weight:600; padding:4px 10px; border-radius:100px; white-space:nowrap;}
+  .pill.g{background:var(--green-dim); color:var(--green);}
+  .pill.r{background:var(--red-dim); color:var(--red);}
+  .pill.a{background:var(--amber-dim); color:var(--amber);}
+  .pill.b{background:var(--blue-dim); color:var(--blue);}
+  .pill.n{background:var(--panel-2); color:var(--tx-3);}
+  .meta{margin:13px 0 0; padding-top:13px; border-top:1px solid var(--line-soft); display:flex; flex-direction:column; gap:7px;}
+  .mrow{display:grid; grid-template-columns:74px 1fr; gap:12px; font-size:13.5px;}
+  .mrow dt{color:var(--tx-3); font-size:12.5px; font-weight:600; padding-top:1px;}
+  .mrow dd{margin:0; color:var(--tx-2);}
+  .mrow.key dd{color:var(--tx);}
+
+  /* route */
+  .route{display:grid; grid-template-columns:repeat(auto-fit,minmax(196px,1fr)); gap:10px;}
+  .leg{background:var(--panel); border-radius:var(--r-m); padding:15px 16px 16px; display:flex; flex-direction:column; gap:6px;}
+  .leg.move{background:transparent; border:1px dashed var(--line);}
+  .legt{font-size:12.5px; font-weight:700; color:var(--blue); font-variant-numeric:tabular-nums;}
+  .leg.move .legt{color:var(--amber);}
+  .legh{font-size:14.5px; font-weight:700; line-height:1.4;}
+  .legn{font-size:12.5px; color:var(--tx-3); line-height:1.55;}
+
+  /* RSVP 대기함 */
+  .rgroup{margin-bottom:26px;}
+  .rghead{display:flex; align-items:baseline; gap:11px; margin-bottom:11px;}
+  .rghead h3{font-size:15px;}
+  .rghead span{font-size:12.5px; color:var(--tx-3);}
+  .rgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:10px;}
+  .rcard{background:var(--panel); border-radius:var(--r-l); padding:16px 18px 15px; display:flex; flex-direction:column; gap:9px;}
+  .rtop{display:flex; align-items:center; gap:9px; flex-wrap:wrap;}
+  .rwhen{font-size:12.5px; color:var(--tx-3); font-variant-numeric:tabular-nums;}
+  .rtitle{font-size:15.5px; font-weight:700; line-height:1.4;}
+  .rdesc{margin:0; font-size:13px; color:var(--tx-2); line-height:1.6;}
+  .rfoot{margin-top:auto; padding-top:9px; display:flex; align-items:center; gap:11px; flex-wrap:wrap;}
+  .rlink{
+    font-size:13px; font-weight:700; color:#fff; background:var(--blue);
+    padding:8px 14px; border-radius:100px; text-decoration:none; white-space:nowrap;
+    transition:filter .15s;
+  }
+  .rlink:hover{filter:brightness(1.12);}
+  .rlink.off{background:var(--panel-3); color:var(--tx-3);}
+  .rsrc{font-size:12px; color:var(--tx-3); line-height:1.4;}
+
+  .note{background:var(--panel); border-radius:var(--r-l); padding:18px 20px; margin-top:12px;}
+  .note.red{border-left:3px solid var(--red);}
+  .note.amber{border-left:3px solid var(--amber);}
+  .note h3{font-size:14.5px; margin-bottom:8px;}
+  .note p, .note li{color:var(--tx-2); font-size:13.5px; margin:0;}
+  .note ul{margin:0; padding-left:17px; display:flex; flex-direction:column; gap:6px;}
+
+  /* table */
+  .tw{overflow-x:auto; background:var(--panel); border-radius:var(--r-l); padding:4px 4px 6px;}
+  table{border-collapse:collapse; width:100%; min-width:760px; font-size:13.5px;}
+  th{
+    text-align:left; font-size:12px; font-weight:600; color:var(--tx-3);
+    padding:14px 16px 10px; white-space:nowrap;
+  }
+  td{padding:13px 16px; border-top:1px solid var(--line-soft); vertical-align:top; color:var(--tx-2);}
+  td:first-child{color:var(--tx); font-weight:600;}
+  tr.hot td:first-child{color:var(--red);}
+  .due{font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600;}
+  .due.hot{color:var(--red);}
+  .sm{font-weight:400; color:var(--tx-3); font-size:12.5px;}
+
+  /* dialog */
+  dialog{
+    border:0; padding:0; background:var(--panel); color:var(--tx); border-radius:var(--r-xl);
+    width:min(620px, calc(100vw - 32px)); max-height:86vh;
+  }
+  dialog::backdrop{background:rgba(8,11,15,.72);}
+  .dlg{display:flex; flex-direction:column; max-height:86vh;}
+  .dlghead{padding:24px 26px 16px;}
+  .dlghead h2{font-size:19px;}
+  .dlghead p{margin:6px 0 0; color:var(--tx-3); font-size:13px;}
+  .dlgbody{padding:0 26px; overflow-y:auto; display:grid; grid-template-columns:1fr 1fr; gap:13px;}
+  .fld{display:flex; flex-direction:column; gap:6px;}
+  .fld.wide{grid-column:1 / -1;}
+  .fld label{font-size:12.5px; font-weight:600; color:var(--tx-3);}
+  .fld input, .fld select, .fld textarea{
+    background:var(--panel-2); border:1px solid transparent; color:var(--tx);
+    border-radius:var(--r-m); padding:11px 13px; font-size:14px; font-family:inherit;
+    letter-spacing:inherit; width:100%; transition:border-color .15s, background .15s;
+  }
+  .fld textarea{resize:vertical; min-height:62px; line-height:1.55;}
+  .fld input:focus, .fld select:focus, .fld textarea:focus{
+    outline:none; border-color:var(--blue); background:var(--panel-3);
+  }
+  .fld input::placeholder, .fld textarea::placeholder{color:var(--tx-3);}
+  .dlgfoot{padding:18px 26px 24px; display:flex; gap:9px; align-items:center;}
+  .ghost{
+    background:var(--panel-2); color:var(--tx-2); border:0; border-radius:100px;
+    padding:10px 17px; font-size:13.5px; font-weight:600; cursor:pointer;
+  }
+  .ghost:hover{background:var(--panel-3); color:var(--tx);}
+
+  /* toast */
+  #toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(14px);
+    background:var(--panel-3); color:var(--tx); padding:12px 20px; border-radius:100px;
+    font-size:13.5px; font-weight:600; opacity:0; pointer-events:none;
+    transition:opacity .2s, transform .2s; z-index:100; box-shadow:0 8px 28px rgba(0,0,0,.5);
+  }
+  #toast.on{opacity:1; transform:translateX(-50%) translateY(0);}
+  #toast.err{background:var(--red); color:#fff;}
+
+  .ro{
+    display:none; margin:18px 0 0; background:var(--amber-dim); color:var(--amber);
+    padding:12px 16px; border-radius:var(--r-m); font-size:13px; font-weight:600;
+  }
+  .ro.on{display:block;}
+  .empty{padding:44px 0; text-align:center; color:var(--tx-3); font-size:14px;}
+  .foot{margin-top:60px; padding-top:22px; border-top:1px solid var(--line-soft); font-size:12.5px; color:var(--tx-3); display:flex; flex-wrap:wrap; gap:6px 24px;}
+
+  @media (max-width:760px){
+    #root{padding:0 15px 100px;}
+    .day{grid-template-columns:1fr;}
+    .daymark{position:static; padding:20px 0 4px; display:flex; align-items:baseline; gap:11px;}
+    .daynum{font-size:23px;} .daydow{margin-top:0;} .daytag{margin-top:0;}
+    .dlgbody{grid-template-columns:1fr;}
+    .evhead{flex-wrap:wrap;}
+    .evtime{max-width:none;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+</style>
+
+<div id="root"></div>
+
+<script id="app">
+(function(){
+"use strict";
+
+/* ── 기본 데이터 (첫 버전) ─────────────────────────────── */
+const SEED = [
+ {id:"e01",date:"2026-08-27",time:"10:00–18:00",title:"호암미술관 《아트스펙트럼 2026》 오프닝",cat:"Kiaf VIP 프로그램",place:"호암미술관 · 용인",type:"fair",press:"미정",roster:"해당없음",rsvp:"미회신",todo:1,contact:"Kiaf 사무국 press@kiaf.org · 이희은 010-3087-1158",key:"Kiaf VIP 패스 소지자 대상 사전 오프닝. 아트위크의 첫 출발점입니다",note:"서울에서 왕복 3시간 — 참석 여부를 먼저 판단해야 합니다"},
+ {id:"e02",date:"2026-08-31",time:"14:00–15:00",title:"디자인마이애미 서울 2026 기자간담회",cat:"기자간담회",place:"DDP 디자인랩 2층 서울-온",type:"fair",press:"취재 가능 (매체 등록)",roster:"해당없음",rsvp:"미신청",todo:1,contact:"MAG PR 예지희 jh@mag-pr.com · 010-9067-3227",key:"차강희 서울디자인재단 대표, 젠 로버츠 디자인마이애미 CEO 참석. 전시 투어 포함",note:"신청 링크 form.typeform.com/to/Udq6XULp — 오늘 중 신청해야 합니다"},
+ {id:"e03",date:"2026-08-31",time:"시간 미정",sort:"18:00",title:"디자인마이애미 서울 2026 VIP 프리뷰",cat:"페어 프리뷰",place:"DDP 디자인랩 1층 쇼룸",type:"fair",press:"검토",roster:"해당없음",rsvp:"미회신",todo:1,contact:"MAG PR 예지희 jh@mag-pr.com",up:"디자인마이애미 서울 콘텐츠",due:"ASAP · MAG 요청",key:"주제 ‘함께, 울림 (Resonance: Design in Dialogue)’. 갤러리 6곳·작가 17명, 인 시추 36팀, 삼성전자·알로소 파트너 프로그램",note:"같은 날 저녁 8시에 지영 교수님 예원 일정이 있습니다"},
+
+ {id:"e02a",date:"2026-08-28",time:"11:00–12:00",title:"GRAFF 《로렌스 그라프 시그니처》 팝업 프레스 데이",cat:"프레스 데이",place:"신세계백화점 강남점 1층 더 스테이지",type:"other",press:"취재 가능",roster:"해당없음",rsvp:"미회신 · 메일 회신 필요",todo:1,contact:"피알프리베 pr@priveeandco.com · 최수빈 010-7301-0701",key:"그라프의 첫 유니섹스 컬렉션. 세션별 운영이라 시간대 변경 요청 가능",note:"같은 날 18시 골드윈 서울 오프닝도 있습니다. 오전·저녁이라 둘 다 가능"},
+ {id:"e02b",date:"2026-08-28",time:"18:00–21:00",title:"Goldwin Seoul — Daichiro Shinjo 개인전 오프닝 리셉션",cat:"오프닝 리셉션",place:"골드윈 서울 · 강남구 언주로164길 33",type:"other",press:"취재 가능",roster:"해당없음",rsvp:"미회신 · 구글폼 응답 필요",todo:1,contact:"FABRICA 샤르카 010-5101-5023 · 정소윤 010-7764-3276",key:"오키나와 미야코지마 기반 현대 ‘서(書)’ 작가 신작 25점. 골드윈의 첫 전시 프로젝트",note:"RSVP forms.gle/4Jx1cWeFSnvjMGYZ9 · 같은 날 14시 롤스로이스 성과 보고 미팅이 있습니다"},
+ {id:"e03a",date:"2026-08-31",time:"14:00",title:"글래드스톤 서울 — 에드 앳킨스 《1 day in space》 기자간담회",cat:"기자간담회",place:"글래드스톤 서울 · 용산구 이태원로55가길 1",type:"other",press:"취재 가능",roster:"해당없음",rsvp:"미회신 · 메일 회신 필요",todo:1,contact:"VIBE 김지영 jy.kim@vibecompany.co.kr · 010-9021-0611",key:"에드 앳킨스 한국 첫 개인전이자 글래드스톤 한남 새 공간 개관전. 프리즈 부스 C20에도 참가",note:"디자인마이애미 기자간담회(같은 날 14:00 DDP)와 시간이 정확히 겹칩니다 — 택일 필요"},
+
+ {id:"e04",date:"2026-09-01",time:"10:00–18:00",title:"리움미술관 《구정아: 우스모스》 오프닝",cat:"Kiaf VIP 프로그램",place:"리움미술관 · 한남",type:"fair",press:"미정",roster:"해당없음",rsvp:"미회신",todo:0,contact:"Kiaf 사무국 press@kiaf.org",key:"아트위크 개막일 오전 코스. 저녁 한남 나잇과 동선이 자연스럽게 이어집니다",note:""},
+ {id:"e05a",date:"2026-09-01",time:"18:00–24:00",title:"KIAF FRIEZE HANNAM NIGHT PARTY — MBGM (Madam Butterfly Going Mad)",cat:"외부 초청 파티 (VIP)",place:"PROCESS ITW (프로세스 이태원) · 용산구 우사단로 42",type:"night",press:"검토",roster:"해당없음",rsvp:"RSVP 미회신 · 구글폼 응답 필요",todo:1,contact:"정형섭 010-8986-1107 · @worksworks_seoul",key:"워크스워크스 × 캐치업소스 매거진 공동 개최. 홍현준(WORKSWORKS)과 YUKINO YAMANAKA(CON TOKYO) 전시로 시작해 FRAME SEOUL DJ SET과 네트워킹 파티로 이어집니다",note:"RSVP forms.gle/h9JLTsPfPjBV4DWe7 · 18시부터 6시간짜리라 9/1 저녁 네 건의 베이스캠프로 쓰기 좋습니다. 파운드리 서울·원사이즈바와 모두 한남·이태원 권"},
+ {id:"e05",date:"2026-09-01",time:"19:00",title:"KORI Gin at FOUNDRY SEOUL — Frieze Seoul Hannam Night",cat:"외부 초청 파티",place:"파운드리 서울 · 한남",type:"night",press:"검토",roster:"해당없음",rsvp:"미회신",todo:1,contact:"안지원 박사 (호텔관광경영학) · 카카오톡",key:"파운드리 서울 × 코리진 두 번째 협업. 런던 기반 작가 줄리아 아이오실존의 《Zero Gravity》와 연계한 칵테일",note:"안지원 박사가 직접 초청 — 회신 필요. HANNAM NIGHT(18시~)에서 넘어오면 되고, 파운드리↔프로세스 이태원은 차로 10분 거리"},
+ {id:"e06",date:"2026-09-01",time:"20:00–24:00",title:"SAM 파티",cat:"지인 파티",place:"이태원 원사이즈바",type:"night",press:"취재 없음",roster:"동반 1명 미정",rsvp:"참석 확정",todo:1,contact:"SAM",key:"프리즈 위크 전야 네트워킹",note:"동반 1명 확정 필요. 프로세스 이태원·파운드리 서울과 모두 같은 한남·이태원 권이라 순차 이동 가능"},
+ {id:"e07",date:"2026-09-01",time:"21:30",title:"바카라 바 방문 이벤트",cat:"브랜드 이벤트",place:"바카라 바 서울",type:"night",press:"검토",roster:"동반 1명 미정",rsvp:"참석 확정 (동반 1 가능)",todo:1,contact:"—",key:"럭셔리 브랜드 접점 — 세일즈 리드로 이어질 수 있습니다",note:"시간 21:30 확정. 캘린더도 21:30으로 고쳐뒀습니다. 동반 1명 미정 · 바카라 바가 강남권이면 이동에 20~30분 더 잡아야 합니다"},
+
+ {id:"e08",date:"2026-09-02",time:"11:00–15:00",title:"Kiaf SEOUL 2026 — Kiaf VIP Only",cat:"페어 본행사",place:"코엑스 1층 홀 A·B, 그랜드볼룸",type:"fair",press:"취재 있음 (바터 계약)",roster:"VIP 패스 5매 (동반권 포함) 확정",rsvp:"진행 확정",todo:0,contact:"Kiaf 사무국 press@kiaf.org · 이희은 010-3087-1158",up:"현장취재 릴스 1회 + 현장 스토리 1회",due:"릴스 행사 직후 / 스토리 당일",key:"오전은 VIP 전용 슬롯이라 가장 한산합니다. 25주년, 18개국 175개 갤러리, 주제 ‘공존’",note:"오전 Kiaf → 14:30 DDP 런웨이 → 복귀 후 루이나 → 프리즈 순서로 움직여야 합니다"},
+ {id:"e09",date:"2026-09-02",time:"11:00–19:00",sort:"11:01",title:"Frieze Seoul 2026 VIP 프리뷰",cat:"페어 본행사",place:"코엑스 3층 홀 C·D",type:"fair",press:"취재 있음 (MAG 협업)",roster:"VIP 패스 확보 · 동반 1인 포함 (변경 가능)",rsvp:"등록 이메일 주소 전달 필요",todo:1,contact:"MAG PR 예지희 jh@mag-pr.com · 010-9067-3227",up:"프리즈 서울 Galleries 콘텐츠",due:"9/2 노출",key:"초청 전용 프리뷰 데이. 일반 공개는 9/3 15시부터. 가고시안·하우저앤워스·페이스·화이트큐브·타데우스 로팍 중심 촬영 가이드를 MAG가 보내왔습니다",note:"VIP 라운지 앵글은 MAG가 리스크로 제외했습니다. 등록할 분의 이메일을 jh@mag-pr.com으로 보내야 패스가 나옵니다"},
+ {id:"e10",date:"2026-09-02",time:"11:00–22:00",sort:"11:02",title:"송은 《SONGEUN × Unboxing Project: Generative Forms》",cat:"Kiaf VIP 프로그램",place:"송은 · 청담",type:"fair",press:"미정",roster:"해당없음",rsvp:"미회신",todo:0,contact:"Kiaf 사무국 press@kiaf.org",key:"야간 도슨트 투어와 아이스크림 증정 이벤트. 22시까지 운영합니다",note:"저녁 현대백화점 일정(19:00) 이후 늦게 방문 가능"},
+ {id:"e11",date:"2026-09-02",time:"14:30",title:"얼킨(ULKIN) 서울패션위크 런웨이 쇼 — 모비데이즈",cat:"패션쇼",place:"DDP 동대문디자인플라자",type:"fair",press:"취재 있음 (광고 없음)",roster:"박성연 + 김준형 확정",rsvp:"미회신 · 캘린더 응답 필요",todo:1,contact:"박성연 sw.park@1percentclub.kr",key:"이날 동선의 최대 난제 — 강남 코엑스와 동대문 DDP를 왕복해야 합니다",note:"코엑스에서 DDP까지 40~50분. 13:30 출발을 권합니다"},
+ {id:"e12",date:"2026-09-02",time:"권장 15:00 · 시간 내 자유",sort:"14:50",title:"루이나(Ruinart) 방문",cat:"브랜드 초청",place:"장소 미확인 — 프리즈 연계, 코엑스 추정",type:"night",press:"검토",roster:"동반 1명 가능 · 동반자 미정",rsvp:"참석 확정",todo:1,contact:"카카오톡 (이메일 이력 없음 — 담당자 확인 필요)",key:"간단한 케이터링을 준비한다고 합니다. 루이나는 프리즈의 공식 샴페인 파트너로 8/31–9/5 참여합니다",note:"권장 15:00은 런웨이 쇼와 겹칩니다. “시간 내 편하실 때”라 했으니 복귀 직후 16:20–16:50을 권합니다. 장소를 확인해 주세요"},
+ {id:"e13",date:"2026-09-02",time:"15:00–20:00",title:"Kiaf & Frieze VIP 통합 관람",cat:"페어 본행사",place:"코엑스",type:"fair",press:"취재 있음 (바터 계약)",roster:"VIP 패스 5매",rsvp:"진행 확정",todo:0,contact:"Kiaf 사무국 press@kiaf.org",up:"현장취재 릴스 1회",due:"행사 직후",key:"프리즈는 19시 마감, Kiaf는 20시까지. 복귀 후 프리즈를 먼저 소화하세요",note:"16:20 복귀 → 루이나 30분 → 16:50부터 프리즈에 2시간 10분"},
+ {id:"e14",date:"2026-09-02",time:"15:30–16:10",title:"Museum Tour — 박서보 뮤지엄",cat:"Kiaf VIP 프로그램",place:"박서보 뮤지엄",type:"skip",press:"—",roster:"해당없음",rsvp:"불참 권장",todo:0,contact:"Kiaf 사무국",key:"런웨이 쇼와 정면 충돌합니다",note:"참석 불가"},
+ {id:"e15",date:"2026-09-02",time:"18:10–18:40",title:"Museum Tour — 롯데 뮤지엄",cat:"Kiaf VIP 프로그램",place:"롯데 뮤지엄",type:"skip",press:"—",roster:"해당없음",rsvp:"불참 권장",todo:0,contact:"Kiaf 사무국",key:"현대백화점 아트 이브닝과 충돌합니다",note:"원문 시간표에 ‘18:10–16:40’ 오타가 있어 사무국 확인이 필요합니다"},
+ {id:"e16",date:"2026-09-02",time:"19:00–22:00",title:"현대백화점 《아트 이브닝: 6분 40초의 미학》",cat:"VIP 초청 행사 · 바터",place:"현대백화점 무역센터점 10층 EP.1",type:"night",press:"취재 있음",roster:"초대권 6매 확정 · 참석자 명단 미확정",rsvp:"진행 확정",todo:1,contact:"Kiaf 사무국 press@kiaf.org",key:"Kiaf HIGHLIGHTS 선정 작가들의 페차쿠차 아티스트 토크, 축하 공연, 샴페인 리셉션",note:"코엑스 바로 옆이라 프리즈 종료(19:00) 직후 도보로 이동합니다. 6매 배분 명단을 정해야 합니다"},
+ {id:"e17",date:"2026-09-02",time:"19:00–22:00",sort:"19:01",title:"OPENSTUDIO — 악셀 베르보르트 × 스튜디오 김수자 × 공원",cat:"외부 초청 · RSVP",place:"서울 서초구 강남대로 337 (B1·2F·15F)",type:"skip",press:"검토",roster:"해당없음",rsvp:"RSVP 마감 8/23 · 회신 여부 확인 필요",todo:1,contact:"남윤미 Studio Director yunmi@kimsooja.com · 010-3126-2115",key:"지하 1층과 2층 전시, 15층에서 디너와 와인. 김수자 스튜디오가 직접 초청했습니다",note:"현대백화점과 시간이 완전히 중복됩니다. 바터 계약이 걸린 현대백화점을 우선하고 불참 회신을 보내는 편이 낫습니다"},
+
+ {id:"e17a",date:"2026-09-01",time:"15:30",title:"에드 앳킨스 아티스트 토크",cat:"아티스트 토크",place:"현대카드 언더스테이지",type:"other",press:"검토",roster:"해당없음",rsvp:"미확인",todo:0,contact:"VIBE 김지영 jy.kim@vibecompany.co.kr",key:"글래드스톤 서울 개관전 연계 토크",note:"저녁 한남·이태원 일정(18시~) 전에 넣을 수 있습니다"},
+ {id:"e18",date:"2026-09-03",time:"10:00–11:30",title:"K&L 뮤지엄 《위프레도 람》 토크 프로그램",cat:"Kiaf VIP 프로그램",place:"K&L 뮤지엄 · 경기 과천 뒷골2로 19",type:"fair",press:"미정",roster:"해당없음",rsvp:"미회신",todo:0,contact:"Kiaf 사무국",key:"전시 연계 토크",note:"과천까지 이동해야 해 같은 날 서울 일정 밀도상 참석이 어렵습니다"},
+ {id:"e19",date:"2026-09-03",time:"10:30–12:00",title:"Artist Studio Visit — 김택상 작가",cat:"Kiaf VIP 프로그램",place:"김택상 스튜디오 · 경기 고양 일산동구",type:"fair",press:"검토",roster:"해당없음",rsvp:"미회신",todo:0,contact:"Kiaf 사무국",key:"아티스트 스튜디오 비짓과 토크 — 콘텐츠 소재로서 가치가 높습니다",note:"일산 이동 필요. K&L 뮤지엄 토크와 택일해야 합니다"},
+ {id:"e20",date:"2026-09-03",time:"11:00–19:00",title:"Kiaf SEOUL — VIP 통합·Preview / GA Preview 15:00–19:00",cat:"페어 본행사",place:"코엑스 1층 홀 A·B",type:"fair",press:"취재 있음 (바터 계약)",roster:"VIP 패스 5매",rsvp:"진행 확정",todo:0,contact:"Kiaf 사무국",up:"전날 못 담은 부스·작가 보완 촬영",due:"당일",key:"프리즈는 이날 15시부터 일반 공개로 전환됩니다",note:""},
+ {id:"e21",date:"2026-09-03",time:"13:00–14:30",title:"Collector’s Talk — 심준섭 컬렉터 @ OPNNG",cat:"Kiaf VIP 프로그램",place:"OPNNG",type:"fair",press:"검토",roster:"해당없음",rsvp:"미회신",todo:0,contact:"Kiaf 사무국",key:"전시 오프닝과 컬렉터 토크 (SAVE POINT / AOKIZY 개인전)",note:"마리끌레르 A-DAY와 겹칩니다"},
+ {id:"e22",date:"2026-09-03",time:"13:00–17:00",sort:"13:01",title:"마리끌레르 × Kiaf 《Where Art Connects》 A-DAY",cat:"VIP 초청 행사 · 바터",place:"서울공예박물관 (SeMoCA)",type:"fair",press:"취재 있음",roster:"초대권 6매 확정 · 참석자 명단 미확정",rsvp:"진행 확정",todo:1,contact:"Kiaf 사무국 press@kiaf.org",key:"K-미디어아트 전시, 수상 작가 아트 토크, 라이브 퍼포먼스",note:"A-DAY와 A-NIGHT 통합 초대권 6매입니다. 어느 세션에 갈지 정해야 합니다"},
+ {id:"e23",date:"2026-09-03",time:"14:00–18:00",title:"디자인마이애미 서울 — 디자인 토크",cat:"컨퍼런스",place:"DDP 디자인랩 3층 디자인홀",type:"fair",press:"검토",roster:"해당없음",rsvp:"미회신",todo:0,contact:"MAG PR 예지희 jh@mag-pr.com",key:"제시 리 체어맨, 젠 로버츠 CEO, 마우로 포르치니 삼성전자 CDO 패널",note:"프리미엄패스(8만원)에 입장권이 포함됩니다. 마리끌레르 A-DAY와 충돌"},
+ {id:"e23a",date:"2026-09-03",time:"14:00–19:00",sort:"14:01",title:"XLIM(엑슬림) EP.10 PRIVATE PREVIEW",cat:"프라이빗 프리뷰",place:"XLIM 한남 플래그십 · 용산구 한남동 726-82",type:"other",press:"취재 가능",roster:"해당없음",rsvp:"미회신 · 구글폼 응답 필요",todo:1,contact:"FABRICA 정소윤 010-7764-3276 · 샤르카 010-5101-5023",key:"테마 ‘Layered Composition’. 초청자에 한해 진행되는 프라이빗 행사",note:"RSVP forms.gle/DQUic5sayBk97gTp8 · 마리끌레르 A-DAY(13:00–17:00)와 겹칩니다. 다만 19시까지 열려 있어 A-DAY 후 들르는 것도 가능"},
+ {id:"e24",date:"2026-09-03",time:"15:30–17:20",title:"Museum Tour — 퐁피두 센터",cat:"Kiaf VIP 프로그램",place:"퐁피두 센터",type:"skip",press:"—",roster:"해당없음",rsvp:"불참 권장",todo:0,contact:"Kiaf 사무국",key:"마리끌레르 A-DAY와 충돌합니다",note:"참석 어려움"},
+ {id:"e25",date:"2026-09-03",time:"18:00–21:00",title:"마리끌레르 × Kiaf 《Where Art Connects》 A-NIGHT",cat:"VIP 초청 행사 · 바터",place:"서울공예박물관 (SeMoCA)",type:"night",press:"취재 있음",roster:"초대권 6매 확정 · 참석자 명단 미확정",rsvp:"진행 확정",todo:1,contact:"Kiaf 사무국 press@kiaf.org",key:"오프닝 파티, K 미디어아트 전시, Marie Next 시상식, 한영애 공연과 라이브 퍼포먼스",note:"아트선재 삼청 나잇(19:00)과 겹치지만 서울공예박물관에서 아트선재까지 도보 10분이라 이어서 이동할 수 있습니다"},
+ {id:"e26",date:"2026-09-03",time:"19:00–22:00",title:"아트선재센터 2026 삼청 나잇 파티 (VOSS 공동주최)",cat:"협업 행사 · 콘텐츠 계약",place:"아트선재센터 · 종로구 율곡로3길 87",type:"night",press:"취재 있음 (현장 스토리 확정)",roster:"우리 초청 10명 · 명단 미확정",rsvp:"진행 확정",todo:1,contact:"남서원 nam@artsonje.org · 조희현 heehyun.cho2@gmail.com",up:"① 사전 피드 1회 ② 당일 현장 영상 스토리 1회",due:"① 8/26 (지연 중) ② 9/3 당일",key:"바 티센트 앤디윤, 소코 박주성의 시그니처 칵테일. 21:00–21:21 함양아·김무영 스크리닝. DJ 정후·키티·머미 라이브 세트",note:"최우선 과제입니다. 피드 시안 최종 컨펌을 받아 8/26 안에 올려야 하고, 초청 10명의 성함·연락처를 넘겨야 RSVP가 자동 처리됩니다"},
+
+ {id:"e27",date:"2026-09-04",time:"10:00–13:00",title:"Museum Tour — MMCA 과천 → K&L 뮤지엄",cat:"Kiaf VIP 프로그램",place:"MMCA 과천 · K&L 뮤지엄",type:"fair",press:"—",roster:"해당없음",rsvp:"미회신",todo:0,contact:"Kiaf 사무국",key:"MMCA 과천 40주년 연계 투어",note:"과천 왕복에 반나절이 듭니다"},
+ {id:"e28",date:"2026-09-04",time:"11:00–19:00",title:"Kiaf SEOUL / Frieze Seoul — VIP 통합",cat:"페어 본행사",place:"코엑스",type:"fair",press:"취재 있음",roster:"—",rsvp:"진행 확정",todo:0,contact:"Kiaf 사무국",key:"GA First Access 11:00–15:00 / GA Afternoon 15:00–19:00",note:""},
+ {id:"e29",date:"2026-09-04",time:"시간 확인 중",sort:"19:00",title:"Kiaf Classic — 조성진 특별공연 《Resonance of Coexistence》",cat:"공연 · 바터 티켓",place:"코엑스 오디토리움",type:"night",press:"검토",roster:"티켓 2매 확정 · 동반 1명 미정",rsvp:"진행 확정",todo:1,contact:"Kiaf 사무국 press@kiaf.org",key:"키아프 최초의 클래식 프로그램. 주제 ‘공존’을 청각의 언어로 풀어냅니다",note:"공연 시간과 좌석은 대표님이 직접 확인하시기로 했습니다"},
+
+ {id:"e30",date:"2026-09-05",time:"11:00–19:00",title:"Kiaf SEOUL / Frieze Seoul",cat:"페어 본행사",place:"코엑스",type:"fair",press:"—",roster:"—",rsvp:"—",todo:0,contact:"—",key:"두 페어가 함께 운영되는 마지막 날 (프리즈 최종일)",note:""},
+ {id:"e31",date:"2026-09-05",time:"17:00–18:00",title:"설해냄 청모 — 중국성 반포본점",cat:"개인 일정",place:"잠원로3길 40",type:"other",press:"취재 없음",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:""},
+ {id:"e32",date:"2026-09-06",time:"11:00–18:00",title:"Kiaf SEOUL — Kiaf Only (최종일)",cat:"페어 본행사",place:"코엑스 1층 홀 A·B",type:"fair",press:"—",roster:"—",rsvp:"—",todo:0,contact:"—",key:"프리즈 종료 후 키아프 단독 운영",note:"디자인마이애미도 이날 10:00–18:00로 마무리됩니다"},
+ {id:"e33",date:"2026-09-02",time:"9/2–9/6 · 시간 변동",sort:"23:59",title:"Kiaf SEOUL 공식 도슨트 프로그램",cat:"Kiaf VIP 프로그램",place:"도슨트 부스 A1 게이트 앞",type:"fair",press:"—",roster:"해당없음",rsvp:"—",todo:0,contact:"Kiaf VIP APP으로 신청",key:"참여 갤러리 작품 및 작가 소개",note:"Kiaf VIP APP에서 사전 신청이 필요합니다"},
+
+ {id:"e33a",date:"2026-09-04",time:"미정",sort:"12:00",title:"하겐다즈 팝업 ‘더 하겐 크루즈’",cat:"팝업 초청",place:"성수동",type:"other",press:"검토",roster:"—",rsvp:"이경준이 회신 처리 중",todo:0,contact:"TheLayer 김미현 l@the-layer.com",key:"",note:"이경준 매니저가 8/25 회신했습니다. BK 참석 여부는 별도 판단"},
+ {id:"e33b",date:"2026-09-07",time:"11:20",title:"크리스챤 디올 뷰티 ‘2026 NEW ROUGE DIOR ON STAGE’ 팝업 초청",cat:"팝업 초청",place:"미정",type:"other",press:"검토",roster:"—",rsvp:"이경준이 회신 처리 중",todo:0,contact:"HANPR 이정연 팀장 jyl@hanpr.net",key:"디올 뷰티는 26년 정기 계약 클라이언트입니다",note:"이경준 매니저가 8/24 회신했습니다"},
+ {id:"e33c",date:"2026-09-08",time:"18:00–21:00",title:"버거킹 Flameground 프리 오프닝 파티",cat:"프리 오프닝",place:"성수동 · 성동구 성수이로7길 28",type:"other",press:"취재 가능",roster:"동반 1인 가능 · 동반자 미정",rsvp:"미회신 · 구글폼 응답 필요",todo:1,contact:"오프닝 추재연 010-7674-7819",key:"세계 최초 버거킹 플래그십. 사전 등록 게스트만 입장, 드레스코드는 레드 계열 포인트",note:"RSVP forms.gle/dQr6wFwqjwFjJykt8 · 원래 8/26이었다가 9/8로 변경됐습니다. 회신하면 전화 RSVP는 생략해 줍니다"},
+ {id:"e33d",date:"2026-09-10",time:"11:00–15:00",title:"더바넷 한남 플래그십 그랜드 오픈",cat:"플래그십 오픈",place:"용산구 이태원로 268 (한남동 682-1)",type:"other",press:"취재 가능",roster:"동반인 여부 회신 필요",rsvp:"미회신 · 회신 필요",todo:1,contact:"비엔비엔 박소연 010-7104-6842 · 장유나 010-3600-2865",key:"26 FALL COLLECTION 첫 공개",note:"참석자 성함·동반인 여부·방문 시간·연락처를 함께 회신해야 합니다. 같은 날 13시 더라인 한남 쇼룸과 겹칩니다 (둘 다 한남이라 연달아 가능)"},
+ {id:"e33e",date:"2026-09-10",time:"13:00",sort:"13:00",title:"더라인 한남 쇼룸 오프닝 이벤트",cat:"쇼룸 오프닝",place:"THE LINE SHOWROOM · 용산구 한남대로20길 47-26",type:"other",press:"취재 가능",roster:"해당없음",rsvp:"미회신 · 메일 회신 필요",todo:1,contact:"더레이어 이지안 e@the-layer.com · 02-545-3934",key:"허먼밀러·놀·웬델보 아이코닉 피스와 더라인 셀렉션. 럭키드로우 진행",note:"더바넷(11:00–15:00)과 시간이 겹치지만 둘 다 한남이라 순차 방문 가능. 주차 혼잡 예상, 대중교통 권장"},
+ {id:"e34",date:"2026-09-09",time:"18:00–21:30",title:"캘리포니아관광청 행사",cat:"취재 (광고 없음)",place:"장소 미정",type:"other",press:"취재 있음",roster:"손문정 + 김준형",rsvp:"미회신 · 캘린더 응답 필요",todo:1,contact:"손문정 mj.son@1percentclub.kr",key:"관광청 네트워크 — MyFirstKorea와 연결할 수 있습니다",note:"캘린더 초대 수락이 필요합니다"},
+ {id:"e35",date:"2026-09-12",time:"종일",sort:"09:00",title:"여의도 크루즈 행사",cat:"행사",place:"여의도",type:"other",press:"—",roster:"—",rsvp:"참석 확정",todo:0,contact:"—",key:"",note:""}
+];
+
+const TICKETS = [
+ {n:"Kiaf VIP 패스",q:"5매",d:"9/2 – 9/6",s:"확정",hot:0,m:"1매당 동반인 1명 포함 — 실질 10명 입장 가능"},
+ {n:"Frieze Seoul VIP 패스",sub:"MAG PR 경유",q:"수량 미지정",d:"9/2 – 9/5",s:"등록 이메일 전달 필요",hot:1,m:"페어 기간 내내 동반 1인과 입장 가능하고 동반인 변경도 됩니다. 등록할 분의 이메일을 jh@mag-pr.com으로 보내야 발급됩니다"},
+ {n:"현대백화점 《아트 이브닝》 초대권",q:"6매",d:"9/2 19:00",s:"배분 명단 미확정",hot:1,m:"동반인 미포함. 내부 초청 80% / 외부 이벤트 10~20% 방침"},
+ {n:"마리끌레르 《Where Art Connects》 초대권",q:"6매",d:"9/3",s:"배분 명단 미확정",hot:1,m:"현대백화점과 별개 프로그램. A-DAY / A-NIGHT 중 선택 필요"},
+ {n:"루이나 방문 (동반 포함)",q:"본인 + 1명",d:"9/2",s:"동반자 미정 · 장소 미확인",hot:1,m:"카카오톡 안내만 있고 이메일 이력이 없습니다. 장소와 담당자 확인 필요"},
+ {n:"조성진 Kiaf Classic 공연 티켓",q:"2매",d:"9/4",s:"시간·좌석 확인 중",hot:1,m:"대표님이 직접 확인하기로 함. 동반 1명 미정"},
+ {n:"아트선재 삼청 나잇 초청 (우리가 제공)",q:"10명",d:"9/3 19:00",s:"명단 미확정",hot:1,m:"성함·연락처를 nam@artsonje.org로 보내면 아트선재가 RSVP를 자동 처리합니다"}
+];
+
+const ROUTE1 = [
+ {t:"낮 · 선택",h:"리움미술관 《구정아: 우스모스》 오프닝",n:"한남. 저녁 일정과 동선이 그대로 이어집니다"},
+ {t:"18:00",h:"HANNAM NIGHT PARTY 입장",n:"프로세스 이태원. 24시까지 6시간 열리니 저녁의 베이스캠프. 홍현준·YUKINO YAMANAKA 전시부터 보기"},
+ {t:"19:00 → 19:50",h:"파운드리 서울로 이동 · KORI Gin",n:"차로 10분. 안지원 박사가 직접 초청한 자리라 얼굴은 비추는 편이 좋습니다",move:1},
+ {t:"20:00 – 21:20",h:"SAM 파티",n:"이태원 원사이즈바. 차로 10분. 동반 1명 미정"},
+ {t:"21:30",h:"바카라 바 방문 이벤트",n:"동반 1명 미정. 강남권이면 이동에 20~30분 더 필요합니다"},
+ {t:"22:00 이후",h:"선택 · HANNAM NIGHT 복귀",n:"FRAME SEOUL DJ SET. 24시까지라 마무리 네트워킹으로 다시 들러도 됩니다"}
+];
+
+const ROUTE = [
+ {t:"10:40",h:"코엑스 도착 · VIP 등록",n:"1층 홀 A·B. Kiaf VIP 패스 5매는 각각 동반인 1명 포함"},
+ {t:"11:00 – 13:00",h:"Kiaf VIP Only 관람 · 취재 촬영",n:"VIP 전용 슬롯이라 하루 중 가장 한산합니다. 릴스 소재를 여기서 다 확보하세요"},
+ {t:"13:00 – 13:30",h:"점심 · 프리즈 3층 사전 스캔",n:"오후 재방문 전 동선만 미리 파악. 루이나 위치도 이때 확인"},
+ {t:"13:30 → 14:20",h:"강남 → 동대문 이동",n:"차량 40~50분, 지하철 2호선 삼성 → 을지로4가 환승 약 45분",move:1},
+ {t:"14:30 – 15:30",h:"얼킨 서울패션위크 런웨이 쇼",n:"DDP. 박성연 매니저와 합류. 취재(광고 없음)"},
+ {t:"15:30 → 16:20",h:"동대문 → 강남 복귀",n:"같은 DDP에서 디자인마이애미도 열리는 중 — 여유가 생기면 10분 스캔",move:1},
+ {t:"16:20 – 16:50",h:"루이나(Ruinart) 방문",n:"주최측 권장은 15시지만 런웨이와 겹칩니다. “시간 내 편하실 때”라 했으니 복귀 직후가 현실적. 동반 1명 가능"},
+ {t:"16:50 – 19:00",h:"Frieze Seoul VIP 프리뷰 집중",n:"프리즈가 19시에 먼저 닫습니다. Kiaf는 20시까지 열려 있으니 프리즈부터"},
+ {t:"19:10 – 21:00",h:"현대백화점 《아트 이브닝》",n:"무역센터점 10층 EP.1. 코엑스에서 도보 5분. 초대권 6매"},
+ {t:"21:00 – 22:00",h:"선택 · 송은 야간 도슨트",n:"청담. 22시까지 운영. 체력이 남으면 마무리 콘텐츠로 좋습니다"}
+];
+
+/* RSVP 대기함 — 받은 메일·메시지에서 응답이 필요한 건 전부 */
+const RSVP = [
+ {u:"now",t:"Frieze Seoul VIP 초대장 활성화",w:"페어 전까지 · 미완료로 보임",how:"프리즈 계정",link:"https://app.frieze.com/invite?id=06874c6083",
+  d:"로그인 → 초대장과 입장 시간 확정 → 게스트 초대장 공유, 이 세 단계를 마쳐야 패스가 나옵니다. 패스가 있으면 9/2 12시부터 프리즈, 15시부터 키아프에 무제한 입장하고 코엑스 2층 프리즈 VIP 라운지도 씁니다.",
+  src:"vip@frieze.com · 8/25 info@ 수신"},
+ {u:"now",t:"GRAFF 《로렌스 그라프 시그니처》 팝업 프레스 데이",w:"8/28 (금) 11:00–12:00 · 신세계 강남",how:"메일 회신",link:"mailto:pr@priveeandco.com",
+  d:"세션별 운영이라 시간대 변경도 요청할 수 있습니다.",src:"피알프리베 · 최수빈 010-7301-0701"},
+ {u:"now",t:"Goldwin Seoul — Daichiro Shinjo 오프닝 리셉션",w:"8/28 (금) 18:00–21:00 · 강남",how:"구글폼",link:"https://forms.gle/4Jx1cWeFSnvjMGYZ9",
+  d:"GRAFF와 같은 날이지만 오전·저녁이라 둘 다 됩니다.",src:"FABRICA · 정소윤 010-7764-3276"},
+ {u:"now",t:"디자인마이애미 서울 기자간담회",w:"8/31 (월) 14:00 · DDP",how:"타입폼",link:"https://form.typeform.com/to/Udq6XULp",
+  d:"전시 투어 포함. 글래드스톤 기자간담회와 같은 시간이라 택일해야 합니다.",src:"MAG PR · 예지희 010-9067-3227"},
+ {u:"now",t:"글래드스톤 서울 — 에드 앳킨스 기자간담회",w:"8/31 (월) 14:00 · 한남",how:"메일 회신",link:"mailto:jy.kim@vibecompany.co.kr",
+  d:"사전 RSVP로만 진행됩니다. 디자인마이애미와 정확히 겹칩니다.",src:"VIBE · 김지영 010-9021-0611"},
+ {u:"now",t:"KIAF FRIEZE HANNAM NIGHT PARTY",w:"9/1 (화) 18:00–24:00 · 프로세스 이태원",how:"구글폼",link:"https://forms.gle/h9JLTsPfPjBV4DWe7",
+  d:"동반자가 있으면 폼에 같이 적으세요.",src:"워크스워크스 · 정형섭 010-8986-1107"},
+ {u:"now",t:"OPENSTUDIO — 악셀 베르보르트 × 김수자 스튜디오",w:"9/2 (수) 19:00–22:00 · 서초",how:"구글폼",link:"https://forms.gle/ZezD5yTqZT5Exigp8",
+  d:"RSVP 마감일이 8/23이라 이미 지났습니다. 현대백화점 아트 이브닝과 완전히 겹치므로 불참 회신을 보내는 편이 낫습니다.",src:"김수자 스튜디오 · 남윤미 010-3126-2115"},
+
+ {u:"soon",t:"XLIM EP.10 PRIVATE PREVIEW",w:"9/3 (목) 14:00–19:00 · 한남",how:"구글폼",link:"https://forms.gle/DQUic5sayBk97gTp8",
+  d:"초청자만 입장. 마리끌레르 A-DAY와 겹치지만 19시까지 열려 있어 이어서 갈 수 있습니다.",src:"FABRICA · 정소윤 010-7764-3276"},
+ {u:"soon",t:"버거킹 Flameground 프리 오프닝 파티",w:"9/8 (화) 18:00–21:00 · 성수",how:"구글폼",link:"https://forms.gle/dQr6wFwqjwFjJykt8",
+  d:"동반 1인 가능, 드레스코드는 레드 계열 포인트. 회신하면 전화 RSVP는 생략해 줍니다.",src:"오프닝 · 추재연 010-7674-7819"},
+ {u:"soon",t:"더바넷 한남 플래그십 그랜드 오픈",w:"9/10 (목) 11:00–15:00 · 한남",how:"문자·전화 회신",link:"tel:010-7104-6842",
+  d:"참석자 성함, 동반인 여부, 방문 시간, 연락처를 함께 보내야 합니다.",src:"비엔비엔 · 박소연 010-7104-6842"},
+ {u:"soon",t:"더라인 한남 쇼룸 오프닝",w:"9/10 (목) 13:00 · 한남",how:"메일 회신",link:"mailto:e@the-layer.com",
+  d:"더바넷과 같은 날 같은 동네라 연달아 가면 됩니다. 럭키드로우 있음.",src:"더레이어 · 이지안 02-545-3934"},
+
+ {u:"soon",t:"얼킨 서울패션위크 런웨이 쇼",w:"9/2 (수) 14:30 · DDP",how:"구글 캘린더",link:"",
+  d:"캘린더 초대가 아직 응답 대기(needsAction) 상태입니다. 수락만 누르면 됩니다.",src:"박성연 sw.park@1percentclub.kr"},
+ {u:"soon",t:"캘리포니아관광청 행사",w:"9/9 (수) 18:00–21:30",how:"구글 캘린더",link:"",
+  d:"캘린더 초대가 응답 대기 상태입니다.",src:"손문정 mj.son@1percentclub.kr"},
+ {u:"soon",t:"Kiaf 공식 도슨트 프로그램",w:"9/2–9/6 · 시간 변동",how:"Kiaf VIP 앱",link:"",
+  d:"앱에서 사전 신청해야 참여할 수 있습니다.",src:"Kiaf 사무국"},
+
+ {u:"later",t:"LOEWE at Frieze Seoul 《Strata of Time》",w:"프리즈 위크 · 청담",how:"artsvp",link:"https://friezeevents.artsvp.com/45a896?link=loewe_vippreview",
+  d:"로에베 재단 공예상 2026 수상자 박종진 도예전. 아티스트 토크와 인스토어 이벤트 포함. 인트렌드 e-vite 건은 이경준 매니저가 8/25 회신했습니다.",src:"프리즈 VIP 메일 내 파트너 링크"},
+ {u:"later",t:"Cassina — Ardys by Patricia Urquiola",w:"9/2~ · 카시나 스토어 삼청",how:"artsvp",link:"https://friezeevents.artsvp.com/27c4f8",
+  d:"프리즈 파트너 프로그램.",src:"프리즈 VIP 메일 내 파트너 링크"},
+ {u:"later",t:"MCM HAUS — 김창옥 《Traces of Comfort》",w:"프리즈 위크",how:"구글폼",link:"https://forms.gle/6an4YgKxF1EbesSg9",
+  d:"MCM 50주년 기념 옻칠 전시.",src:"프리즈 VIP 메일 내 파트너 링크"}
+];
+
+const RSVP_DONE = [
+ "하겐다즈 ‘더 하겐 크루즈’ 9/4 성수 — 이경준 8/25 회신",
+ "크리스챤 디올 뷰티 ROUGE DIOR ON STAGE 팝업 9/7 — 이경준 8/24 회신",
+ "adidas Originals by JENNIE ‘FUNCTIONAL GRACE’ — 이경준 8/25 회신",
+ "BCCK Garden Party 9/22 — 이경준 8/25 회신",
+ "로에베 × 프리즈 인트렌드 e-vite — 이경준 8/25 회신"
+];
+
+const DAYTAG = {
+ "2026-09-01":["peak","저녁 4건 겹침"],
+ "2026-09-02":["peak","최난이도"],
+ "2026-09-03":["peak","밀도 최고"],
+ "2026-09-04":["fair","조성진"]
+};
+const DOW = ["일","월","화","수","목","금","토"];
+
+/* ── 상태 ─────────────────────────────────────────────── */
+function loadState(){
+  const tag = document.getElementById("data");
+  if(tag){
+    try{
+      const p = JSON.parse(tag.textContent);
+      if(p && Array.isArray(p.events) && p.events.length) return p;
+    }catch(e){}
+  }
+  return {events: SEED.slice()};
+}
+let state = loadState();
+let filter = "all";
+let canWrite = false;
+let artifactNs = null;
+
+/* ── 유틸 ─────────────────────────────────────────────── */
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function sortKey(e){
+  if(e.sort) return e.sort;
+  const m = String(e.time||"").match(/(\d{1,2}):(\d{2})/);
+  return m ? m[1].padStart(2,"0")+":"+m[2] : "99:99";
+}
+function ordered(list){
+  return list.slice().sort((a,b)=>
+    a.date===b.date ? sortKey(a).localeCompare(sortKey(b)) : a.date.localeCompare(b.date));
+}
+function dowOf(iso){
+  const p = iso.split("-");
+  return DOW[new Date(+p[0], +p[1]-1, +p[2]).getDay()];
+}
+function isTodo(e){ return e.todo===1 || e.todo===true; }
+function hasPress(e){ return /취재 있음|취재 가능/.test(e.press||""); }
+
+function matches(e){
+  if(filter==="all") return true;
+  if(filter==="fair") return e.type==="fair";
+  if(filter==="party") return e.type==="night";
+  if(filter==="press") return hasPress(e);
+  if(filter==="todo") return isTodo(e);
+  return true;
+}
+
+/* ── 렌더 ─────────────────────────────────────────────── */
+function evCard(e){
+  const cls = e.type==="skip" ? "ev skip" : "ev";
+  let pills = "";
+  if(hasPress(e)) pills += '<span class="pill g">'+esc(e.press)+'</span>';
+  else if(e.press && e.press!=="—") pills += '<span class="pill n">취재 '+esc(e.press)+'</span>';
+  if(e.up) pills += '<span class="pill b">업로드 · '+esc(e.up)+'</span>';
+  if(/미회신|미신청|미확인|마감|필요/.test(e.rsvp||"")) pills += '<span class="pill r">'+esc(e.rsvp)+'</span>';
+  else if(e.rsvp && e.rsvp!=="—") pills += '<span class="pill n">'+esc(e.rsvp)+'</span>';
+  if(/미확정|미정/.test(e.roster||"")) pills += '<span class="pill a">'+esc(e.roster)+'</span>';
+  else if(e.roster && !/해당없음|—/.test(e.roster)) pills += '<span class="pill n">'+esc(e.roster)+'</span>';
+
+  const rows = [];
+  if(e.key) rows.push(["키포인트", e.key, "key"]);
+  if(e.due) rows.push(["업로드 기한", e.due, "key"]);
+  if(e.contact && e.contact!=="—") rows.push(["컨택", e.contact, ""]);
+  if(e.note) rows.push(["메모", e.note, ""]);
+  const meta = rows.length ? '<dl class="meta">'+rows.map(r =>
+    '<div class="mrow '+r[2]+'"><dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd></div>').join("")+'</dl>' : "";
+
+  return '<article class="'+cls+'" data-id="'+esc(e.id)+'">'+
+    '<div class="evhead">'+
+      '<span class="evtime">'+esc(e.time)+'</span>'+
+      '<div class="evbody"><div class="evtitle">'+esc(e.title)+'</div>'+
+        '<div class="evsub">'+esc(e.cat)+(e.place?' &nbsp;·&nbsp; <b>'+esc(e.place)+'</b>':'')+'</div></div>'+
+      (canWrite ? '<button class="del" data-del="'+esc(e.id)+'" aria-label="일정 삭제" title="삭제">×</button>' : '')+
+    '</div>'+ (pills?'<div class="pills">'+pills+'</div>':'') + meta +
+  '</article>';
+}
+
+function timelineHTML(){
+  const list = ordered(state.events).filter(matches);
+  if(!list.length) return '<p class="empty">이 조건에 해당하는 일정이 없습니다.</p>';
+  let out = "", cur = null;
+  list.forEach((e,i) => {
+    if(e.date !== cur){
+      if(cur !== null) out += '</div></div>';
+      cur = e.date;
+      const tag = DAYTAG[e.date];
+      const mm = +e.date.slice(5,7), dd = +e.date.slice(8,10);
+      out += '<div class="day"><div class="daymark">'+
+        '<span class="daynum">'+dd+'</span>'+
+        '<span class="daydow">'+mm+'월 · '+dowOf(e.date)+'</span>'+
+        (tag?'<span class="daytag '+tag[0]+'">'+tag[1]+'</span>':'')+
+        '</div><div class="dayevents">';
+    }
+    out += evCard(e);
+    if(i===list.length-1) out += '</div></div>';
+  });
+  return out;
+}
+
+function uploadRowsHTML(){
+  const rows = ordered(state.events).filter(e => e.up).map(e => {
+    const hot = /8\/2[5-9]|오늘|ASAP|지연/.test(e.due||"");
+    return '<tr class="'+(hot?"hot":"")+'">'+
+      '<td>'+esc(e.title.split("—")[0].split("(")[0].trim())+'</td>'+
+      '<td>'+esc(e.up)+'</td>'+
+      '<td class="due'+(hot?" hot":"")+'">'+esc(e.due||"—")+'</td>'+
+      '<td>'+esc(e.date.slice(5).replace("-","/"))+'</td>'+
+      '<td>'+esc(e.note || e.key || "")+'</td></tr>';
+  }).join("");
+  return rows || '<tr><td colspan="5">등록된 업로드 의무가 없습니다.</td></tr>';
+}
+
+function ticketRowsHTML(){
+  return TICKETS.map(t => '<tr class="'+(t.hot?"hot":"")+'">'+
+    '<td>'+esc(t.n)+(t.sub?'<br><span class="sm">'+esc(t.sub)+'</span>':'')+'</td>'+
+    '<td>'+esc(t.q)+'</td><td class="due">'+esc(t.d)+'</td><td>'+esc(t.s)+'</td><td>'+esc(t.m)+'</td></tr>').join("");
+}
+
+const URG = {now:["r","지금"], soon:["a","9월 초"], later:["b","프리즈 파트너"]};
+
+function rsvpHTML(){
+  const groups = [
+    ["now","오늘·이번 주 안에", "마감이 코앞이거나 이미 지난 것"],
+    ["soon","9월 행사", "아직 여유는 있지만 자리가 한정된 것"],
+    ["later","프리즈 파트너 프로그램", "프리즈 VIP 메일 안에 함께 온 초청"]
+  ];
+  return groups.map(g => {
+    const items = RSVP.filter(r => r.u === g[0]);
+    if(!items.length) return "";
+    return '<div class="rgroup"><div class="rghead"><h3>'+g[1]+'</h3><span>'+g[2]+'</span></div>'+
+      '<div class="rgrid">'+items.map(r => {
+        const badge = URG[r.u];
+        const btn = r.link
+          ? '<a class="rlink" href="'+esc(r.link)+'" target="_blank" rel="noopener">'+esc(r.how)+' 열기 ↗</a>'
+          : '<span class="rlink off">'+esc(r.how)+'</span>';
+        return '<div class="rcard">'+
+          '<div class="rtop"><span class="pill '+badge[0]+'">'+esc(r.how)+'</span><span class="rwhen">'+esc(r.w)+'</span></div>'+
+          '<div class="rtitle">'+esc(r.t)+'</div>'+
+          '<p class="rdesc">'+esc(r.d)+'</p>'+
+          '<div class="rfoot">'+btn+'<span class="rsrc">'+esc(r.src)+'</span></div>'+
+        '</div>';
+      }).join("")+'</div></div>';
+  }).join("");
+}
+
+function counters(){
+  const ev = state.events;
+  return [
+    ["", ev.length, "등록된 일정"],
+    ["red", RSVP.filter(r=>r.u==="now").length, "지금 응답할 RSVP"],
+    ["red", RSVP.length, "전체 RSVP 대기"],
+    ["blue", ev.filter(e=>e.up).length, "약속된 업로드"],
+    ["green", ev.filter(hasPress).length, "취재가 걸린 행사"]
+  ].map(c => '<div class="ct '+c[0]+'"><b>'+c[1]+'</b><span>'+c[2]+'</span></div>').join("");
+}
+
+const FIELDS = [
+  ["date","날짜","date","",1],
+  ["time","시간","text","예: 19:00–22:00 / 시간 미정",1],
+  ["title","이벤트명","text","예: 루이나 방문",1,"wide"],
+  ["cat","구분","text","예: VIP 초청 행사 · 바터",0],
+  ["place","장소","text","예: 코엑스 3층 홀 C·D",0],
+  ["press","취재 여부","select","미정|취재 있음|취재 가능|검토|취재 없음|—",0],
+  ["type","성격","select2","other:기타|fair:페어·공식 프로그램|night:파티·나잇|skip:참석 포기",0],
+  ["roster","참가자 명단","text","예: 초대권 6매 확정 · 명단 미확정",0],
+  ["rsvp","나의 RSVP","text","예: 미회신 / 참석 확정",0],
+  ["contact","컨택포인트","text","이름 · 이메일 · 연락처",0,"wide"],
+  ["up","업로드할 것","text","예: 현장 릴스 1회 (없으면 비워두세요)",0],
+  ["due","업로드 기한","text","예: 행사 직후 / 9/2",0],
+  ["key","키포인트","textarea","이 일정에서 가장 중요한 것",0,"wide"],
+  ["note","메모 · 충돌","textarea","시간 충돌, 이동 시간, 확인이 필요한 것",0,"wide"]
+];
+
+function formHTML(){
+  return FIELDS.map(f => {
+    const [k,label,kind,ph,req,wide] = f;
+    let input;
+    if(kind==="select"){
+      input = '<select name="'+k+'">'+ph.split("|").map(o=>'<option>'+o+'</option>').join("")+'</select>';
+    }else if(kind==="select2"){
+      input = '<select name="'+k+'">'+ph.split("|").map(o=>{
+        const p=o.split(":"); return '<option value="'+p[0]+'">'+p[1]+'</option>';}).join("")+'</select>';
+    }else if(kind==="textarea"){
+      input = '<textarea name="'+k+'" placeholder="'+ph+'"></textarea>';
+    }else{
+      input = '<input name="'+k+'" type="'+kind+'" placeholder="'+ph+'"'+(req?" required":"")+'>';
+    }
+    return '<div class="fld'+(wide?" wide":"")+'"><label for="'+k+'">'+label+(req?' *':'')+'</label>'+input+'</div>';
+  }).join("");
+}
+
+function render(){
+  document.getElementById("root").innerHTML =
+  '<header class="mast">'+
+    '<span class="kicker">Seoul Art Week · 2026년 9월</span>'+
+    '<h1>9월 아트위크 일정 마스터</h1>'+
+    '<p>Frieze Seoul, Kiaf SEOUL, 디자인마이애미 서울이 같은 주에 겹칩니다. 취재 의무와 초대권, 회신 대기와 업로드 마감을 한 장에서 봅니다.</p>'+
+    '<div class="stampline"><span>최종 갱신 2026-08-26</span><span>출처 · Kiaf VIP 프로그램 시트 / MAG PR 메일 / Gmail / 구글 캘린더</span><span>담당 · BK, 손문정, 이경준, 박성연</span></div>'+
+  '</header>'+
+  '<div class="counters">'+counters()+'</div>'+
+  '<div class="ro" id="ro">읽기 전용으로 열렸습니다. 일정을 추가하거나 지우려면 소유자 계정으로 열어주세요.</div>'+
+  '<div class="sec"><h2>RSVP 대기함</h2><p>받은 메일과 메시지에서 대표님 응답이 필요한 것만 모았습니다 · 총 '+RSVP.length+'건</p></div>'+
+  rsvpHTML()+
+  '<div class="note"><h3>이경준 매니저가 이미 회신한 것</h3><ul>'+
+    RSVP_DONE.map(x=>'<li>'+esc(x)+'</li>').join("")+
+    '</ul><p style="margin-top:10px">회신은 됐지만 대표님 참석 여부는 별도 판단이 필요합니다.</p></div>'+
+  '<div class="bar">'+
+    '<button class="chip" data-f="all">전체</button>'+
+    '<button class="chip" data-f="fair">페어·공식</button>'+
+    '<button class="chip" data-f="party">파티·나잇</button>'+
+    '<button class="chip" data-f="press">취재 있음</button>'+
+    '<button class="chip warn" data-f="todo">내 액션 필요</button>'+
+    '<span class="grow"></span>'+
+    '<span class="tally" id="tally"></span>'+
+    '<button class="cta" id="addbtn" hidden>＋ 일정 추가</button>'+
+  '</div>'+
+  '<section id="timeline">'+timelineHTML()+'</section>'+
+  '<div class="sec"><h2>9월 1일 저녁 — 한남·이태원에서 네 자리</h2>'+
+    '<p>HANNAM NIGHT, KORI Gin, SAM 파티, 바카라 바가 저녁 하나에 몰립니다</p></div>'+
+  '<div class="route">'+ROUTE1.map(l=>'<div class="leg'+(l.move?" move":"")+'">'+
+    '<span class="legt">'+esc(l.t)+'</span><span class="legh">'+esc(l.h)+'</span><span class="legn">'+esc(l.n)+'</span></div>').join("")+'</div>'+
+  '<div class="note amber"><h3>지금 할 일 — HANNAM NIGHT RSVP</h3>'+
+    '<p>구글폼 응답이 아직 안 됐습니다. <b>forms.gle/h9JLTsPfPjBV4DWe7</b> · 정형섭 010-8986-1107. 동반자가 있으면 폼에 같이 적으세요.</p></div>'+
+  '<div class="sec"><h2>9월 2일 — 하루 안에 강남과 동대문을 왕복하는 날</h2>'+
+    '<p>Kiaf VIP, 얼킨 런웨이, 루이나, 프리즈, 현대백화점이 하루에 몰립니다</p></div>'+
+  '<div class="route">'+ROUTE.map(l=>'<div class="leg'+(l.move?" move":"")+'">'+
+    '<span class="legt">'+esc(l.t)+'</span><span class="legh">'+esc(l.h)+'</span><span class="legn">'+esc(l.n)+'</span></div>').join("")+'</div>'+
+  '<div class="note red"><h3>이날 포기해야 하는 것</h3><ul>'+
+    '<li>Kiaf 박서보 뮤지엄 투어 (15:30–16:10) — 런웨이 쇼와 정면 충돌</li>'+
+    '<li>Kiaf 롯데 뮤지엄 투어 (18:10) — 현대백화점 아트 이브닝과 충돌</li>'+
+    '<li>OPENSTUDIO · 김수자 스튜디오 × 악셀 베르보르트 (19:00–22:00) — 현대백화점과 완전히 겹칩니다. 바터 계약이 걸린 현대백화점이 우선이며, 남윤미 디렉터(yunmi@kimsooja.com)에게 불참 회신을 보내는 편이 낫습니다</li>'+
+    '</ul></div>'+
+  '<div class="note amber"><h3>확인이 필요한 것 — 루이나 장소</h3>'+
+    '<p>카카오톡으로만 받은 안내라 장소가 없습니다. jh.kim@ · info@ · kj.lee@ 세 계정을 모두 검색했지만 관련 메일이 없었습니다. 루이나는 프리즈의 공식 샴페인 파트너로 8/31–9/5 참여하므로 코엑스 안일 가능성이 높지만, 별도 공간일 수도 있습니다. 장소를 알려주시면 동선을 확정하겠습니다.</p></div>'+
+  '<div class="sec"><h2>우리가 올려야 하는 것</h2><p>계약으로 약속된 콘텐츠와 마감 — 일정을 추가하면 여기에 자동으로 붙습니다</p></div>'+
+  '<div class="tw"><table><thead><tr><th>파트너</th><th>콘텐츠</th><th>마감</th><th>행사일</th><th>메모</th></tr></thead>'+
+    '<tbody>'+uploadRowsHTML()+'</tbody></table></div>'+
+  '<div class="sec"><h2>티켓과 명단</h2><p>받은 것과 우리가 넘겨야 할 것</p></div>'+
+  '<div class="tw"><table><thead><tr><th>항목</th><th>수량</th><th>사용일</th><th>상태</th><th>비고</th></tr></thead>'+
+    '<tbody>'+ticketRowsHTML()+'</tbody></table></div>'+
+  '<div class="foot"><span>구글 스프레드시트와 같은 데이터입니다.</span><span>새 일정이 생기면 시간 순서로 다시 정렬됩니다.</span></div>'+
+  '<dialog id="dlg"><form method="dialog" class="dlg" id="frm">'+
+    '<div class="dlghead"><h2>일정 추가</h2><p>날짜와 시간, 이벤트명만 넣어도 됩니다. 나머지는 나중에 채워도 됩니다.</p></div>'+
+    '<div class="dlgbody">'+formHTML()+'</div>'+
+    '<div class="dlgfoot"><button class="cta" id="save" value="ok">추가하고 저장</button>'+
+      '<button class="ghost" value="cancel" formnovalidate>취소</button>'+
+      '<span class="grow"></span></div>'+
+  '</form></dialog>'+
+  '<div id="toast"></div>';
+
+  document.querySelectorAll(".chip").forEach(c => {
+    c.setAttribute("aria-pressed", c.dataset.f===filter ? "true" : "false");
+    c.addEventListener("click", () => { filter = c.dataset.f; render(); });
+  });
+  document.getElementById("tally").textContent =
+    ordered(state.events).filter(matches).length + "개 표시 중";
+  if(canWrite){
+    document.getElementById("addbtn").hidden = false;
+    document.getElementById("addbtn").addEventListener("click", openAdd);
+    document.querySelectorAll("[data-del]").forEach(b =>
+      b.addEventListener("click", () => removeEvent(b.dataset.del)));
+    document.getElementById("frm").addEventListener("submit", onSubmit);
+  }
+}
+
+/* ── 토스트 ───────────────────────────────────────────── */
+let toastTimer;
+function toast(msg, err){
+  const t = document.getElementById("toast");
+  if(!t) return;
+  t.textContent = msg;
+  t.className = "on" + (err ? " err" : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ t.className = ""; }, 3200);
+}
+
+/* ── 추가 / 삭제 ──────────────────────────────────────── */
+function openAdd(){
+  const dlg = document.getElementById("dlg");
+  dlg.querySelector('[name="date"]').value = "2026-09-02";
+  dlg.showModal();
+}
+
+function onSubmit(ev){
+  const btn = ev.submitter;
+  if(btn && btn.value === "cancel") return;
+  const fd = new FormData(ev.target);
+  const item = {id: "u" + Date.now().toString(36)};
+  FIELDS.forEach(f => {
+    const v = (fd.get(f[0]) || "").toString().trim();
+    if(v) item[f[0]] = v;
+  });
+  if(!item.date || !item.title){ toast("날짜와 이벤트명은 필요합니다", true); return; }
+  if(!item.time) item.time = "시간 미정";
+  if(!item.type) item.type = "other";
+  if(!item.cat) item.cat = "일정";
+  item.todo = /미회신|미정|미확정|필요|미신청/.test((item.rsvp||"")+(item.roster||"")) ? 1 : 0;
+  state.events.push(item);
+  setTimeout(() => save(item.title + " 추가됨"), 0);
+}
+
+function removeEvent(id){
+  const e = state.events.find(x => x.id === id);
+  if(!e) return;
+  if(!confirm("‘" + e.title + "’ 일정을 지울까요?")) return;
+  state.events = state.events.filter(x => x.id !== id);
+  save(e.title + " 삭제됨");
+}
+
+/* ── 저장 (자체 발행) ─────────────────────────────────── */
+function buildDoc(){
+  const css = document.getElementById("css").textContent;
+  const app = document.getElementById("app").textContent;
+  const json = JSON.stringify({events: state.events}).replace(/</g, "\\u003c");
+  return '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">\n' +
+    '<title>2026 아트위크 일정 마스터 — Frieze · Kiaf</title>\n' +
+    '<style id="css">' + css + '</style>\n</head>\n<body>\n<div id="root"></div>\n' +
+    '<script id="data" type="application/json">' + json + '<\/script>\n' +
+    '<script id="app">' + app + '<\/script>\n</body>\n</html>';
+}
+
+let saving = false;
+async function save(msg){
+  render();
+  if(saving) return;
+  if(!artifactNs){ toast("저장 기능을 쓸 수 없어 이 화면에만 반영됐습니다", true); return; }
+  saving = true;
+  toast("저장하는 중…");
+  try{
+    await artifactNs.publish(buildDoc());
+    toast(msg + " · 저장 완료");
+  }catch(err){
+    const code = err && err.code;
+    if(code === "conflict"){
+      toast("다른 곳에서 먼저 저장했습니다. 최신 버전으로 새로고침합니다", true);
+    }else if(code === "not_writer" || code === "not_granted" || code === "not_declared"){
+      canWrite = false; render();
+      const ro = document.getElementById("ro"); if(ro) ro.className = "ro on";
+      toast("이 화면은 읽기 전용입니다", true);
+    }else if(code === "rate_limited"){
+      toast("저장이 너무 잦습니다. 잠시 후 다시 시도해 주세요", true);
+    }else{
+      toast("저장하지 못했습니다. 다시 시도해 주세요", true);
+    }
+  }finally{ saving = false; }
+}
+
+/* ── 시작 ─────────────────────────────────────────────── */
+render();
+if(window.claude && typeof window.claude.use === "function"){
+  window.claude.use("artifact").then(ns => {
+    if(!ns) return;
+    artifactNs = ns; canWrite = true; render();
+  }).catch(()=>{});
+}
+})();
+</script>
+
+</body>
+</html>
