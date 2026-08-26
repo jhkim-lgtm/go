@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="pubbar">
-  <span><b>공유용 읽기 전용 사본</b> · 최종확인·응답완료·숨기기는 이 화면에서만 적용되고 새로고침하면 돌아옵니다</span>
+  <span><b>공유용 읽기 전용 사본</b> · 참가확정·미참가·보류·숨기기는 이 화면에서만 적용되고 새로고침하면 돌아옵니다</span>
 </div>
 <style>
 .pubbar{
@@ -231,11 +231,25 @@
   .rgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:10px;}
   .rbar{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:16px;}
   .rcard{background:var(--panel); border-radius:var(--r-l); padding:16px 18px 15px; display:flex; flex-direction:column; gap:9px; position:relative;}
-  .rcard.isOK{box-shadow:inset 0 0 0 1.5px var(--green);}
-  .rcard.isHidden{opacity:.5;}
+  .rcard.st-go{box-shadow:inset 0 0 0 1.5px var(--green);}
+  .rcard.st-hold{box-shadow:inset 0 0 0 1.5px var(--amber);}
+  .rcard.st-no{opacity:.62;}
+  .rcard.st-no .rtitle{text-decoration:line-through; text-decoration-color:var(--tx-3);}
+  .rcard.isHidden{opacity:.45;}
   .rcard.isHidden .rtitle{text-decoration:line-through; text-decoration-color:var(--tx-3);}
   .rtools{border-radius:0 var(--r-l) 0 10px;}
-  .rtop{display:flex; align-items:center; gap:9px; flex-wrap:wrap; padding-right:150px; min-height:30px;}
+  .rtop{display:flex; align-items:center; gap:9px; flex-wrap:wrap; padding-right:78px; min-height:30px;}
+  .rseg{display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-top:11px; padding-top:11px; border-top:1px solid var(--line-soft);}
+  .sg{
+    border:0; cursor:pointer; background:var(--panel-2); color:var(--tx-3);
+    font-size:12.5px; font-weight:700; font-family:inherit; letter-spacing:inherit;
+    padding:9px 4px; border-radius:9px; transition:background .15s, color .15s;
+  }
+  .sg:hover{background:var(--panel-3); color:var(--tx);}
+  .sg.s-go.on{background:var(--green); color:#06210f;}
+  .sg.s-no.on{background:var(--red); color:#2b0808;}
+  .sg.s-hold.on{background:var(--amber); color:#241700;}
+  .chip.noc[aria-pressed="true"]{background:var(--red); color:#fff;}
   .rwhen{font-size:12.5px; color:var(--tx-3); font-variant-numeric:tabular-nums;}
   .rtitle{font-size:15.5px; font-weight:700; line-height:1.4;}
   .rdesc{margin:0; font-size:13px; color:var(--tx-2); line-height:1.6;}
@@ -500,6 +514,9 @@ const DAYTAG = {
 const DOW = ["일","월","화","수","목","금","토"];
 
 /* ── 상태 ─────────────────────────────────────────────── */
+/* BK가 8/26 '응답완료'로 표시했던 2건 — 새 3단계 체계에서 참가확정으로 이관 */
+const SEED_RSVP = { r01:{s:"go"}, r02:{s:"go"} };
+
 function loadState(){
   const tag = document.getElementById("data");
   if(tag){
@@ -507,11 +524,16 @@ function loadState(){
       const p = JSON.parse(tag.textContent);
       if(p && Array.isArray(p.events) && p.events.length){
         if(!p.rsvpState) p.rsvpState = {};
+        // 구버전 '응답완료(done)' → '참가확정(go)'으로 이관
+        for(const k in p.rsvpState){
+          const v = p.rsvpState[k];
+          if(v && v.done){ if(!v.s) v.s = "go"; delete v.done; }
+        }
         return p;
       }
     }catch(e){}
   }
-  return {events: SEED.slice(), rsvpState: {}};
+  return {events: SEED.slice(), rsvpState: JSON.parse(JSON.stringify(SEED_RSVP))};
 }
 let state = loadState();
 let filter = "all";
@@ -738,12 +760,20 @@ function ticketRowsHTML(){
 const URG = {now:["r","지금"], soon:["a","9월 초"], later:["b","프리즈 파트너"]};
 
 function rs(id){ return (state.rsvpState && state.rsvpState[id]) || {}; }
+
+const STAT = [
+  ["go",  "참가확정", "go"],
+  ["no",  "미참가",   "no"],
+  ["hold","보류",     "hold"]
+];
+
 function rsvpVisible(r){
   const st = rs(r.id);
-  if(rsvpView==="done")   return !!st.done;
   if(rsvpView==="hidden") return !!st.hidden;
   if(rsvpView==="all")    return true;
-  return !st.done && !st.hidden;      // open
+  if(st.hidden) return false;
+  if(rsvpView==="open")   return !st.s;
+  return st.s === rsvpView;           // go / no / hold
 }
 
 function rsvpHTML(){
@@ -763,36 +793,43 @@ function rsvpHTML(){
           ? '<a class="rlink" href="'+esc(r.link)+'" target="_blank" rel="noopener">'+esc(r.how)+' 열기 ↗</a>'
           : '<span class="rlink off">'+esc(r.how)+'</span>';
         const tools = '<div class="evtools rtools">'+
-          '<button class="ok'+(st.done?" on":"")+'" data-rdone="'+r.id+'">'+(st.done?"✓ 완료":"응답완료")+'</button>'+
           (st.hidden
             ? '<button class="un" data-rshow="'+r.id+'">다시 표시</button>'
             : '<button data-rhide="'+r.id+'">숨기기</button>')+
         '</div>';
+        const seg = '<div class="rseg">'+STAT.map(s =>
+          '<button class="sg s-'+s[2]+(st.s===s[0]?" on":"")+'" data-rs="'+r.id+'" data-v="'+s[0]+'">'+
+          s[1]+'</button>').join("")+'</div>';
         let cls = "rcard";
-        if(st.done) cls += " isOK";
+        if(st.s) cls += " st-" + st.s;
         if(st.hidden) cls += " isHidden";
         return '<div class="'+cls+'">'+tools+
           '<div class="rtop"><span class="pill '+badge[0]+'">'+esc(r.how)+'</span><span class="rwhen">'+esc(r.w)+'</span></div>'+
           '<div class="rtitle">'+esc(r.t)+'</div>'+
           '<p class="rdesc">'+esc(r.d)+'</p>'+
           '<div class="rfoot">'+btn+'<span class="rsrc">'+esc(r.src)+'</span></div>'+
+          seg+
         '</div>';
       }).join("")+'</div></div>';
   }).join("");
 
-  const nDone = RSVP.filter(r=>rs(r.id).done).length;
+  const cnt = k => RSVP.filter(r=>!rs(r.id).hidden && rs(r.id).s===k).length;
   const nHid  = RSVP.filter(r=>rs(r.id).hidden).length;
-  const nOpen = RSVP.filter(r=>{const s=rs(r.id); return !s.done && !s.hidden;}).length;
+  const nOpen = RSVP.filter(r=>{const s=rs(r.id); return !s.s && !s.hidden;}).length;
   const tabs = '<div class="rbar">'+
-    '<button class="chip" data-rv="open" aria-pressed="'+(rsvpView==="open")+'">남은 것 '+nOpen+'</button>'+
-    '<button class="chip okc" data-rv="done" aria-pressed="'+(rsvpView==="done")+'">✓ 응답완료 '+nDone+'</button>'+
+    '<button class="chip" data-rv="open" aria-pressed="'+(rsvpView==="open")+'">미정 '+nOpen+'</button>'+
+    '<button class="chip okc" data-rv="go" aria-pressed="'+(rsvpView==="go")+'">참가확정 '+cnt("go")+'</button>'+
+    '<button class="chip noc" data-rv="no" aria-pressed="'+(rsvpView==="no")+'">미참가 '+cnt("no")+'</button>'+
+    '<button class="chip paidc" data-rv="hold" aria-pressed="'+(rsvpView==="hold")+'">보류 '+cnt("hold")+'</button>'+
     '<button class="chip hid" data-rv="hidden" aria-pressed="'+(rsvpView==="hidden")+'">숨김 '+nHid+'</button>'+
     '<button class="chip hid" data-rv="all" aria-pressed="'+(rsvpView==="all")+'">전체 '+RSVP.length+'</button>'+
   '</div>';
 
   const empty = body ? "" : '<p class="empty">'+(
-      rsvpView==="open"   ? '남은 RSVP가 없습니다. 전부 처리하셨습니다.'
-    : rsvpView==="done"   ? '응답완료로 표시한 항목이 없습니다.'
+      rsvpView==="open"   ? '미정인 RSVP가 없습니다. 전부 정하셨습니다.'
+    : rsvpView==="go"     ? '참가확정으로 표시한 항목이 없습니다.'
+    : rsvpView==="no"     ? '미참가로 표시한 항목이 없습니다.'
+    : rsvpView==="hold"   ? '보류로 둔 항목이 없습니다.'
     : rsvpView==="hidden" ? '숨긴 항목이 없습니다.'
     : '항목이 없습니다.')+'</p>';
 
@@ -803,8 +840,8 @@ function counters(){
   const ev = state.events;
   return [
     ["", ev.filter(e=>!e.hidden).length, "표시 중인 일정"],
-    ["red", RSVP.filter(r=>r.u==="now" && !rs(r.id).done && !rs(r.id).hidden).length, "지금 응답할 RSVP"],
-    ["red", RSVP.filter(r=>!rs(r.id).done && !rs(r.id).hidden).length, "남은 RSVP 전체"],
+    ["red", RSVP.filter(r=>r.u==="now" && !rs(r.id).s && !rs(r.id).hidden).length, "지금 정할 RSVP"],
+    ["red", RSVP.filter(r=>!rs(r.id).s && !rs(r.id).hidden).length, "미정 RSVP 전체"],
     ["blue", ev.filter(e=>e.up).length, "약속된 업로드"],
     ["green", ev.filter(hasPress).length, "취재가 걸린 행사"]
   ].map(c => '<div class="ct '+c[0]+'"><b>'+c[1]+'</b><span>'+c[2]+'</span></div>').join("");
@@ -855,7 +892,7 @@ function render(){
   '</header>'+
   '<div class="counters">'+counters()+'</div>'+
   '<div class="ro" id="ro">읽기 전용으로 열렸습니다. 일정을 추가하거나 지우려면 소유자 계정으로 열어주세요.</div>'+
-  '<div class="sec"><h2>RSVP 대기함</h2><p>받은 메일과 메시지에서 대표님 응답이 필요한 것만 모았습니다 · 응답하셨거나 안 갈 건은 카드 오른쪽 위에서 정리하세요</p></div>'+
+  '<div class="sec"><h2>RSVP 대기함</h2><p>받은 메일과 메시지에서 대표님 응답이 필요한 것만 모았습니다 · 카드 아래에서 참가확정·미참가·보류를 정하고, 아예 안 볼 건 오른쪽 위 숨기기로 치우세요</p></div>'+
   rsvpHTML()+
   '<div class="note"><h3>이경준 매니저가 이미 회신한 것</h3><ul>'+
     RSVP_DONE.map(x=>'<li>'+esc(x)+'</li>').join("")+
@@ -957,12 +994,12 @@ function render(){
 
   document.querySelectorAll("[data-rv]").forEach(b =>
     b.addEventListener("click", () => { rsvpView = b.dataset.rv; render(); }));
-  document.querySelectorAll("[data-rdone]").forEach(b =>
-    b.addEventListener("click", () => setRsvp(b.dataset.rdone, "done", !rs(b.dataset.rdone).done)));
+  document.querySelectorAll("[data-rs]").forEach(b =>
+    b.addEventListener("click", () => setRsvpStatus(b.dataset.rs, b.dataset.v)));
   document.querySelectorAll("[data-rhide]").forEach(b =>
-    b.addEventListener("click", () => setRsvp(b.dataset.rhide, "hidden", true)));
+    b.addEventListener("click", () => setRsvpHidden(b.dataset.rhide, true)));
   document.querySelectorAll("[data-rshow]").forEach(b =>
-    b.addEventListener("click", () => setRsvp(b.dataset.rshow, "hidden", false)));
+    b.addEventListener("click", () => setRsvpHidden(b.dataset.rshow, false)));
 
   if(canWrite){
     document.getElementById("addbtn").hidden = false;
@@ -1009,16 +1046,27 @@ function onSubmit(ev){
   setTimeout(() => save(item.title + " 추가됨"), 0);
 }
 
-function setRsvp(id, key, on){
-  if(!state.rsvpState) state.rsvpState = {};
-  const st = state.rsvpState[id] || (state.rsvpState[id] = {});
-  if(on) st[key] = true; else delete st[key];
-  if(!Object.keys(st).length) delete state.rsvpState[id];
-  const label = key==="done"
-    ? (on ? "응답완료로 표시" : "응답완료 해제")
-    : (on ? "숨김 처리" : "다시 표시");
+function commitRsvp(label){
   if(!canWrite){ render(); toast("이 화면에서만 " + label + "했습니다"); return; }
   save(label);
+}
+
+function setRsvpStatus(id, v){
+  if(!state.rsvpState) state.rsvpState = {};
+  const st = state.rsvpState[id] || (state.rsvpState[id] = {});
+  const off = st.s === v;
+  if(off) delete st.s; else st.s = v;
+  if(!Object.keys(st).length) delete state.rsvpState[id];
+  const name = (STAT.find(x=>x[0]===v)||["","선택"])[1];
+  commitRsvp(off ? name + " 해제" : name + "으로 표시");
+}
+
+function setRsvpHidden(id, on){
+  if(!state.rsvpState) state.rsvpState = {};
+  const st = state.rsvpState[id] || (state.rsvpState[id] = {});
+  if(on) st.hidden = true; else delete st.hidden;
+  if(!Object.keys(st).length) delete state.rsvpState[id];
+  commitRsvp(on ? "숨김 처리" : "다시 표시");
 }
 
 function toggleOK(id){
