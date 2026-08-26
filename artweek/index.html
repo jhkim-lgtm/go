@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="pubbar">
-  <span><b>공유용 읽기 전용 사본</b> · 최종확인·숨기기는 이 화면에서만 적용되고 새로고침하면 돌아옵니다</span>
+  <span><b>공유용 읽기 전용 사본</b> · 최종확인·응답완료·숨기기는 이 화면에서만 적용되고 새로고침하면 돌아옵니다</span>
 </div>
 <style>
 .pubbar{
@@ -229,8 +229,13 @@
   .rghead h3{font-size:15px;}
   .rghead span{font-size:12.5px; color:var(--tx-3);}
   .rgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:10px;}
-  .rcard{background:var(--panel); border-radius:var(--r-l); padding:16px 18px 15px; display:flex; flex-direction:column; gap:9px;}
-  .rtop{display:flex; align-items:center; gap:9px; flex-wrap:wrap;}
+  .rbar{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:16px;}
+  .rcard{background:var(--panel); border-radius:var(--r-l); padding:16px 18px 15px; display:flex; flex-direction:column; gap:9px; position:relative;}
+  .rcard.isOK{box-shadow:inset 0 0 0 1.5px var(--green);}
+  .rcard.isHidden{opacity:.5;}
+  .rcard.isHidden .rtitle{text-decoration:line-through; text-decoration-color:var(--tx-3);}
+  .rtools{border-radius:0 var(--r-l) 0 10px;}
+  .rtop{display:flex; align-items:center; gap:9px; flex-wrap:wrap; padding-right:150px; min-height:30px;}
   .rwhen{font-size:12.5px; color:var(--tx-3); font-variant-numeric:tabular-nums;}
   .rtitle{font-size:15.5px; font-weight:700; line-height:1.4;}
   .rdesc{margin:0; font-size:13px; color:var(--tx-2); line-height:1.6;}
@@ -424,46 +429,46 @@ const ROUTE = [
 
 /* RSVP 대기함 — 받은 메일·메시지에서 응답이 필요한 건 전부 */
 const RSVP = [
- {u:"now",t:"Frieze Seoul VIP 초대장 활성화",w:"페어 전까지 · 미완료로 보임",how:"프리즈 계정",link:"https://app.frieze.com/invite?id=06874c6083",
+ {id:"r01",u:"now",t:"Frieze Seoul VIP 초대장 활성화",w:"페어 전까지 · 미완료로 보임",how:"프리즈 계정",link:"https://app.frieze.com/invite?id=06874c6083",
   d:"로그인 → 초대장과 입장 시간 확정 → 게스트 초대장 공유, 이 세 단계를 마쳐야 패스가 나옵니다. 패스가 있으면 9/2 12시부터 프리즈, 15시부터 키아프에 무제한 입장하고 코엑스 2층 프리즈 VIP 라운지도 씁니다.",
   src:"vip@frieze.com · 8/25 info@ 수신"},
- {u:"now",t:"GRAFF 《로렌스 그라프 시그니처》 팝업 프레스 데이",w:"8/28 (금) 11:00–12:00 · 신세계 강남",how:"메일 회신",link:"mailto:pr@priveeandco.com",
+ {id:"r02",u:"now",t:"GRAFF 《로렌스 그라프 시그니처》 팝업 프레스 데이",w:"8/28 (금) 11:00–12:00 · 신세계 강남",how:"메일 회신",link:"mailto:pr@priveeandco.com",
   d:"세션별 운영이라 시간대 변경도 요청할 수 있습니다.",src:"피알프리베 · 최수빈 010-7301-0701"},
- {u:"now",t:"Goldwin Seoul — Daichiro Shinjo 오프닝 리셉션",w:"8/28 (금) 18:00–21:00 · 강남",how:"구글폼",link:"https://forms.gle/4Jx1cWeFSnvjMGYZ9",
+ {id:"r03",u:"now",t:"Goldwin Seoul — Daichiro Shinjo 오프닝 리셉션",w:"8/28 (금) 18:00–21:00 · 강남",how:"구글폼",link:"https://forms.gle/4Jx1cWeFSnvjMGYZ9",
   d:"GRAFF와 같은 날이지만 오전·저녁이라 둘 다 됩니다.",src:"FABRICA · 정소윤 010-7764-3276"},
- {u:"now",t:"디자인마이애미 서울 기자간담회",w:"8/31 (월) 14:00 · DDP",how:"타입폼",link:"https://form.typeform.com/to/Udq6XULp",
+ {id:"r04",u:"now",t:"디자인마이애미 서울 기자간담회",w:"8/31 (월) 14:00 · DDP",how:"타입폼",link:"https://form.typeform.com/to/Udq6XULp",
   d:"전시 투어 포함. 글래드스톤 기자간담회와 같은 시간이라 택일해야 합니다.",src:"MAG PR · 예지희 010-9067-3227"},
- {u:"now",t:"글래드스톤 서울 — 에드 앳킨스 기자간담회",w:"8/31 (월) 14:00 · 한남",how:"메일 회신",link:"mailto:jy.kim@vibecompany.co.kr",
+ {id:"r05",u:"now",t:"글래드스톤 서울 — 에드 앳킨스 기자간담회",w:"8/31 (월) 14:00 · 한남",how:"메일 회신",link:"mailto:jy.kim@vibecompany.co.kr",
   d:"사전 RSVP로만 진행됩니다. 디자인마이애미와 정확히 겹칩니다.",src:"VIBE · 김지영 010-9021-0611"},
- {u:"now",t:"KIAF FRIEZE HANNAM NIGHT PARTY",w:"9/1 (화) 18:00–24:00 · 프로세스 이태원",how:"구글폼",link:"https://forms.gle/h9JLTsPfPjBV4DWe7",
+ {id:"r06",u:"now",t:"KIAF FRIEZE HANNAM NIGHT PARTY",w:"9/1 (화) 18:00–24:00 · 프로세스 이태원",how:"구글폼",link:"https://forms.gle/h9JLTsPfPjBV4DWe7",
   d:"동반자가 있으면 폼에 같이 적으세요.",src:"워크스워크스 · 정형섭 010-8986-1107"},
- {u:"now",t:"💰 시몬스 Beautyrest BLACK 아트 퍼포먼스",w:"9/3 (목) 17:00–18:00 · 레이어41 (성동)",how:"카카오톡 회신",link:"",
+ {id:"r07",u:"now",t:"💰 시몬스 Beautyrest BLACK 아트 퍼포먼스",w:"9/3 (목) 17:00–18:00 · 레이어41 (성동)",how:"카카오톡 회신",link:"",
   d:"두 가지를 답해야 합니다. ① 대표님 참석 여부 — 좌석이 제한이라 상대가 확정을 기다리는 중입니다. ② 취재·업로드 담당 에디터 배정 — 시몬스가 유가 집행을 희망하고, 담당을 알려주면 박경난 차장이 info@1percentclub.kr로 설명 메일을 보냅니다. 매출로 이어질 수 있는 건이라 오늘 안에 답하는 편이 좋습니다.",
   src:"블랑 커뮤니케이션 박경난 차장 · 카카오톡 8/26 14:27"},
- {u:"now",t:"OPENSTUDIO — 악셀 베르보르트 × 김수자 스튜디오",w:"9/2 (수) 19:00–22:00 · 서초",how:"구글폼",link:"https://forms.gle/ZezD5yTqZT5Exigp8",
+ {id:"r08",u:"now",t:"OPENSTUDIO — 악셀 베르보르트 × 김수자 스튜디오",w:"9/2 (수) 19:00–22:00 · 서초",how:"구글폼",link:"https://forms.gle/ZezD5yTqZT5Exigp8",
   d:"RSVP 마감일이 8/23이라 이미 지났습니다. 현대백화점 아트 이브닝과 완전히 겹치므로 불참 회신을 보내는 편이 낫습니다.",src:"김수자 스튜디오 · 남윤미 010-3126-2115"},
 
- {u:"soon",t:"XLIM EP.10 PRIVATE PREVIEW",w:"9/3 (목) 14:00–19:00 · 한남",how:"구글폼",link:"https://forms.gle/DQUic5sayBk97gTp8",
+ {id:"r09",u:"soon",t:"XLIM EP.10 PRIVATE PREVIEW",w:"9/3 (목) 14:00–19:00 · 한남",how:"구글폼",link:"https://forms.gle/DQUic5sayBk97gTp8",
   d:"초청자만 입장. 마리끌레르 A-DAY와 겹치지만 19시까지 열려 있어 이어서 갈 수 있습니다.",src:"FABRICA · 정소윤 010-7764-3276"},
- {u:"soon",t:"버거킹 Flameground 프리 오프닝 파티",w:"9/8 (화) 18:00–21:00 · 성수",how:"구글폼",link:"https://forms.gle/dQr6wFwqjwFjJykt8",
+ {id:"r10",u:"soon",t:"버거킹 Flameground 프리 오프닝 파티",w:"9/8 (화) 18:00–21:00 · 성수",how:"구글폼",link:"https://forms.gle/dQr6wFwqjwFjJykt8",
   d:"동반 1인 가능, 드레스코드는 레드 계열 포인트. 회신하면 전화 RSVP는 생략해 줍니다.",src:"오프닝 · 추재연 010-7674-7819"},
- {u:"soon",t:"더바넷 한남 플래그십 그랜드 오픈",w:"9/10 (목) 11:00–15:00 · 한남",how:"문자·전화 회신",link:"tel:010-7104-6842",
+ {id:"r11",u:"soon",t:"더바넷 한남 플래그십 그랜드 오픈",w:"9/10 (목) 11:00–15:00 · 한남",how:"문자·전화 회신",link:"tel:010-7104-6842",
   d:"참석자 성함, 동반인 여부, 방문 시간, 연락처를 함께 보내야 합니다.",src:"비엔비엔 · 박소연 010-7104-6842"},
- {u:"soon",t:"더라인 한남 쇼룸 오프닝",w:"9/10 (목) 13:00 · 한남",how:"메일 회신",link:"mailto:e@the-layer.com",
+ {id:"r12",u:"soon",t:"더라인 한남 쇼룸 오프닝",w:"9/10 (목) 13:00 · 한남",how:"메일 회신",link:"mailto:e@the-layer.com",
   d:"더바넷과 같은 날 같은 동네라 연달아 가면 됩니다. 럭키드로우 있음.",src:"더레이어 · 이지안 02-545-3934"},
 
- {u:"soon",t:"얼킨 서울패션위크 런웨이 쇼",w:"9/2 (수) 14:30 · DDP",how:"구글 캘린더",link:"",
+ {id:"r13",u:"soon",t:"얼킨 서울패션위크 런웨이 쇼",w:"9/2 (수) 14:30 · DDP",how:"구글 캘린더",link:"",
   d:"캘린더 초대가 아직 응답 대기(needsAction) 상태입니다. 수락만 누르면 됩니다.",src:"박성연 sw.park@1percentclub.kr"},
- {u:"soon",t:"캘리포니아관광청 행사",w:"9/9 (수) 18:00–21:30",how:"구글 캘린더",link:"",
+ {id:"r14",u:"soon",t:"캘리포니아관광청 행사",w:"9/9 (수) 18:00–21:30",how:"구글 캘린더",link:"",
   d:"캘린더 초대가 응답 대기 상태입니다.",src:"손문정 mj.son@1percentclub.kr"},
- {u:"soon",t:"Kiaf 공식 도슨트 프로그램",w:"9/2–9/6 · 시간 변동",how:"Kiaf VIP 앱",link:"",
+ {id:"r15",u:"soon",t:"Kiaf 공식 도슨트 프로그램",w:"9/2–9/6 · 시간 변동",how:"Kiaf VIP 앱",link:"",
   d:"앱에서 사전 신청해야 참여할 수 있습니다.",src:"Kiaf 사무국"},
 
- {u:"later",t:"LOEWE at Frieze Seoul 《Strata of Time》",w:"프리즈 위크 · 청담",how:"artsvp",link:"https://friezeevents.artsvp.com/45a896?link=loewe_vippreview",
+ {id:"r16",u:"later",t:"LOEWE at Frieze Seoul 《Strata of Time》",w:"프리즈 위크 · 청담",how:"artsvp",link:"https://friezeevents.artsvp.com/45a896?link=loewe_vippreview",
   d:"로에베 재단 공예상 2026 수상자 박종진 도예전. 아티스트 토크와 인스토어 이벤트 포함. 인트렌드 e-vite 건은 이경준 매니저가 8/25 회신했습니다.",src:"프리즈 VIP 메일 내 파트너 링크"},
- {u:"later",t:"Cassina — Ardys by Patricia Urquiola",w:"9/2~ · 카시나 스토어 삼청",how:"artsvp",link:"https://friezeevents.artsvp.com/27c4f8",
+ {id:"r17",u:"later",t:"Cassina — Ardys by Patricia Urquiola",w:"9/2~ · 카시나 스토어 삼청",how:"artsvp",link:"https://friezeevents.artsvp.com/27c4f8",
   d:"프리즈 파트너 프로그램.",src:"프리즈 VIP 메일 내 파트너 링크"},
- {u:"later",t:"MCM HAUS — 김창옥 《Traces of Comfort》",w:"프리즈 위크",how:"구글폼",link:"https://forms.gle/6an4YgKxF1EbesSg9",
+ {id:"r18",u:"later",t:"MCM HAUS — 김창옥 《Traces of Comfort》",w:"프리즈 위크",how:"구글폼",link:"https://forms.gle/6an4YgKxF1EbesSg9",
   d:"MCM 50주년 기념 옻칠 전시.",src:"프리즈 VIP 메일 내 파트너 링크"}
 ];
 
@@ -500,14 +505,18 @@ function loadState(){
   if(tag){
     try{
       const p = JSON.parse(tag.textContent);
-      if(p && Array.isArray(p.events) && p.events.length) return p;
+      if(p && Array.isArray(p.events) && p.events.length){
+        if(!p.rsvpState) p.rsvpState = {};
+        return p;
+      }
     }catch(e){}
   }
-  return {events: SEED.slice()};
+  return {events: SEED.slice(), rsvpState: {}};
 }
 let state = loadState();
 let filter = "all";
 let view = "list";
+let rsvpView = "open";
 let calWeek = 0;
 let calAll = false;
 let canWrite = false;
@@ -728,22 +737,41 @@ function ticketRowsHTML(){
 
 const URG = {now:["r","지금"], soon:["a","9월 초"], later:["b","프리즈 파트너"]};
 
+function rs(id){ return (state.rsvpState && state.rsvpState[id]) || {}; }
+function rsvpVisible(r){
+  const st = rs(r.id);
+  if(rsvpView==="done")   return !!st.done;
+  if(rsvpView==="hidden") return !!st.hidden;
+  if(rsvpView==="all")    return true;
+  return !st.done && !st.hidden;      // open
+}
+
 function rsvpHTML(){
   const groups = [
     ["now","오늘·이번 주 안에", "마감이 코앞이거나 이미 지난 것"],
     ["soon","9월 행사", "아직 여유는 있지만 자리가 한정된 것"],
     ["later","프리즈 파트너 프로그램", "프리즈 VIP 메일 안에 함께 온 초청"]
   ];
-  return groups.map(g => {
-    const items = RSVP.filter(r => r.u === g[0]);
+  const body = groups.map(g => {
+    const items = RSVP.filter(r => r.u === g[0] && rsvpVisible(r));
     if(!items.length) return "";
     return '<div class="rgroup"><div class="rghead"><h3>'+g[1]+'</h3><span>'+g[2]+'</span></div>'+
       '<div class="rgrid">'+items.map(r => {
+        const st = rs(r.id);
         const badge = URG[r.u];
         const btn = r.link
           ? '<a class="rlink" href="'+esc(r.link)+'" target="_blank" rel="noopener">'+esc(r.how)+' 열기 ↗</a>'
           : '<span class="rlink off">'+esc(r.how)+'</span>';
-        return '<div class="rcard">'+
+        const tools = '<div class="evtools rtools">'+
+          '<button class="ok'+(st.done?" on":"")+'" data-rdone="'+r.id+'">'+(st.done?"✓ 완료":"응답완료")+'</button>'+
+          (st.hidden
+            ? '<button class="un" data-rshow="'+r.id+'">다시 표시</button>'
+            : '<button data-rhide="'+r.id+'">숨기기</button>')+
+        '</div>';
+        let cls = "rcard";
+        if(st.done) cls += " isOK";
+        if(st.hidden) cls += " isHidden";
+        return '<div class="'+cls+'">'+tools+
           '<div class="rtop"><span class="pill '+badge[0]+'">'+esc(r.how)+'</span><span class="rwhen">'+esc(r.w)+'</span></div>'+
           '<div class="rtitle">'+esc(r.t)+'</div>'+
           '<p class="rdesc">'+esc(r.d)+'</p>'+
@@ -751,14 +779,32 @@ function rsvpHTML(){
         '</div>';
       }).join("")+'</div></div>';
   }).join("");
+
+  const nDone = RSVP.filter(r=>rs(r.id).done).length;
+  const nHid  = RSVP.filter(r=>rs(r.id).hidden).length;
+  const nOpen = RSVP.filter(r=>{const s=rs(r.id); return !s.done && !s.hidden;}).length;
+  const tabs = '<div class="rbar">'+
+    '<button class="chip" data-rv="open" aria-pressed="'+(rsvpView==="open")+'">남은 것 '+nOpen+'</button>'+
+    '<button class="chip okc" data-rv="done" aria-pressed="'+(rsvpView==="done")+'">✓ 응답완료 '+nDone+'</button>'+
+    '<button class="chip hid" data-rv="hidden" aria-pressed="'+(rsvpView==="hidden")+'">숨김 '+nHid+'</button>'+
+    '<button class="chip hid" data-rv="all" aria-pressed="'+(rsvpView==="all")+'">전체 '+RSVP.length+'</button>'+
+  '</div>';
+
+  const empty = body ? "" : '<p class="empty">'+(
+      rsvpView==="open"   ? '남은 RSVP가 없습니다. 전부 처리하셨습니다.'
+    : rsvpView==="done"   ? '응답완료로 표시한 항목이 없습니다.'
+    : rsvpView==="hidden" ? '숨긴 항목이 없습니다.'
+    : '항목이 없습니다.')+'</p>';
+
+  return tabs + body + empty;
 }
 
 function counters(){
   const ev = state.events;
   return [
     ["", ev.filter(e=>!e.hidden).length, "표시 중인 일정"],
-    ["red", RSVP.filter(r=>r.u==="now").length, "지금 응답할 RSVP"],
-    ["red", RSVP.length, "전체 RSVP 대기"],
+    ["red", RSVP.filter(r=>r.u==="now" && !rs(r.id).done && !rs(r.id).hidden).length, "지금 응답할 RSVP"],
+    ["red", RSVP.filter(r=>!rs(r.id).done && !rs(r.id).hidden).length, "남은 RSVP 전체"],
     ["blue", ev.filter(e=>e.up).length, "약속된 업로드"],
     ["green", ev.filter(hasPress).length, "취재가 걸린 행사"]
   ].map(c => '<div class="ct '+c[0]+'"><b>'+c[1]+'</b><span>'+c[2]+'</span></div>').join("");
@@ -809,7 +855,7 @@ function render(){
   '</header>'+
   '<div class="counters">'+counters()+'</div>'+
   '<div class="ro" id="ro">읽기 전용으로 열렸습니다. 일정을 추가하거나 지우려면 소유자 계정으로 열어주세요.</div>'+
-  '<div class="sec"><h2>RSVP 대기함</h2><p>받은 메일과 메시지에서 대표님 응답이 필요한 것만 모았습니다 · 총 '+RSVP.length+'건</p></div>'+
+  '<div class="sec"><h2>RSVP 대기함</h2><p>받은 메일과 메시지에서 대표님 응답이 필요한 것만 모았습니다 · 응답하셨거나 안 갈 건은 카드 오른쪽 위에서 정리하세요</p></div>'+
   rsvpHTML()+
   '<div class="note"><h3>이경준 매니저가 이미 회신한 것</h3><ul>'+
     RSVP_DONE.map(x=>'<li>'+esc(x)+'</li>').join("")+
@@ -909,6 +955,15 @@ function render(){
   document.querySelectorAll("[data-ok]").forEach(b =>
     b.addEventListener("click", () => toggleOK(b.dataset.ok)));
 
+  document.querySelectorAll("[data-rv]").forEach(b =>
+    b.addEventListener("click", () => { rsvpView = b.dataset.rv; render(); }));
+  document.querySelectorAll("[data-rdone]").forEach(b =>
+    b.addEventListener("click", () => setRsvp(b.dataset.rdone, "done", !rs(b.dataset.rdone).done)));
+  document.querySelectorAll("[data-rhide]").forEach(b =>
+    b.addEventListener("click", () => setRsvp(b.dataset.rhide, "hidden", true)));
+  document.querySelectorAll("[data-rshow]").forEach(b =>
+    b.addEventListener("click", () => setRsvp(b.dataset.rshow, "hidden", false)));
+
   if(canWrite){
     document.getElementById("addbtn").hidden = false;
     document.getElementById("addbtn").addEventListener("click", openAdd);
@@ -954,6 +1009,18 @@ function onSubmit(ev){
   setTimeout(() => save(item.title + " 추가됨"), 0);
 }
 
+function setRsvp(id, key, on){
+  if(!state.rsvpState) state.rsvpState = {};
+  const st = state.rsvpState[id] || (state.rsvpState[id] = {});
+  if(on) st[key] = true; else delete st[key];
+  if(!Object.keys(st).length) delete state.rsvpState[id];
+  const label = key==="done"
+    ? (on ? "응답완료로 표시" : "응답완료 해제")
+    : (on ? "숨김 처리" : "다시 표시");
+  if(!canWrite){ render(); toast("이 화면에서만 " + label + "했습니다"); return; }
+  save(label);
+}
+
 function toggleOK(id){
   const e = state.events.find(x => x.id === id);
   if(!e) return;
@@ -990,7 +1057,8 @@ function removeEvent(id){
 function buildDoc(){
   const css = document.getElementById("css").textContent;
   const app = document.getElementById("app").textContent;
-  const json = JSON.stringify({events: state.events}).replace(/</g, "\\u003c");
+  const json = JSON.stringify({events: state.events, rsvpState: state.rsvpState || {}})
+    .replace(/</g, "\\u003c");
   return '<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">\n' +
     '<title>2026 아트위크 일정 마스터 — Frieze · Kiaf</title>\n' +
