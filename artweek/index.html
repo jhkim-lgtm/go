@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="pubbar">
-  <span><b>공유용 읽기 전용 사본</b> · 일정 추가·삭제는 대표님 전용 편집본에서만 됩니다</span>
+  <span><b>공유용 읽기 전용 사본</b> · 숨기기는 이 화면에서만 적용되고 새로고침하면 돌아옵니다</span>
 </div>
 <style>
 .pubbar{
@@ -86,6 +86,8 @@
   .chip:hover{background:var(--panel-2); color:var(--tx);}
   .chip[aria-pressed="true"]{background:var(--blue); color:#fff;}
   .chip.warn[aria-pressed="true"]{background:var(--red); color:#fff;}
+  .chip.hid{color:var(--tx-3);}
+  .chip.hid[aria-pressed="true"]{background:var(--panel-3); color:var(--tx); box-shadow:inset 0 0 0 1px var(--line);}
   .grow{flex:1 1 auto;}
   .cta{
     font-size:13.5px; font-weight:700; cursor:pointer; border:0;
@@ -115,7 +117,20 @@
   .ev{background:var(--panel); border-radius:var(--r-l); padding:17px 19px; position:relative;}
   .ev.skip{background:var(--line-soft);}
   .ev.skip .evtitle{color:var(--tx-2);}
-  .evhead{display:flex; gap:12px; align-items:flex-start;}
+  .evhead{display:flex; gap:12px; align-items:flex-start; padding-right:88px;}
+  .evtools{position:absolute; top:0; right:0; display:flex; overflow:hidden; border-radius:0 var(--r-l) 0 10px;}
+  .evtools button{
+    border:0; cursor:pointer; background:var(--panel-2); color:var(--tx-3);
+    font-size:12px; font-weight:600; font-family:inherit; letter-spacing:inherit;
+    padding:8px 13px; line-height:1.2; transition:background .15s, color .15s;
+  }
+  .evtools button:hover{background:var(--panel-3); color:var(--tx);}
+  .evtools button.dl{padding:8px 11px; font-size:15px; line-height:1;}
+  .evtools button.dl:hover{background:rgba(255,107,107,.2); color:var(--red);}
+  .evtools button.un{background:var(--blue); color:#fff;}
+  .evtools button.un:hover{background:var(--blue); filter:brightness(1.12); color:#fff;}
+  .ev.isHidden{opacity:.5;}
+  .ev.isHidden .evtitle{text-decoration:line-through; text-decoration-color:var(--tx-3);}
   .evtime{
     font-size:13px; font-weight:600; color:var(--blue); font-variant-numeric:tabular-nums;
     white-space:nowrap; padding-top:2px; flex:0 0 auto; max-width:180px;
@@ -437,6 +452,7 @@ function loadState(){
 }
 let state = loadState();
 let filter = "all";
+let showHidden = false;
 let canWrite = false;
 let artifactNs = null;
 
@@ -461,6 +477,8 @@ function isTodo(e){ return e.todo===1 || e.todo===true; }
 function hasPress(e){ return /취재 있음|취재 가능/.test(e.press||""); }
 
 function matches(e){
+  if(showHidden) return !!e.hidden;
+  if(e.hidden) return false;
   if(filter==="all") return true;
   if(filter==="fair") return e.type==="fair";
   if(filter==="party") return e.type==="night";
@@ -471,7 +489,8 @@ function matches(e){
 
 /* ── 렌더 ─────────────────────────────────────────────── */
 function evCard(e){
-  const cls = e.type==="skip" ? "ev skip" : "ev";
+  let cls = e.type==="skip" ? "ev skip" : "ev";
+  if(e.hidden) cls += " isHidden";
   let pills = "";
   if(hasPress(e)) pills += '<span class="pill g">'+esc(e.press)+'</span>';
   else if(e.press && e.press!=="—") pills += '<span class="pill n">취재 '+esc(e.press)+'</span>';
@@ -489,19 +508,27 @@ function evCard(e){
   const meta = rows.length ? '<dl class="meta">'+rows.map(r =>
     '<div class="mrow '+r[2]+'"><dt>'+r[0]+'</dt><dd>'+esc(r[1])+'</dd></div>').join("")+'</dl>' : "";
 
-  return '<article class="'+cls+'" data-id="'+esc(e.id)+'">'+
+  const tools = '<div class="evtools">'+
+    (canWrite ? '<button class="dl" data-del="'+esc(e.id)+'" aria-label="일정 삭제" title="영구 삭제">×</button>' : '')+
+    (e.hidden
+      ? '<button class="un" data-show="'+esc(e.id)+'">다시 표시</button>'
+      : '<button data-hide="'+esc(e.id)+'">숨기기</button>')+
+  '</div>';
+
+  return '<article class="'+cls+'" data-id="'+esc(e.id)+'">'+ tools +
     '<div class="evhead">'+
       '<span class="evtime">'+esc(e.time)+'</span>'+
       '<div class="evbody"><div class="evtitle">'+esc(e.title)+'</div>'+
         '<div class="evsub">'+esc(e.cat)+(e.place?' &nbsp;·&nbsp; <b>'+esc(e.place)+'</b>':'')+'</div></div>'+
-      (canWrite ? '<button class="del" data-del="'+esc(e.id)+'" aria-label="일정 삭제" title="삭제">×</button>' : '')+
     '</div>'+ (pills?'<div class="pills">'+pills+'</div>':'') + meta +
   '</article>';
 }
 
 function timelineHTML(){
   const list = ordered(state.events).filter(matches);
-  if(!list.length) return '<p class="empty">이 조건에 해당하는 일정이 없습니다.</p>';
+  if(!list.length) return '<p class="empty">'+(showHidden
+    ? '숨긴 일정이 없습니다. 카드 오른쪽 위 ‘숨기기’를 누르면 여기로 옵니다.'
+    : '이 조건에 해당하는 일정이 없습니다.')+'</p>';
   let out = "", cur = null;
   list.forEach((e,i) => {
     if(e.date !== cur){
@@ -570,7 +597,7 @@ function rsvpHTML(){
 function counters(){
   const ev = state.events;
   return [
-    ["", ev.length, "등록된 일정"],
+    ["", ev.filter(e=>!e.hidden).length, "표시 중인 일정"],
     ["red", RSVP.filter(r=>r.u==="now").length, "지금 응답할 RSVP"],
     ["red", RSVP.length, "전체 RSVP 대기"],
     ["blue", ev.filter(e=>e.up).length, "약속된 업로드"],
@@ -634,6 +661,7 @@ function render(){
     '<button class="chip" data-f="party">파티·나잇</button>'+
     '<button class="chip" data-f="press">취재 있음</button>'+
     '<button class="chip warn" data-f="todo">내 액션 필요</button>'+
+    '<button class="chip hid" id="hidchip">숨긴 일정 '+state.events.filter(e=>e.hidden).length+'</button>'+
     '<span class="grow"></span>'+
     '<span class="tally" id="tally"></span>'+
     '<button class="cta" id="addbtn" hidden>＋ 일정 추가</button>'+
@@ -682,12 +710,25 @@ function render(){
   '</form></dialog>'+
   '<div id="toast"></div>';
 
-  document.querySelectorAll(".chip").forEach(c => {
-    c.setAttribute("aria-pressed", c.dataset.f===filter ? "true" : "false");
-    c.addEventListener("click", () => { filter = c.dataset.f; render(); });
+  document.querySelectorAll(".chip[data-f]").forEach(c => {
+    c.setAttribute("aria-pressed", (!showHidden && c.dataset.f===filter) ? "true" : "false");
+    c.addEventListener("click", () => { showHidden = false; filter = c.dataset.f; render(); });
   });
-  document.getElementById("tally").textContent =
-    ordered(state.events).filter(matches).length + "개 표시 중";
+  const hc = document.getElementById("hidchip");
+  hc.setAttribute("aria-pressed", showHidden ? "true" : "false");
+  hc.addEventListener("click", () => { showHidden = !showHidden; render(); });
+
+  const shown = ordered(state.events).filter(matches).length;
+  const hid = state.events.filter(e=>e.hidden).length;
+  document.getElementById("tally").textContent = showHidden
+    ? "숨긴 일정 " + shown + "개"
+    : shown + "개 표시 중" + (hid ? " · " + hid + "개 숨김" : "");
+
+  document.querySelectorAll("[data-hide]").forEach(b =>
+    b.addEventListener("click", () => setHidden(b.dataset.hide, true)));
+  document.querySelectorAll("[data-show]").forEach(b =>
+    b.addEventListener("click", () => setHidden(b.dataset.show, false)));
+
   if(canWrite){
     document.getElementById("addbtn").hidden = false;
     document.getElementById("addbtn").addEventListener("click", openAdd);
@@ -731,6 +772,18 @@ function onSubmit(ev){
   item.todo = /미회신|미정|미확정|필요|미신청/.test((item.rsvp||"")+(item.roster||"")) ? 1 : 0;
   state.events.push(item);
   setTimeout(() => save(item.title + " 추가됨"), 0);
+}
+
+function setHidden(id, on){
+  const e = state.events.find(x => x.id === id);
+  if(!e) return;
+  if(on) e.hidden = true; else delete e.hidden;
+  if(!canWrite){
+    render();
+    toast(on ? "이 화면에서만 숨겼습니다" : "다시 표시했습니다");
+    return;
+  }
+  save(on ? "숨김 처리" : "다시 표시");
 }
 
 function removeEvent(id){
