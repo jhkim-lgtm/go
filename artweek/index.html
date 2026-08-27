@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>2026 아트위크 일정 마스터 — Frieze · Kiaf | 1%CLUB</title>
 <meta name="robots" content="noindex,nofollow">
-<meta name="description" content="Frieze Seoul · Kiaf SEOUL · 디자인마이애미 서울 기간 일정과 RSVP 대기함">
+<meta name="description" content="Frieze Seoul · Kiaf SEOUL · 디자인마이애미 서울 기간 확정 일정과 동선">
 <style>html,body{margin:0;padding:0}</style>
 </head>
 <body>
@@ -185,6 +185,37 @@
   .evtools button.ok{background:var(--panel-2);}
   .evtools button.ok.on{background:var(--green); color:#06210f;}
   .evtools button.ok.on:hover{background:var(--green); filter:brightness(1.08); color:#06210f;}
+
+  /* 확정 일정 브리핑 */
+  .pday{margin-bottom:30px;}
+  .pdhead{
+    display:flex; align-items:baseline; gap:11px; padding:0 2px 11px;
+    border-bottom:1px solid var(--line); margin-bottom:12px;
+  }
+  .pdn{font-size:22px; font-weight:700; letter-spacing:-.03em; font-variant-numeric:tabular-nums;}
+  .pdw{font-size:13px; color:var(--tx-3); font-weight:600;}
+  .pdmeta{font-size:12.5px; color:var(--tx-3); font-variant-numeric:tabular-nums;}
+  .prow{
+    display:grid; grid-template-columns:150px 1fr; gap:16px;
+    background:var(--panel); border-radius:var(--r-l); padding:15px 18px;
+  }
+  .ptime{
+    font-size:13px; font-weight:700; color:var(--blue);
+    font-variant-numeric:tabular-nums; line-height:1.45; padding-top:2px;
+  }
+  .ptitle{font-size:16px; font-weight:700; line-height:1.4;}
+  .pplace{margin-top:6px; font-size:13.5px; color:var(--tx-2); display:flex; flex-wrap:wrap; align-items:center; gap:8px;}
+  .zone{
+    font-size:11.5px; font-weight:700; color:var(--tx); background:var(--panel-3);
+    padding:3px 9px; border-radius:100px; white-space:nowrap;
+  }
+  .pprep{margin-top:9px; font-size:12.5px; color:var(--amber);}
+  .mv{
+    display:flex; align-items:center; gap:9px; padding:9px 18px;
+    font-size:12.5px; color:var(--amber); font-weight:600;
+  }
+  .mv.near{color:var(--tx-3); font-weight:500;}
+  .mvi{font-size:14px; line-height:1;}
 
   /* 주간 캘린더 */
   .calnav{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:14px;}
@@ -557,7 +588,7 @@ function loadState(){
 }
 let state = loadState();
 let filter = "all";
-let view = "cal";
+let view = "plan";
 let rsvpView = "open";
 let calWeek = 0;
 let calAll = false;
@@ -690,6 +721,121 @@ function timelineHTML(){
     if(i===list.length-1) out += '</div></div>';
   });
   return out;
+}
+
+/* ── 확정 일정 브리핑 (장소 · 동선) ───────────────────── */
+const ZONES = [
+ [/코엑스|무역센터|삼성동|신세계백화점 강남|언주로|청담|송은|잠원|반포본점|서초|강남대로|오디토리움|골드윈/, "강남·코엑스"],
+ [/레이어41|아차산로|성수|장터길|성동/, "성수·성동"],
+ [/한남|이태원|우사단|리움|파운드리|프로세스|원사이즈바|XLIM|더바넷|THE LINE|글래드스톤|언더스테이지/, "한남·이태원"],
+ [/아트선재|율곡로|서울공예박물관|SeMoCA|안국|삼청|종로|OPNNG/, "종로·삼청"],
+ [/DDP|동대문/, "동대문·DDP"],
+ [/오금로|송파|코오롱/, "송파"],
+ [/여의도|퐁피두/, "여의도"],
+ [/과천|MMCA|K&L/, "과천"],
+ [/일산|고양/, "일산"],
+ [/호암|용인/, "용인"]
+];
+const TRAVEL = {
+ "강남·코엑스|성수·성동":25, "강남·코엑스|한남·이태원":20, "강남·코엑스|종로·삼청":40,
+ "강남·코엑스|동대문·DDP":45, "강남·코엑스|송파":25, "강남·코엑스|여의도":30,
+ "성수·성동|한남·이태원":20, "성수·성동|종로·삼청":20, "성수·성동|동대문·DDP":15,
+ "한남·이태원|종로·삼청":20, "한남·이태원|동대문·DDP":25, "종로·삼청|동대문·DDP":15,
+ "강남·코엑스|과천":35, "강남·코엑스|일산":60, "강남·코엑스|용인":60
+};
+function zoneOf(e){
+  const t = (e.place||"") + " " + (e.title||"");
+  for(const [re,name] of ZONES) if(re.test(t)) return name;
+  return null;
+}
+function travelMin(a,b){
+  if(!a||!b) return null;
+  if(a===b) return 0;
+  return TRAVEL[a+"|"+b] || TRAVEL[b+"|"+a] || 30;
+}
+function prepOf(e){
+  const bits = [];
+  const n = (e.note||"") + " " + (e.roster||"");
+  if(/드레스코드|Dress Code/i.test(n)){
+    const m = n.match(/드레스코드[^.·,]*/); if(m) bits.push(m[0].trim());
+  }
+  if(/발렛/.test(n)) bits.push("발렛 가능");
+  if(/동반\s*1|동행\s*1/.test(n)) bits.push("동반 1명 가능");
+  if(/초대권\s*\d+매/.test(e.roster||"")){
+    const m = e.roster.match(/초대권\s*\d+매/); if(m) bits.push(m[0]);
+  }
+  if(/티켓\s*\d+매/.test(e.roster||"")){
+    const m = e.roster.match(/티켓\s*\d+매/); if(m) bits.push(m[0]);
+  }
+  return bits;
+}
+
+function planHTML(){
+  const list = ordered(state.events.filter(e => e.confirmed && !e.hidden));
+  if(!list.length) return '<p class="empty">확정한 일정이 없습니다. 목록 탭에서 카드 오른쪽 위 ‘최종확인’을 누르면 여기에 모입니다.</p>';
+
+  const byDay = {};
+  list.forEach(e => (byDay[e.date] = byDay[e.date] || []).push(e));
+  const days = Object.keys(byDay).sort();
+
+  const zonesAll = new Set();
+  list.forEach(e => { const z = zoneOf(e); if(z) zonesAll.add(z); });
+
+  const head = '<div class="counters" style="margin:0 0 22px">'+
+    '<div class="ct green"><b>'+list.length+'</b><span>확정 일정</span></div>'+
+    '<div class="ct"><b>'+days.length+'</b><span>움직이는 날</span></div>'+
+    '<div class="ct blue"><b>'+zonesAll.size+'</b><span>다니는 권역</span></div>'+
+    '<div class="ct red"><b>'+list.filter(e=>e.up).length+'</b><span>업로드 걸린 일정</span></div>'+
+  '</div>';
+
+  const body = days.map(d => {
+    const items = byDay[d];
+    const mm = +d.slice(5,7), dd = +d.slice(8,10);
+    const tag = DAYTAG[d];
+
+    let rows = "", prevZone = null, moves = 0;
+    items.forEach(e => {
+      const z = zoneOf(e);
+      if(prevZone && z && z !== prevZone){
+        const t = travelMin(prevZone, z);
+        moves++;
+        rows += '<div class="mv"><span class="mvi">↓</span>'+
+          '<span>'+esc(prevZone)+' → '+esc(z)+' · 차로 약 '+t+'분</span></div>';
+      }else if(prevZone && z && z === prevZone){
+        rows += '<div class="mv near"><span class="mvi">↓</span><span>같은 권역 · 도보나 짧은 이동</span></div>';
+      }
+      prevZone = z || prevZone;
+
+      const prep = prepOf(e);
+      let tags = "";
+      if(e.cal) tags += '<span class="pill b">📅 캘린더</span>';
+      if(isPaid(e)) tags += '<span class="pill a">💰 유가</span>';
+      if(hasPress(e)) tags += '<span class="pill g">취재</span>';
+      if(e.up) tags += '<span class="pill r">업로드 · '+esc(e.up)+'</span>';
+
+      rows += '<div class="prow">'+
+        '<div class="ptime">'+esc(e.time)+'</div>'+
+        '<div class="pbody">'+
+          '<div class="ptitle">'+esc(e.title)+'</div>'+
+          '<div class="pplace">'+(z?'<span class="zone">'+esc(z)+'</span>':'')+
+            esc(e.place || "장소 미정")+'</div>'+
+          (tags?'<div class="pills">'+tags+'</div>':'')+
+          (prep.length?'<div class="pprep">준비 · '+prep.map(esc).join(" · ")+'</div>':'')+
+        '</div>'+
+      '</div>';
+    });
+
+    return '<div class="pday">'+
+      '<div class="pdhead"><span class="pdn">'+mm+'/'+dd+'</span>'+
+        '<span class="pdw">'+dowOf(d)+'요일</span>'+
+        (tag?'<span class="daytag '+tag[0]+'">'+tag[1]+'</span>':'')+
+        '<span class="grow"></span>'+
+        '<span class="pdmeta">'+items.length+'건'+(moves?' · 권역 이동 '+moves+'회':'')+'</span>'+
+      '</div>'+rows+'</div>';
+  }).join("");
+
+  return head + body +
+    '<p class="calnote">이동 시간은 차량 기준 대략치입니다. 아트위크 주간은 강남·한남 일대가 평소보다 막히니 여유를 더 두세요.</p>';
 }
 
 function calendarHTML(){
@@ -929,8 +1075,9 @@ function render(){
     '</ul><p style="margin-top:10px">회신은 됐지만 대표님 참석 여부는 별도 판단이 필요합니다.</p></div>'+
   '<div class="bar">'+
     '<div class="tabs">'+
-      '<button class="tab'+(view==="list"?" on":"")+'" data-v="list">목록</button>'+
+      '<button class="tab'+(view==="plan"?" on":"")+'" data-v="plan">✓ 확정 일정</button>'+
       '<button class="tab'+(view==="cal"?" on":"")+'" data-v="cal">주간 캘린더</button>'+
+      '<button class="tab'+(view==="list"?" on":"")+'" data-v="list">전체 목록</button>'+
     '</div>'+
     (view==="list" ? (
       '<button class="chip" data-f="all">전체</button>'+
@@ -947,7 +1094,10 @@ function render(){
     '<span class="tally" id="tally"></span>'+
     '<button class="cta" id="addbtn" hidden>＋ 일정 추가</button>'+
   '</div>'+
-  '<section id="timeline">'+(view==="cal" ? calendarHTML() : timelineHTML())+'</section>'+
+  '<section id="timeline">'+(
+      view==="cal"  ? calendarHTML()
+    : view==="plan" ? planHTML()
+    : timelineHTML())+'</section>'+
   '<div class="sec"><h2>9월 1일 저녁 — 한남·이태원에서 네 자리</h2>'+
     '<p>HANNAM NIGHT, KORI Gin, SAM 파티, 바카라 바가 저녁 하나에 몰립니다</p></div>'+
   '<div class="route">'+ROUTE1.map(l=>'<div class="leg'+(l.move?" move":"")+'">'+
@@ -1001,7 +1151,9 @@ function render(){
 
   const hid = state.events.filter(e=>e.hidden).length;
   const okn = state.events.filter(e=>e.confirmed && !e.hidden).length;
-  if(view==="cal"){
+  if(view==="plan"){
+    document.getElementById("tally").textContent = "확정 " + okn + "건";
+  }else if(view==="cal"){
     document.getElementById("tally").textContent = "최종확인 " + okn + "개";
     const wp=document.getElementById("wprev"), wn=document.getElementById("wnext"),
           ct=document.getElementById("caltoggle");
