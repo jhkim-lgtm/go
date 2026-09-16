@@ -5,9 +5,34 @@
 https://jhkim-lgtm.github.io/go/<slug>/ 리다이렉트 페이지를 다시 쓰고,
 바뀐 게 있으면 commit + push 한다. launchd 5분 주기.
 """
-import os, subprocess, sys
+import os, re, subprocess, sys
+import urllib.request
+from pathlib import Path
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+GUARD = "/Users/bk/sales-agent/scripts/git_connection_guard/guard.py"
+
+
+def valid_tunnel_url(url):
+    """Quick-tunnel service hosts only: api.trycloudflare.com is not an app."""
+    return re.fullmatch(
+        r"https://[a-z0-9]+(?:-[a-z0-9]+)+\.trycloudflare\.com/?", url
+    ) is not None
+
+
+def reachable(url, slug):
+    """Keep the last published URL until its replacement actually serves the app."""
+    try:
+        with urllib.request.urlopen(url, timeout=15) as response:
+            if response.status != 200:
+                return False
+            if slug == "mfk":
+                html = response.read(100000).decode("utf-8", errors="replace")
+                return "<title>MFK 인플루언서 허브</title>" in html and 'name="password"' not in html
+            return True
+    except Exception as exc:
+        print(f"{slug}: 새 연결 확인 대기 ({type(exc).__name__})", file=sys.stderr)
+        return False
 
 SERVICES = [
     ("mirror", "1%CLUB 글로벌 미러링",
@@ -65,43 +90,58 @@ RESOLVER = """<!DOCTYPE html>
 
 
 def main():
-    changed = False
+    changed_paths = []
     for slug, title, url_file in SERVICES:
         try:
-            url = open(url_file, encoding="utf-8").read().strip()
+            url = Path(url_file).read_text(encoding="utf-8").strip()
         except OSError:
             continue
-        if not url.startswith("https://"):
+        if not valid_tunnel_url(url):
+            print(f"{slug}: 서비스 주소가 아니므로 기존 고정 링크 유지", file=sys.stderr)
             continue
         slug_dir = os.path.join(HERE, slug)
         os.makedirs(slug_dir, exist_ok=True)
         # 1) 실제 주소는 url.txt에만 둔다(회전 시 이 파일만 바뀜).
         url_dest = os.path.join(slug_dir, "url.txt")
-        old_url = open(url_dest, encoding="utf-8").read() if os.path.exists(url_dest) else ""
+        old_url = Path(url_dest).read_text(encoding="utf-8") if os.path.exists(url_dest) else ""
+        if url != old_url and not reachable(url, slug):
+            continue
         if url != old_url:
-            open(url_dest, "w", encoding="utf-8").write(url)
-            changed = True
+            Path(url_dest).write_text(url, encoding="utf-8")
+            changed_paths.append(os.path.relpath(url_dest, HERE))
         # 2) index.html은 주소 없는 고정 리졸버(내용 불변 → 재배포 거의 없음).
         dest = os.path.join(slug_dir, "index.html")
         html = RESOLVER.format(title=title)
-        old = open(dest, encoding="utf-8").read() if os.path.exists(dest) else ""
+        old = Path(dest).read_text(encoding="utf-8") if os.path.exists(dest) else ""
         if html != old:
-            open(dest, "w", encoding="utf-8").write(html)
-            changed = True
+            Path(dest).write_text(html, encoding="utf-8")
+            changed_paths.append(os.path.relpath(dest, HERE))
     for slug, title, url in STATIC_SERVICES:
         dest = os.path.join(HERE, slug, "index.html")
         html = PAGE.format(title=title, url=url)
-        old = open(dest, encoding="utf-8").read() if os.path.exists(dest) else ""
+        old = Path(dest).read_text(encoding="utf-8") if os.path.exists(dest) else ""
         if html != old:
             os.makedirs(os.path.dirname(dest), exist_ok=True)
-            open(dest, "w", encoding="utf-8").write(html)
-            changed = True
-    if not changed:
-        return
+            Path(dest).write_text(html, encoding="utf-8")
+            changed_paths.append(os.path.relpath(dest, HERE))
     run = lambda *a: subprocess.run(a, cwd=HERE, capture_output=True, text=True)
-    run("git", "add", "-A")
-    r = run("git", "commit", "-m", "터널 주소 갱신")
-    if r.returncode == 0:
+    if changed_paths:
+        r = run("git", "add", "--", *changed_paths)
+        if r.returncode != 0:
+            raise RuntimeError(r.stderr)
+        r = run("git", "commit", "--only", "-m", "터널 주소 갱신", "--", *changed_paths)
+        if r.returncode != 0:
+            raise RuntimeError(r.stderr)
+    # push 실패 뒤에도 다음 주기에 재시도한다. 파일 변경 유무와 분리한다.
+    pending = run("git", "rev-list", "--count", "origin/main..HEAD")
+    if pending.returncode != 0:
+        raise RuntimeError(pending.stderr)
+    if int(pending.stdout.strip() or "0"):
+        check = run("/usr/bin/python3", GUARD, "preflight")
+        if check.returncode != 0:
+            print("고정 링크 배포 연결 확인 대기 — 다음 주기 자동 재시도", file=sys.stderr)
+            print(check.stdout or check.stderr, file=sys.stderr)
+            return
         p = run("git", "push", "origin", "main")
         if p.returncode != 0:
             print(p.stderr, file=sys.stderr)
