@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-09-23T12:11:25.799284+09:00",
+ "updatedAt": "2026-09-24T12:11:50.080287+09:00",
  "month": "2026-09",
  "scope": "자체 집행 팔로워 성장 광고만 집계 (시승 리드 등 별도 캠페인 제외)",
  "accounts": [
@@ -7,14 +7,14 @@
    "id": "oneclub",
    "label": "1%CLUB (@1club.kr)",
    "yesterday": {
-    "date": "2026-09-22",
-    "spend": 100853
+    "date": "2026-09-23",
+    "spend": 81461
    },
    "todayPartial": {
-    "date": "2026-09-23",
-    "spend": 29558
+    "date": "2026-09-24",
+    "spend": 35256
    },
-   "mtdSpend": 1521028,
+   "mtdSpend": 1608187,
    "planDaily": 100000,
    "planNote": "챔피언 5만 + 신규 테스트 최대 5만"
   },
@@ -22,20 +22,20 @@
    "id": "rolls",
    "label": "롤스로이스 (@rollsroycecarsseoul)",
    "yesterday": {
-    "date": "2026-09-22",
-    "spend": 55120
+    "date": "2026-09-23",
+    "spend": 59722
    },
    "todayPartial": {
-    "date": "2026-09-23",
-    "spend": 17442
+    "date": "2026-09-24",
+    "spend": 24957
    },
-   "mtdSpend": 1779190,
+   "mtdSpend": 1846438,
    "planDaily": 100000,
    "planNote": "챔피언 5만 + 신규 테스트 최대 5만 (통상 5~7만)"
   }
  ],
  "totals": {
-  "yesterday": 155973,
-  "mtdSpend": 3300218
+  "yesterday": 141183,
+  "mtdSpend": 3454625
  }
 }
