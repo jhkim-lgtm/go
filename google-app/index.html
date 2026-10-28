@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="1club-sales-agent는 승인된 Google 계정을 연결해 1%CLUB의 내부 업무를 지원합니다.">
+  <title>1club-sales-agent | 1%CLUB</title>
+  <style>
+    :root { color-scheme: light; --ink: #17201d; --muted: #52615a; --line: #dce4de; --accent: #17623e; --paper: #f5f7f3; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 17px; line-height: 1.75; word-break: keep-all; overflow-wrap: anywhere; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
+    .skip { position: absolute; left: 20px; top: -80px; background: white; padding: 10px 16px; z-index: 1; }
+    .skip:focus { top: 10px; }
+    .wrap { width: min(100% - 40px, 920px); margin: auto; }
+    header { padding: 25px 0; border-bottom: 1px solid var(--line); }
+    nav { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .brand { font-size: 22px; font-weight: 800; letter-spacing: -.06em; text-decoration: none; color: var(--ink); }
+    nav a:not(.brand) { font-size: 15px; }
+    main { padding: 64px 0 60px; }
+    .eyebrow { color: var(--accent); font-size: 15px; font-weight: 700; margin: 0 0 14px; }
+    h1 { font-size: clamp(31px, 5vw, 48px); line-height: 1.3; letter-spacing: -.045em; max-width: 760px; margin: 0 0 24px; }
+    .lead { max-width: 730px; font-size: 20px; color: var(--muted); margin-bottom: 38px; }
+    h2 { font-size: 25px; letter-spacing: -.03em; margin: 0 0 18px; }
+    h3 { font-size: 19px; margin: 0 0 8px; }
+    p { margin: 0 0 16px; }
+    section { margin-top: 48px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .card { background: white; border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+    .card p { color: var(--muted); margin: 0; }
+    .note { border-left: 3px solid var(--accent); padding: 4px 0 4px 20px; }
+    .note p:last-child { margin: 0; }
+    footer { border-top: 1px solid var(--line); padding: 24px 0 32px; color: var(--muted); font-size: 14px; }
+    footer p { margin: 0 0 6px; }
+    @media (max-width: 600px) { main { padding-top: 40px; } .grid { grid-template-columns: 1fr; } .lead { font-size: 18px; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">본문으로 바로가기</a>
+  <header>
+    <nav class="wrap" aria-label="주요 메뉴">
+      <a class="brand" href="index.html">1%CLUB</a>
+      <a href="privacy.html">Google 연동 데이터 이용 안내</a>
+    </nav>
+  </header>
+  <main id="main" class="wrap">
+    <p class="eyebrow">1club-sales-agent</p>
+    <h1>승인된 계정으로 연결하는<br>1%CLUB 업무 지원 도구</h1>
+    <p class="lead">1club-sales-agent는 Google 계정 소유자가 승인한 권한을 바탕으로 연락처와 문서, 일정, 이메일 업무를 지원하는 1%CLUB 내부 도구입니다. 일반 사용자를 위한 공개 회원가입은 제공하지 않습니다.</p>
+
+    <section aria-labelledby="features">
+      <h2 id="features">지원하는 업무</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>연락처·명함 정리</h3>
+          <p>연결된 계정의 연락처를 조회하고 Remember 라벨을 기준으로 명함 연락처를 선별·동기화합니다.</p>
+        </article>
+        <article class="card">
+          <h3>이메일 업무</h3>
+          <p>업무 메일의 초안과 답장을 작성하고, 승인된 발송 요청을 처리합니다.</p>
+        </article>
+        <article class="card">
+          <h3>일정 관리</h3>
+          <p>요청된 업무에 필요한 캘린더 일정 조회·생성·수정을 지원합니다.</p>
+        </article>
+        <article class="card">
+          <h3>문서·시트·양식 작업</h3>
+          <p>업무용 문서, 스프레드시트, 양식의 생성과 업데이트를 지원합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="permissions" class="note">
+      <h2 id="permissions">계정별 승인 범위에 따라 이용합니다</h2>
+      <p>사용 가능한 기능과 데이터는 해당 Google 계정에서 승인한 권한 및 요청된 업무에 따라 달라집니다. 업무 데이터는 회사 권한 기준에 따라 계정 소유자와 승인된 내부 담당자가 이용합니다.</p>
+      <p>처리 과정에서는 승인된 Google Workspace·Slack 업무 흐름과 OpenAI·Anthropic AI 서비스가 사용될 수 있습니다. 구체적인 데이터 항목과 연결 해제 방법은 <a href="privacy.html">Google 연동 데이터 이용 안내</a>에서 확인할 수 있습니다.</p>
+    </section>
+
+    <section aria-labelledby="contact">
+      <h2 id="contact">문의</h2>
+      <p>앱 이용 및 저장된 데이터의 확인·삭제 요청: <a href="mailto:admin@handal.us">admin@handal.us</a></p>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <p>1%CLUB · 1club-sales-agent</p>
+      <p>안내 기준일: <time datetime="2026-10-28">2026-10-28</time></p>
+    </div>
+  </footer>
+</body>
+</html>
