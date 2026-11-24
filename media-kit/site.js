@@ -34,6 +34,7 @@
     refresh();
   }
   bindCards();
+  window.KitReader?.mount(document.documentElement.lang, 1);
   function menu(open) {
     site.querySelector('.menubtn').setAttribute('aria-expanded', String(open));
     site.querySelector('#mobile-nav').hidden = !open;
@@ -47,9 +48,23 @@
     if (id === 'top' || id === 'main') window.scrollTo(0,0);
     else document.getElementById(id)?.scrollIntoView();
   }
+  function updateEdition(next) {
+    for (const selector of ['.skip', '.mast', 'footer']) {
+      site.querySelector(selector).replaceWith(document.importNode(next.querySelector(selector), true));
+    }
+    // Keep the slide on screen while the next language's image decodes.
+    const top = document.getElementById('top');
+    top.querySelector('h1').textContent = next.querySelector('#top h1').textContent;
+    top.querySelector('#deck-host').dataset.locale = next.documentElement.lang;
+    for (const section of next.querySelectorAll('main > section:not(#top)')) {
+      document.getElementById(section.id).replaceWith(document.importNode(section, true));
+    }
+  }
   async function switchLang(anchor) {
     const language = anchor.dataset.language;
     if (!languages.includes(language) || document.documentElement.lang === language) return;
+    const previousLanguage = document.documentElement.lang;
+    const previousPage = window.KitReader?.getPage() || 1;
     const currentSection = visibleSection();
     const id = currentSection.id;
     const activeCard=cardIndex(site.querySelector('#brand-posts'));
@@ -61,7 +76,7 @@
     if(id!=='top')url.hash=id;
     const token = ++requestId;
     try {
-      const response = await fetch(url.href.split('#')[0],{credentials:'same-origin'});
+      const response = await fetch(url.href.split('#')[0],{credentials:'same-origin',cache:'reload'});
       if(!response.ok)throw new Error('Missing language edition');
       const next = new DOMParser().parseFromString(await response.text(),'text/html');
       if(token!==requestId)return;
@@ -72,7 +87,8 @@
       ['meta[name="description"]','meta[property="og:title"]','meta[property="og:description"]','meta[property="og:url"]','link[rel="canonical"]'].forEach(sel=>{
         document.querySelector(sel)?.replaceWith(next.querySelector(sel).cloneNode(true));
       });
-      site.replaceChildren(...Array.from(next.querySelector('#site').childNodes));
+      updateEdition(next);
+      const switchedReader = window.KitReader?.switchLanguage(language, previousLanguage, previousPage);
       bindCards(activeCard);
       selectTab(tabKey || 'production');
       site.querySelectorAll('#pricing details,#faq details').forEach((el,i)=>{if(i<meta.length)el.open=meta[i];});
@@ -83,12 +99,13 @@
         window.scrollTo(0,same.getBoundingClientRect().top+window.scrollY-header-10+offset*same.offsetHeight);
       }
       site.querySelector('[data-language="'+language+'"]').focus({preventScroll:true});
+      await switchedReader;
     } catch (_) {if(token===requestId)location.assign(url.href);}
   }
   site.addEventListener('click',e=>{
     const action=e.target.closest('a,button');
     if(!action || e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
-    if(action.dataset.cardstep){const grid=site.querySelector('#brand-posts');goCard(grid,cardIndex(grid)+Number(action.dataset.cardstep),matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth');return;}
+    if(action.dataset.cardstep){const grid=site.querySelector('#brand-posts');goCard(grid,cardIndex(grid)+Number(action.dataset.cardstep));return;}
     if(action.dataset.language){e.preventDefault();switchLang(action);return;}
     if(action.dataset.anchor){
       e.preventDefault();menu(false);
@@ -98,7 +115,11 @@
     }
     if(action.matches('.menubtn')){menu(action.getAttribute('aria-expanded')!=='true');return;}
     if(action.dataset.tab){selectTab(action.dataset.tab);return;}
-    if(action.dataset.slide)window.KitReader?.open(document.documentElement.lang,Number(action.dataset.slide),action);
+    if(action.dataset.slide){
+      const url=new URL(location.href);
+      if(url.hash){url.hash='';history.replaceState({kit:true},'',url);}
+      window.KitReader?.open(document.documentElement.lang,Number(action.dataset.slide),action);
+    }
   });
   site.addEventListener('keydown',e=>{
     if(e.key==='Escape'){menu(false);return;}
