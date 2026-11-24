@@ -256,7 +256,8 @@
   });
   document.addEventListener('keydown',e=>{
     if (dialog.open || video || scale!==1 || !host?.isConnected || !rows.length || e.defaultPrevented) return;
-    if (e.target!==document.body && e.target!==document.documentElement) return;
+    const readingFromHeader = e.target instanceof Element && e.target.matches('.langs a[data-language]');
+    if (e.target!==document.body && e.target!==document.documentElement && !readingFromHeader) return;
     if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || !['ArrowLeft','ArrowRight'].includes(e.key)) return;
     const box=frame.getBoundingClientRect(), visible=Math.min(innerHeight,box.bottom)-Math.max(0,box.top);
     if (visible<Math.min(box.height*.5,innerHeight*.4) || visible<=0) return;
