@@ -1,53 +1,80 @@
-#deck-host, #reader { color-scheme: dark; }
-#deck-host:has(> .deck-poster)::after { content: ""; display: block; height: 52px; background: #111416; }
-#deck-host:has(.krd-shell) { scroll-margin-top: 72px; }
-#reader { position: fixed; inset: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; overflow: hidden; border: 0; background: #08090b; color: #fff; }
-#reader[open] { display: grid; place-items: center; }
-#reader:not([open]) { display: none; }
-#reader::backdrop { background: #08090b; }
-:is(#deck-host,#reader) .krd-shell {
-  width: 100%; min-width: 0; max-width: none; margin: 0; padding: 0;
-  background: #08090b; color: #f6f6f4; font: 15px/1.4 system-ui, sans-serif; overflow-anchor: none;
+#deck-host {
+  width: 100%;
+  max-width: 1360px;
+  margin-inline: auto;
 }
-:is(#deck-host,#reader) .krd-shell *, :is(#deck-host,#reader) .krd-shell *::before, :is(#deck-host,#reader) .krd-shell *::after { box-sizing: border-box; animation: none; transition: none; }
-:is(#deck-host,#reader) .krd-shell [hidden] { display: none !important; }
-:is(#deck-host,#reader) .krd-frame {
-  position: relative; isolation: isolate; width: min(100%, calc(177.77778svh - 302.22223px));
-  aspect-ratio: 16 / 9; margin: 0 auto; overflow: hidden; background: #000;
+#deck-host .flow-page {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  padding: 0;
+  isolation: isolate;
+  background: #101113;
+  scroll-margin-top: 0;
 }
-#reader .krd-frame { width: min(100%, calc(177.77778dvh - 128px)); }
-:is(#deck-host,#reader) .krd-viewport,
-:is(#deck-host,#reader) .krd-media,
-:is(#deck-host,#reader) .krd-notice { position: absolute; inset: 0; min-height: 0; min-width: 0; }
-:is(#deck-host,#reader) .krd-viewport { overflow: hidden; background: #000; }
-:is(#deck-host,#reader) .krd-viewport.krd-enlarged { overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; touch-action: pan-x pan-y pinch-zoom; }
-:is(#deck-host,#reader) .krd-slide { position: relative; width: 100%; aspect-ratio: 16 / 9; max-width: none; margin: 0; }
-:is(#deck-host,#reader) .krd-image { display: block; position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: contain; border: 0; border-radius: 0; margin: 0; user-select: none; }
-:is(#deck-host,#reader) .krd-targets { position: absolute; inset: 0; pointer-events: none; }
-:is(#deck-host,#reader) .krd-bar { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 52px; margin: 0; padding: 4px 8px; background: #141719; border-top: 1px solid #35393c; }
-:is(#deck-host,#reader) .krd-bar button,
-:is(#deck-host,#reader) .krd-bar select,
-:is(#deck-host,#reader) .krd-retry { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: auto; min-width: 0; height: 40px; margin: 0; padding: 0 12px; border: 1px solid #454a50; border-radius: 6px; color: #f5f6f7; background: #1d2226; font: 500 14px/1.15 system-ui, sans-serif; text-transform: none; letter-spacing: normal; white-space: nowrap; cursor: pointer; }
-:is(#deck-host,#reader) select.krd-select { display: block; flex: 0 1 340px; max-width: 340px; text-overflow: ellipsis; appearance: auto; }
-:is(#deck-host,#reader) .krd-bar .krd-previous, :is(#deck-host,#reader) .krd-bar .krd-next { width: 42px; padding: 0; font: 400 26px/1 system-ui,sans-serif; }
-:is(#deck-host,#reader) .krd-bar .krd-zoom { min-width: 44px; font-variant-numeric: tabular-nums; }
-:is(#deck-host,#reader) .krd-bar :disabled { opacity: .42; cursor: default; }
-:is(#deck-host,#reader) .krd-shell :focus-visible { outline: 2px solid #f5c349; outline-offset: -2px; }
-:is(#deck-host,#reader) .krd-shell a.krd-target,
-:is(#deck-host,#reader) .krd-shell button.krd-target { display: block; position: absolute; min-width: 0; min-height: 0; height: auto; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: white; pointer-events: auto; text-decoration: none; cursor: pointer; }
-:is(#deck-host,#reader) .krd-target:hover, :is(#deck-host,#reader) .krd-target:focus-visible { outline: 2px solid #edc95a; outline-offset: -2px; }
-:is(#deck-host,#reader) .krd-target-icon { display: grid; place-items: center; position: absolute; bottom: 2px; right: 2px; min-width: 18px; height: 18px; padding: 0 3px; border-radius: 3px; background: rgb(8 10 13 / 82%); color: #fff; font: 600 14px/1 system-ui, sans-serif; }
-:is(#deck-host,#reader) .krd-media { display: grid; place-items: center; background: #050607; }
-:is(#deck-host,#reader) .krd-video { display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain; }
-:is(#deck-host,#reader) .krd-notice { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; align-content: center; background: rgb(8 11 14 / 86%); }
-:is(#deck-host,#reader) .krd-video-error { position: absolute; left: 5%; right: 5%; top: 12%; padding: 12px; background: #171b1e; color: white; text-align: center; }
-:is(#deck-host,#reader) .krd-video-error a { color: #eec655; text-decoration: underline; }
-:is(#deck-host,#reader) .krd-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+#deck-host .flow-page + .flow-page { margin-top: 4px; }
+#deck-host .flow-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  object-fit: contain;
+}
+#deck-host .flow-targets { position: absolute; inset: 0; pointer-events: none; }
+#deck-host .flow-target {
+  position: absolute;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #fff;
+  text-decoration: none;
+  pointer-events: auto;
+  cursor: pointer;
+}
+#deck-host .flow-target:hover,
+#deck-host .flow-target:focus-visible,
+#deck-host .flow-page:focus-visible,
+#deck-host .flow-close:focus-visible { outline: 2px solid #edc95a; outline-offset: -2px; }
+#deck-host .flow-icon {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 3px;
+  border-radius: 3px;
+  background: rgb(8 10 13 / 82%);
+  color: #fff;
+  font: 600 14px/1 system-ui, sans-serif;
+}
+#deck-host .flow-player { position: absolute; inset: 0; background: #050607; color: white; }
+#deck-host .flow-player video { display: block; width: 100%; height: 100%; object-fit: contain; }
+#deck-host .flow-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  background: #17191c;
+  color: white;
+  font: 500 14px/1.2 system-ui, sans-serif;
+  cursor: pointer;
+}
+#deck-host .flow-play-error { position: absolute; inset: 30% 5% auto; text-align: center; }
+#deck-host .flow-play-error a { color: #edc95a; text-decoration: underline; }
 @media (max-width: 600px) {
-  :is(#deck-host,#reader) .krd-bar { gap: 4px; padding: 4px; }
-  :is(#deck-host,#reader) .krd-bar button, :is(#deck-host,#reader) .krd-bar select { height: 42px; padding: 0 7px; }
-  :is(#deck-host,#reader) .krd-bar .krd-previous, :is(#deck-host,#reader) .krd-bar .krd-next { width: 32px; padding: 0; }
-  :is(#deck-host,#reader) .krd-bar .krd-zoom { min-width: 34px; }
-  :is(#deck-host,#reader) .krd-select { flex: 1 1 60px; }
-  :is(#deck-host,#reader) .krd-target-icon { min-width: 16px; height: 16px; right: 1px; bottom: 1px; }
+  #deck-host .flow-page + .flow-page { margin-top: 2px; }
+  #deck-host .flow-icon { min-width: 16px; height: 16px; bottom: 1px; right: 1px; }
 }

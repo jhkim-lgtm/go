@@ -34,7 +34,8 @@
     refresh();
   }
   bindCards();
-  window.KitReader?.mount(document.documentElement.lang, 1);
+  const reader = window.KitReader;
+  reader.mount(document.documentElement.lang);
   function menu(open) {
     site.querySelector('.menubtn').setAttribute('aria-expanded', String(open));
     site.querySelector('#mobile-nav').hidden = !open;
@@ -46,41 +47,49 @@
   }
   function scrollToId(id) {
     if (id === 'top' || id === 'main') window.scrollTo(0,0);
-    else document.getElementById(id)?.scrollIntoView();
+    else {
+      const target = document.getElementById(id);
+      if (target?.matches('.flow-page')) reader.goTo(Number(target.dataset.page));
+      else target?.scrollIntoView();
+    }
   }
   function updateEdition(next) {
     for (const selector of ['.skip', '.mast', 'footer']) {
       site.querySelector(selector).replaceWith(document.importNode(next.querySelector(selector), true));
     }
-    // Keep the slide on screen while the next language's image decodes.
-    const top = document.getElementById('top');
-    top.querySelector('h1').textContent = next.querySelector('#top h1').textContent;
-    top.querySelector('#deck-host').dataset.locale = next.documentElement.lang;
-    for (const section of next.querySelectorAll('main > section:not(#top)')) {
+    for (const section of next.querySelectorAll('main > section')) {
       document.getElementById(section.id).replaceWith(document.importNode(section, true));
     }
   }
   async function switchLang(anchor) {
     const language = anchor.dataset.language;
-    if (!languages.includes(language) || document.documentElement.lang === language) return;
-    const previousLanguage = document.documentElement.lang;
-    const previousPage = window.KitReader?.getPage() || 1;
-    const currentSection = visibleSection();
-    const id = currentSection.id;
-    const activeCard=cardIndex(site.querySelector('#brand-posts'));
-    const tabKey = site.querySelector('[aria-selected="true"][data-tab]')?.dataset.tab;
-    const meta = Array.from(site.querySelectorAll('#pricing details,#faq details')).map(d=>d.open);
-    const inset = site.querySelector('.mast').offsetHeight + 10;
-    const offset = Math.max(0, Math.min(1, (inset-currentSection.getBoundingClientRect().top) / Math.max(1,currentSection.offsetHeight)));
-    const url = new URL(anchor.getAttribute('href'),base.href);
-    if(id!=='top')url.hash=id;
+    if (!languages.includes(language)) return;
     const token = ++requestId;
+    if (document.documentElement.lang === language) return;
+    const previousLanguage = document.documentElement.lang;
+    const url = new URL(anchor.getAttribute('href'),base.href);
     try {
-      const response = await fetch(url.href.split('#')[0],{credentials:'same-origin',cache:'reload'});
+      const response = await fetch(url.href,{credentials:'same-origin',cache:'reload'});
       if(!response.ok)throw new Error('Missing language edition');
       const next = new DOMParser().parseFromString(await response.text(),'text/html');
       if(token!==requestId)return;
-      if(next.documentElement.lang!==language||!next.querySelector('#site'))throw new Error('Wrong edition');
+      if(next.documentElement.lang!==language||!next.querySelector('#deck-host .flow-page'))throw new Error('Wrong edition');
+      const currentSection = visibleSection();
+      const id = currentSection.id;
+      const position = id === 'top' ? reader.getPosition() : null;
+      const atStart = window.scrollY < 2;
+      const mapped = position ? reader.translatePage(previousLanguage,position.page,language) : null;
+      const activeCard = cardIndex(site.querySelector('#brand-posts'));
+      const tabKey = site.querySelector('[aria-selected="true"][data-tab]')?.dataset.tab;
+      const meta = Array.from(site.querySelectorAll('#pricing details,#faq details')).map(d=>d.open);
+      const inset = site.querySelector('.mast').offsetHeight + 10;
+      const offset = Math.max(0, Math.min(1, (inset-currentSection.getBoundingClientRect().top) / Math.max(1,currentSection.offsetHeight)));
+      if (position && !atStart) {
+        const oldURL = new URL(location.href);
+        oldURL.hash = 'slide-' + position.page;
+        history.replaceState({kit:true, fraction:position.fraction},'',oldURL);
+        url.hash = 'slide-' + mapped;
+      } else if (id !== 'top') url.hash = id;
       history.pushState({kit:true},'',url);
       document.documentElement.lang=language;
       document.title=next.title;
@@ -88,18 +97,18 @@
         document.querySelector(sel)?.replaceWith(next.querySelector(sel).cloneNode(true));
       });
       updateEdition(next);
-      const switchedReader = window.KitReader?.switchLanguage(language, previousLanguage, previousPage);
+      reader.mount(language);
       bindCards(activeCard);
       selectTab(tabKey || 'production');
       site.querySelectorAll('#pricing details,#faq details').forEach((el,i)=>{if(i<meta.length)el.open=meta[i];});
-      if (id==='top') window.scrollTo(0,0);
+      if (position && !atStart) reader.goTo(mapped,position.fraction);
+      else if (id==='top') window.scrollTo(0,0);
       else {
         const same=document.getElementById(id);
         const header=site.querySelector('.mast').offsetHeight;
         window.scrollTo(0,same.getBoundingClientRect().top+window.scrollY-header-10+offset*same.offsetHeight);
       }
       site.querySelector('[data-language="'+language+'"]').focus({preventScroll:true});
-      await switchedReader;
     } catch (_) {if(token===requestId)location.assign(url.href);}
   }
   site.addEventListener('click',e=>{
@@ -116,9 +125,11 @@
     if(action.matches('.menubtn')){menu(action.getAttribute('aria-expanded')!=='true');return;}
     if(action.dataset.tab){selectTab(action.dataset.tab);return;}
     if(action.dataset.slide){
+      const page = Number(action.dataset.slide);
       const url=new URL(location.href);
-      if(url.hash){url.hash='';history.replaceState({kit:true},'',url);}
-      window.KitReader?.open(document.documentElement.lang,Number(action.dataset.slide),action);
+      url.hash='slide-'+page;
+      if(url.href!==location.href)history.pushState({kit:true},'',url);
+      reader.open(document.documentElement.lang,page,action);
     }
   });
   site.addEventListener('keydown',e=>{
