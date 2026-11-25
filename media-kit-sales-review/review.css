@@ -12,6 +12,11 @@
   font-weight: 100 900;
   font-display: swap;
 }
+@font-face {
+  font-family: "Review Audience Numerals";
+  src: local("AppleSDGothicNeo-UltraLight"), local("Apple SD Gothic Neo UltraLight");
+  font-weight: 200;
+}
 /* Geometry follows the 1920 × 1080 source pages. The masthead is the original PDF artwork. */
 #deck-host .rv-slide {
   position: relative;
@@ -25,6 +30,10 @@
   margin: 0;
   background: #000;
   color: #fff;
+  /* 1920-wide master: body 20px, labels 18px, account names and subheads 23px. */
+  --rv-label: .94cqw;
+  --rv-body: 1.04cqw;
+  --rv-subhead: 1.2cqw;
   font-family: "Review Pretendard", "Helvetica Neue", Arial, "Apple SD Gothic Neo", sans-serif;
   font-synthesis: none;
   line-height: 1.28;
@@ -37,6 +46,16 @@
   line-break: strict;
 }
 #deck-host .rv-slide:lang(ko) { word-break: keep-all; }
+/* Match the neighboring chart labels in the original 1680-wide artwork. */
+#deck-host .audience-layer .audience-stat-label { font-size: 17.5px; transform: translateY(-3px); }
+#deck-host .audience-layer .audience-stat-date { font-size: 15.75px; transform: translateY(-5px); }
+#deck-host .audience-layer:lang(ja) .audience-stat-label { font-size: 15px; }
+#deck-host .audience-layer .audience-stat-count {
+  fill: #939da6;
+  font-family: "Review Audience Numerals", "Review Pretendard", sans-serif;
+  font-weight: 200;
+  letter-spacing: -2.1px;
+}
 #deck-host .rv-slide * { box-sizing: border-box; }
 #deck-host .rv-slide :is(h2,h3,h4,p,dd,dl) { margin: 0; padding: 0; }
 #deck-host .rv-mast {
@@ -53,12 +72,15 @@
   top: 13.85%;
   max-width: 88%;
   color: #f1c219;
-  font-size: 2.81cqw;
-  font-weight: 700;
-  letter-spacing: -.025em;
+  font-size: 2.3cqw;
+  font-weight: 600;
+  letter-spacing: -.015em;
   line-height: 1.12;
 }
-#deck-host .rv-slide:lang(ja) .rv-title { font-size: 2.6042cqw; font-weight: 600; }
+#deck-host .rv-channels .rv-title, #deck-host .rv-plans .rv-title { left: 2.82%; top: 14%; }
+#deck-host .rv-channels .rv-title { color: #9aa3aa; font-size: 2.08cqw; font-weight: 500; }
+#deck-host .rv-channels:lang(en) .rv-title { left: 7%; right: 7%; max-width: none; top: 12.2%; color: #f1c219; text-align: center; }
+#deck-host .rv-plans:lang(en) .rv-title { color: #ededed; }
 #deck-host .rv-slide:lang(ja) .rv-bar, #deck-host .rv-slide:lang(ja) .rv-post-title, #deck-host .rv-slide:lang(ja) .rv-price, #deck-host .rv-slide:lang(ja) .rv-metrics dd { font-weight: 600; }
 #deck-host .rv-grid {
   position: absolute;
@@ -72,14 +94,14 @@
   display: grid;
   place-items: center;
   min-width: 0;
-  min-height: 2.24cqw;
-  padding: .25cqw .4cqw;
+  min-height: 1.88cqw;
+  padding: .14cqw .38cqw;
   color: #07090a;
   background: #939da5;
   border-radius: .33cqw;
   text-align: center;
-  font-size: 1.18cqw;
-  font-weight: 700;
+  font-size: 1.1cqw;
+  font-weight: 600;
   line-height: 1.15;
 }
 #deck-host .rv-pagination {
@@ -90,8 +112,8 @@
   align-items: baseline;
   column-gap: 1.2cqw;
   color: #b6bec4;
-  font-size: 1.16cqw;
-  font-weight: 600;
+  font-size: var(--rv-body);
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 #deck-host .rv-pagination b { color: #939da5; font-size: 1.04cqw; }
@@ -110,45 +132,45 @@
 }
 #deck-host .rv-foot > :last-child { text-align: right; }
 #deck-host .rv-channel-grid {
-  top: 26.3%;
-  left: 13.3%;
-  right: 13.3%;
-  grid-template-columns: repeat(3,minmax(0,1fr));
-  column-gap: 4.2cqw;
+  top: 29.35%;
+  left: 12.6%;
+  grid-template-columns: repeat(3,19.1cqw);
+  column-gap: 8.78cqw;
 }
+#deck-host .rv-channels:lang(en) .rv-channel-grid { left: 14.85%; column-gap: 8.55cqw; }
 #deck-host .rv-channel { text-align: center; }
 #deck-host .rv-avatar {
-  width: 8.4cqw;
-  height: 8.4cqw;
+  width: 6.2cqw;
+  height: 6.2cqw;
   border-radius: 50%;
   display: block;
   margin: 2.2cqw auto .68cqw;
 }
 #deck-host .rv-slide .rv-handle {
-  font-size: 1.48cqw;
-  font-weight: 700;
+  font-size: var(--rv-subhead);
+  font-weight: 500;
   letter-spacing: -.02em;
   line-height: 1.22;
 }
 #deck-host .rv-slide .rv-readers {
   display: grid;
-  grid-template-rows: repeat(2,minmax(0,1fr));
-  gap: 1.1cqw;
-  margin-top: 2cqw;
+  grid-template-rows: repeat(2,minmax(4.55cqw,auto));
+  gap: 1.3cqw;
+  margin-top: 1.65cqw;
   text-align: left;
 }
 #deck-host .rv-readers > div { padding-top: .65cqw; border-top: .065cqw solid #51575b; }
 #deck-host .rv-readers dt, #deck-host .rv-cost h4 {
   margin: 0 0 .35cqw;
   color: #939da5;
-  font-size: 1.04cqw;
+  font-size: var(--rv-label);
   line-height: 1.3;
   font-weight: 600;
 }
 #deck-host .rv-slide .rv-readers dd {
-  color: #ededed;
-  font-size: 1.31cqw;
-  line-height: 1.39;
+  color: #d1d4d6;
+  font-size: var(--rv-body);
+  line-height: 1.48;
   overflow-wrap: break-word;
 }
 #deck-host .rv-slide .rv-scope {
@@ -163,44 +185,51 @@
   line-height: 1.35;
 }
 #deck-host .rv-plan-grid {
-  top: 30.5%;
-  left: 9%;
-  right: 9%;
+  top: 31.4%;
+  left: 2.82%;
+  right: 2.82%;
   grid-template-columns: repeat(2,minmax(0,1fr));
-  gap: 4cqw;
+  gap: 3.6cqw;
 }
 #deck-host .rv-plan {
   border: .075cqw solid #686f74;
   border-radius: .4cqw;
-  min-height: 27.8cqw;
+  min-height: 25.8cqw;
 }
-#deck-host .rv-plan .rv-bar { border-radius: .3cqw .3cqw 0 0; }
-#deck-host .rv-plan-body { padding: 2cqw 2.15cqw 2.1cqw; }
+#deck-host .rv-plan h3.rv-bar {
+  display: block;
+  padding: 1.28cqw 1.58cqw 0;
+  background: transparent;
+  color: #f1c219;
+  font-size: var(--rv-subhead);
+  text-align: left;
+}
+#deck-host .rv-plan-body { padding: 1.65cqw 1.58cqw; }
 #deck-host .rv-price {
   display: block;
-  color: #f1c219;
-  font-size: 3.35cqw;
-  font-weight: 680;
-  letter-spacing: -.04em;
+  color: #ededed;
+  font-size: 1.82cqw;
+  font-weight: 600;
+  letter-spacing: -.015em;
   line-height: 1.14;
   font-variant-numeric: tabular-nums;
 }
 #deck-host .rv-slide .rv-plan-desc {
-  margin-top: 1.3cqw;
-  min-height: 6.3cqw;
-  font-size: 1.45cqw;
+  margin-top: 1cqw;
+  min-height: 4.3cqw;
+  font-size: 1.14cqw;
   line-height: 1.42;
 }
 #deck-host .rv-cost { margin-top: 1.1cqw; border-top: .065cqw solid #585f63; padding-top: 1.1cqw; }
-#deck-host .rv-slide .rv-cost h4 { margin-bottom: .47cqw; color: #939da5; font-size: 1.04cqw; font-weight: 650; }
-#deck-host .rv-cost p { font-size: 1.3cqw; line-height: 1.35; }
+#deck-host .rv-slide .rv-cost h4 { margin-bottom: .47cqw; color: #a8adb1; font-size: var(--rv-label); font-weight: 500; }
+#deck-host .rv-cost p { font-size: var(--rv-body); line-height: 1.45; }
 #deck-host .rv-plans .rv-foot { color: #d7d8da; }
 #deck-host .rv-case-grid {
-  top: 25.85%;
-  left: 6%;
-  right: 6%;
-  grid-template-columns: repeat(var(--rv-columns),minmax(0,22cqw));
-  column-gap: 4.5cqw;
+  top: 29.35%;
+  left: 0;
+  right: 0;
+  grid-template-columns: repeat(var(--rv-columns),minmax(0,19.1cqw));
+  column-gap: 4.17cqw;
 }
 #deck-host .rv-case { text-align: center; }
 #deck-host .rv-case-link {
@@ -219,13 +248,12 @@
 }
 #deck-host .rv-case-link:focus-visible { outline: .15cqw solid #f1c219; outline-offset: .14cqw; }
 #deck-host .rv-slide .rv-post-title {
-  font-size: 1.33cqw;
-  line-height: 1.24;
+  font-size: 1.12cqw;
+  line-height: 1.28;
   letter-spacing: -.012em;
-  font-weight: 650;
-  min-height: 3.35cqw;
+  font-weight: 500;
+  min-height: 2.95cqw;
   overflow-wrap: break-word;
-  align-content: center;
 }
 #deck-host .rv-slide .rv-post-date {
   margin-top: .32cqw;
@@ -246,8 +274,8 @@
 #deck-host .rv-slide .rv-metrics dd {
   margin-top: .16cqw;
   color: #fff;
-  font-size: 1.83cqw;
-  font-weight: 650;
+  font-size: 1.42cqw;
+  font-weight: 550;
   letter-spacing: -.028em;
   line-height: 1.14;
   font-variant-numeric: tabular-nums;
