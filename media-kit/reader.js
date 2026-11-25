@@ -44,7 +44,7 @@
 
   function catalog() {
     if (!catalogPromise) {
-      catalogPromise = fetch(new URL('data/pages.json', baseURL)).then(response => {
+      catalogPromise = fetch(new URL('data/pages.json?v=20261125-review', baseURL)).then(response => {
         if (!response.ok) throw new Error('Could not load page links');
         return response.json();
       }).catch(error => { catalogPromise = null; throw error; });
