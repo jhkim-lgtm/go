@@ -1,51 +1,257 @@
-#deck-host .rv-block, #deck-host .rv-cases {
-  color:#f4f4f0; background:#060707; font-family:inherit; line-height:1.5;
-  --rv-gold:#f0c62c; --rv-line:#414445; --rv-muted:#b5babc;
+@font-face {
+  font-family: "Review Pretendard";
+  src: url("./assets/fonts/PretendardVariable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 45 930;
+  font-display: swap;
 }
-#deck-host .rv-block {padding:clamp(22px,3.2vw,48px) clamp(18px,4vw,58px);background:#101213}
-#deck-host .rv-block h3 {font-size:clamp(1.24rem,2.3vw,2.05rem);line-height:1.2;color:#faf9f1;letter-spacing:-.035em;margin:0}
-#deck-host .rv-channel-list,#deck-host .rv-plan-list,#deck-host .rv-case-list {display:grid;gap:clamp(14px,2vw,32px)}
-#deck-host .rv-channel-list {grid-template-columns:repeat(3,minmax(0,1fr));margin-top:22px}
-#deck-host .rv-channel-list article,#deck-host .rv-plan-list article {border-top:1px solid var(--rv-line);padding:15px 0 0;min-width:0}
-#deck-host .rv-block h4,#deck-host .rv-case-copy h3 {margin:0;line-height:1.18;letter-spacing:-.032em;color:#fff}
-#deck-host .rv-block h4 {font-weight:650;font-size:clamp(1.05rem,1.45vw,1.34rem)}
-#deck-host .rv-handle {margin:3px 0 12px;color:var(--rv-muted);font-size:.83rem}
-#deck-host .rv-task {font-size:clamp(.98rem,1.28vw,1.12rem);font-weight:600;line-height:1.5;margin:0 0 6px}
-#deck-host .rv-reader,#deck-host .rv-plan-head p,#deck-host .rv-terms {color:var(--rv-muted);font-size:.91rem;margin:0}
-#deck-host .rv-cases {padding:clamp(30px,4.8vw,66px) clamp(18px,4vw,58px);min-height:min(56vw,740px);display:flex;flex-direction:column;justify-content:center}
-#deck-host .rv-cases h2 {margin:0 0 clamp(22px,3vw,42px);color:var(--rv-gold);font-size:clamp(1.8rem,3.35vw,3.15rem);font-weight:680;line-height:1.16;letter-spacing:-.045em}
-#deck-host .rv-case-list,#deck-host .rv-plan-list {grid-template-columns:repeat(2,minmax(0,1fr))}
-#deck-host .rv-case {min-width:0;padding-top:18px;border-top:1px solid #65696a;display:flex;flex-direction:column}
-#deck-host .rv-case-main {display:grid;grid-template-columns: minmax(100px,.8fr) minmax(0,1.2fr);gap:clamp(12px,1.75vw,26px);align-items:center}
-#deck-host .rv-visual {aspect-ratio:4 / 5;display:grid;place-items:center;background:#101212;min-width:0}
-#deck-host .rv-visual img {width:100%;height:100%;object-fit:contain;display:block}
-#deck-host .rv-category {color:var(--rv-gold);font-size:.82rem;font-weight:640;line-height:1.4;margin:0 0 8px}
-#deck-host .rv-case-copy h3 {font-size:clamp(1.3rem,2.22vw,2rem)}
-#deck-host .rv-case-copy time {display:block;margin:7px 0 12px;color:var(--rv-muted);font-size:.8rem;letter-spacing:.035em}
-#deck-host .rv-desc {font-size:clamp(.91rem,1.14vw,1.06rem);line-height:1.63;color:#dddeda;margin:0}
-#deck-host .rv-results {display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 12px;border-block:1px solid var(--rv-line);padding:14px 0}
-#deck-host .rv-results dt {color:var(--rv-muted);font-size:.86rem}
-#deck-host .rv-results dd,#deck-host .rv-price {font-variant-numeric:tabular-nums;letter-spacing:-.04em;font-weight:620;line-height:1.2}
-#deck-host .rv-results dd {margin:3px 0 0;font-size:clamp(1.32rem,2.32vw,2.17rem)}
-#deck-host .rv-source {display:inline-flex;align-self:start;align-items:center;gap:9px;min-height:44px;color:#f5e6ab;text-decoration:underline;text-underline-offset:4px;font-size:.93rem}
-#deck-host .rv-date {color:var(--rv-muted);font-size:.8rem;margin:clamp(18px,2.5vw,36px) 0 0}
-#deck-host .rv-plan-head {display:flex;align-items:baseline;justify-content:space-between;gap:8px 24px;flex-wrap:wrap}
-#deck-host .rv-plan-list {margin:20px 0 18px}
-#deck-host .rv-price {display:block;color:var(--rv-gold);font-size:clamp(1.55rem,2.5vw,2.3rem);margin:8px 0}
-#deck-host .rv-plan-list p {font-size:.98rem;margin:5px 0}
-#deck-host .rv-plan-list .rv-bill {color:var(--rv-muted);font-size:.88rem}
-#deck-host .rv-block:lang(ja),#deck-host .rv-cases:lang(ja) {line-break:strict;overflow-wrap:break-word}
-@media(max-width:860px) {
-  #deck-host .rv-case-list {grid-template-columns:1fr}
-  #deck-host .rv-case-main {grid-template-columns:minmax(96px,.5fr) 1.5fr}
-  #deck-host .rv-cases {min-height:0}
+@font-face {
+  font-family: "Review Noto Sans JP";
+  src: url("./assets/fonts/NotoSansJP-JIS.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
 }
-@media(max-width:620px) {
-  #deck-host .rv-channel-list,#deck-host .rv-plan-list {grid-template-columns:1fr}
-  #deck-host .rv-channel-list {gap:14px}
-  #deck-host .rv-handle {margin-bottom:6px}
-  #deck-host .rv-case-main {grid-template-columns:minmax(80px,.72fr) minmax(0,1.28fr);align-items:start}
-  #deck-host .rv-visual {align-self:start}
-  #deck-host .rv-desc {line-height:1.52}
-  #deck-host .rv-results {margin-top:14px}
+/* Geometry follows the 1920 × 1080 source pages. The masthead is the original PDF artwork. */
+#deck-host .rv-slide {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  container-type: inline-size;
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: "Review Pretendard", "Helvetica Neue", Arial, "Apple SD Gothic Neo", sans-serif;
+  font-synthesis: none;
+  line-height: 1.28;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+#deck-host .rv-slide:lang(ja) {
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Review Noto Sans JP", sans-serif;
+  font-weight: 300;
+  line-break: strict;
+}
+#deck-host .rv-slide:lang(ko) { word-break: keep-all; }
+#deck-host .rv-slide * { box-sizing: border-box; }
+#deck-host .rv-slide :is(h2,h3,h4,p,dd,dl) { margin: 0; padding: 0; }
+#deck-host .rv-mast {
+  position: absolute;
+  inset: 0 0 auto;
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+}
+#deck-host .rv-slide .rv-title {
+  position: absolute;
+  left: 3.28%;
+  top: 13.85%;
+  max-width: 88%;
+  color: #f1c219;
+  font-size: 2.81cqw;
+  font-weight: 700;
+  letter-spacing: -.025em;
+  line-height: 1.12;
+}
+#deck-host .rv-slide:lang(ja) .rv-title { font-size: 2.6042cqw; font-weight: 600; }
+#deck-host .rv-slide:lang(ja) .rv-bar, #deck-host .rv-slide:lang(ja) .rv-post-title, #deck-host .rv-slide:lang(ja) .rv-price, #deck-host .rv-slide:lang(ja) .rv-metrics dd { font-weight: 600; }
+#deck-host .rv-grid {
+  position: absolute;
+  display: grid;
+  justify-content: center;
+  align-items: stretch;
+  min-width: 0;
+}
+#deck-host .rv-grid article { min-width: 0; }
+#deck-host .rv-slide .rv-bar {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 2.24cqw;
+  padding: .25cqw .4cqw;
+  color: #07090a;
+  background: #939da5;
+  border-radius: .33cqw;
+  text-align: center;
+  font-size: 1.18cqw;
+  font-weight: 700;
+  line-height: 1.15;
+}
+#deck-host .rv-pagination {
+  position: absolute;
+  right: 3.28%;
+  top: 15.45%;
+  display: flex;
+  align-items: baseline;
+  column-gap: 1.2cqw;
+  color: #b6bec4;
+  font-size: 1.16cqw;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+#deck-host .rv-pagination b { color: #939da5; font-size: 1.04cqw; }
+#deck-host .rv-slide .rv-foot {
+  position: absolute;
+  left: 3.28%;
+  right: 3.28%;
+  bottom: 3.4%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  column-gap: 2.3cqw;
+  color: #afb4b8;
+  font-size: .99cqw;
+  line-height: 1.34;
+}
+#deck-host .rv-foot > :last-child { text-align: right; }
+#deck-host .rv-channel-grid {
+  top: 26.3%;
+  left: 13.3%;
+  right: 13.3%;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  column-gap: 4.2cqw;
+}
+#deck-host .rv-channel { text-align: center; }
+#deck-host .rv-avatar {
+  width: 8.4cqw;
+  height: 8.4cqw;
+  border-radius: 50%;
+  display: block;
+  margin: 2.2cqw auto .68cqw;
+}
+#deck-host .rv-slide .rv-handle {
+  font-size: 1.48cqw;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.22;
+}
+#deck-host .rv-slide .rv-readers {
+  display: grid;
+  grid-template-rows: repeat(2,minmax(0,1fr));
+  gap: 1.1cqw;
+  margin-top: 2cqw;
+  text-align: left;
+}
+#deck-host .rv-readers > div { padding-top: .65cqw; border-top: .065cqw solid #51575b; }
+#deck-host .rv-readers dt, #deck-host .rv-cost h4 {
+  margin: 0 0 .35cqw;
+  color: #939da5;
+  font-size: 1.04cqw;
+  line-height: 1.3;
+  font-weight: 600;
+}
+#deck-host .rv-slide .rv-readers dd {
+  color: #ededed;
+  font-size: 1.31cqw;
+  line-height: 1.39;
+  overflow-wrap: break-word;
+}
+#deck-host .rv-slide .rv-scope {
+  position: absolute;
+  top: 15.18%;
+  right: 3.28%;
+  width: 43%;
+  border-top: .065cqw solid #939da5;
+  padding-top: .65cqw;
+  color: #dbdbdb;
+  font-size: 1.1cqw;
+  line-height: 1.35;
+}
+#deck-host .rv-plan-grid {
+  top: 30.5%;
+  left: 9%;
+  right: 9%;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 4cqw;
+}
+#deck-host .rv-plan {
+  border: .075cqw solid #686f74;
+  border-radius: .4cqw;
+  min-height: 27.8cqw;
+}
+#deck-host .rv-plan .rv-bar { border-radius: .3cqw .3cqw 0 0; }
+#deck-host .rv-plan-body { padding: 2cqw 2.15cqw 2.1cqw; }
+#deck-host .rv-price {
+  display: block;
+  color: #f1c219;
+  font-size: 3.35cqw;
+  font-weight: 680;
+  letter-spacing: -.04em;
+  line-height: 1.14;
+  font-variant-numeric: tabular-nums;
+}
+#deck-host .rv-slide .rv-plan-desc {
+  margin-top: 1.3cqw;
+  min-height: 6.3cqw;
+  font-size: 1.45cqw;
+  line-height: 1.42;
+}
+#deck-host .rv-cost { margin-top: 1.1cqw; border-top: .065cqw solid #585f63; padding-top: 1.1cqw; }
+#deck-host .rv-slide .rv-cost h4 { margin-bottom: .47cqw; color: #939da5; font-size: 1.04cqw; font-weight: 650; }
+#deck-host .rv-cost p { font-size: 1.3cqw; line-height: 1.35; }
+#deck-host .rv-plans .rv-foot { color: #d7d8da; }
+#deck-host .rv-case-grid {
+  top: 25.85%;
+  left: 6%;
+  right: 6%;
+  grid-template-columns: repeat(var(--rv-columns),minmax(0,22cqw));
+  column-gap: 4.5cqw;
+}
+#deck-host .rv-case { text-align: center; }
+#deck-host .rv-case-link {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 22.9cqw;
+  margin: .6cqw 0 .65cqw;
+  color: white;
+}
+#deck-host .rv-post {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+#deck-host .rv-case-link:focus-visible { outline: .15cqw solid #f1c219; outline-offset: .14cqw; }
+#deck-host .rv-slide .rv-post-title {
+  font-size: 1.33cqw;
+  line-height: 1.24;
+  letter-spacing: -.012em;
+  font-weight: 650;
+  min-height: 3.35cqw;
+  overflow-wrap: break-word;
+  align-content: center;
+}
+#deck-host .rv-slide .rv-post-date {
+  margin-top: .32cqw;
+  color: #b1b7bd;
+  font-size: .98cqw;
+  line-height: 1.26;
+  font-variant-numeric: tabular-nums;
+}
+#deck-host .rv-slide .rv-metrics {
+  margin-top: .68cqw;
+  padding-top: .65cqw;
+  border-top: .065cqw solid #61686c;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+#deck-host .rv-metrics > div + div { border-left: .065cqw solid #51575b; }
+#deck-host .rv-metrics dt { color: #b6bec4; font-size: 1cqw; font-weight: 500; }
+#deck-host .rv-slide .rv-metrics dd {
+  margin-top: .16cqw;
+  color: #fff;
+  font-size: 1.83cqw;
+  font-weight: 650;
+  letter-spacing: -.028em;
+  line-height: 1.14;
+  font-variant-numeric: tabular-nums;
+}
+@media print {
+  #deck-host .rv-slide { break-inside: avoid; print-color-adjust: exact; }
 }
