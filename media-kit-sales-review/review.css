@@ -149,15 +149,15 @@
 }
 #deck-host .rv-slide .rv-handle { font-size: var(--rv-subhead); font-weight: 550; }
 #deck-host .rv-slide .rv-audience { font-size: .98cqw; color: #b8bec1; margin-top: .35cqw; line-height: 1.3; }
-#deck-host .rv-executions {
+#deck-host .rv-uses {
   margin: 1.65cqw 0 0;
   padding: 0;
   list-style: none;
   text-align: left;
   border-top: .07cqw solid #676e74;
 }
-#deck-host .rv-executions li { border-bottom: .065cqw solid #393e42; }
-#deck-host .rv-executions a {
+#deck-host .rv-uses li {
+  border-bottom: .065cqw solid #393e42;
   display: grid;
   align-content: center;
   row-gap: .18cqw;
@@ -168,9 +168,7 @@
 }
 #deck-host .rv-category { color: #a5afb5; font-size: var(--rv-label); font-weight: 500; }
 #deck-host .rv-category::before { content: "•"; margin-right: .45em; color: #939da5; }
-#deck-host .rv-ex-title { font-weight: 500; font-size: 1.12cqw; line-height: 1.32; white-space: nowrap; }
-#deck-host .rv-executions a:is(:hover,:focus-visible) .rv-ex-title { text-decoration: underline; text-underline-offset: .14em; }
-#deck-host .rv-executions a:focus-visible { outline: 1px solid #e9c458; outline-offset: 1px; }
+#deck-host .rv-use-title { font-weight: 500; font-size: 1.12cqw; line-height: 1.32; white-space: nowrap; }
 @media (max-width: 700px) {
   #deck-host .rv-slide.rv-channels { aspect-ratio: auto; padding: 46px 6% 27px; }
   #deck-host .rv-channels .rv-title, #deck-host .rv-channels:lang(en) .rv-title {
@@ -182,10 +180,10 @@
   #deck-host .rv-channel .rv-avatar { grid-row: 2/4; width: 38px; height: 38px; margin: 0; align-self: center; justify-self: center; }
   #deck-host .rv-slide .rv-handle { font-size: 13px; align-self: end; }
   #deck-host .rv-slide .rv-audience { margin: 0; font-size: 11px; }
-  #deck-host .rv-executions { grid-column: 1/-1; margin: 7px 0 0; }
-  #deck-host .rv-executions a { min-height: 44px; row-gap: 2px; padding-inline: 2px; }
+  #deck-host .rv-uses { grid-column: 1/-1; margin: 7px 0 0; }
+  #deck-host .rv-uses li { min-height: 44px; row-gap: 2px; padding-inline: 2px; }
   #deck-host .rv-category { font-size: 10.5px; }
-  #deck-host .rv-ex-title { font-size: clamp(11px,3.1vw,14px); }
+  #deck-host .rv-use-title { font-size: clamp(11px,3.1vw,14px); }
 }
 #deck-host .rv-slide .rv-scope { position: absolute; right: 4.3%; top: 16%; color: #bcc2c6; font-size: var(--rv-body); }
 #deck-host .rv-plan-table {
