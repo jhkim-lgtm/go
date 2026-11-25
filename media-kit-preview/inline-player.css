@@ -1,3 +1,6 @@
+#deck-host .flow-targets {
+  --inline-seek-height: clamp(18px, 2.2vw, 24px);
+}
 #deck-host .inline-video-target {
   overflow: hidden;
   isolation: isolate;
@@ -33,6 +36,71 @@
   margin-left: 2px;
   border-block: 5px solid transparent;
   border-left: 8px solid currentColor;
+}
+#deck-host .inline-video-target.has-seekbar .inline-video-icon {
+  bottom: calc(var(--inline-seek-height) + 2px);
+}
+#deck-host input.inline-video-seek {
+  --played: 0%;
+  position: absolute;
+  transform: translateY(-100%);
+  z-index: 2;
+  display: block;
+  box-sizing: border-box;
+  height: var(--inline-seek-height);
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0 clamp(3px, .4vw, 6px);
+  border: 0;
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgb(6 8 10 / 78%);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: pointer;
+}
+#deck-host input.inline-video-seek[hidden] {
+  display: none;
+}
+#deck-host input.inline-video-seek::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #f5ca37 0%, #f5ca37 var(--played), #8994a1 var(--played), #8994a1 100%);
+}
+#deck-host input.inline-video-seek::-webkit-slider-thumb {
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  margin-top: -3px;
+  border: 1px solid #191b1e;
+  border-radius: 50%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #fff;
+}
+#deck-host input.inline-video-seek::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: #8994a1;
+}
+#deck-host input.inline-video-seek::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: #f5ca37;
+}
+#deck-host input.inline-video-seek::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  border: 1px solid #191b1e;
+  border-radius: 50%;
+  background: #fff;
+}
+#deck-host input.inline-video-seek:focus-visible {
+  outline: 2px solid #edc95a;
+  outline-offset: -2px;
 }
 #deck-host .inline-video-target:is([data-video-state="playing"], [data-video-state="loading"]) .inline-video-icon::before {
   width: 4px;

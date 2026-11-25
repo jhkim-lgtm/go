@@ -3,9 +3,9 @@
 
   const baseURL = new URL('../media-kit/', document.currentScript.src);
   const words = {
-    ko: { play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상 재생 오류', direct: '영상 링크 열기' },
-    ja: { play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '再生エラー', direct: '動画リンクを開く' },
-    en: { play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'Video error', direct: 'Open video link' }
+    ko: { play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상 재생 오류', direct: '영상 링크 열기', seek: '재생 위치 조절', time: (now, total) => '전체 ' + total + ' 중 ' + now },
+    ja: { play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '再生エラー', direct: '動画リンクを開く', seek: '再生位置を変更', time: (now, total) => '全' + total + 'のうち' + now },
+    en: { play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'Video error', direct: 'Open video link', seek: 'Seek video', time: (now, total) => now + ' of ' + total }
   };
   function langKey(value) {
     const key = String(value || '').toLowerCase().split('-')[0];
@@ -85,6 +85,36 @@
       offsets.set(url, media.currentTime);
     }
   }
+  function clockTime(seconds) {
+    const whole = Math.floor(seconds);
+    const minutes = Math.floor(whole / 60);
+    const remainder = String(whole % 60).padStart(2, '0');
+    if (minutes < 60) return minutes + ':' + remainder;
+    return Math.floor(minutes / 60) + ':' + String(minutes % 60).padStart(2, '0') + ':' + remainder;
+  }
+  function syncSeek(movie) {
+    const { button, media, seek, copy } = movie;
+    if (movies.get(button) !== movie) return;
+    const duration = media.duration;
+    const available = Number.isFinite(duration) && duration > 0 && !media.error && !movie.fallback;
+    seek.hidden = seek.disabled = !available;
+    button.classList.toggle('has-seekbar', available);
+    if (!available) return;
+    seek.max = String(duration);
+    if (!seek.matches(':active')) seek.value = String(media.currentTime);
+    const now = seek.valueAsNumber;
+    seek.style.setProperty('--played', (100 * now / duration) + '%');
+    seek.setAttribute('aria-valuetext', copy.time(clockTime(now), clockTime(duration)));
+  }
+  function seekTo(movie, position) {
+    const { button, media, seek } = movie;
+    if (seek.disabled || !Number.isFinite(position)) return;
+    const next = Math.max(0, Math.min(media.duration, position));
+    seek.value = String(next);
+    media.currentTime = next;
+    if (button.dataset.videoState === 'ended' && next < media.duration) label(button, 'paused');
+    syncSeek(movie);
+  }
   function pauseMovie() {
     const movie = playing;
     if (!movie) return;
@@ -104,6 +134,8 @@
     movie.media.load();
     movie.media.remove();
     movie.status.remove();
+    movie.seek.remove();
+    movie.button.classList.remove('has-seekbar');
   }
   function showError(movie) {
     if (movies.get(movie.button) !== movie || movie.fallback) return;
@@ -127,9 +159,13 @@
     });
     button.after(link);
     movie.fallback = link;
+    syncSeek(movie);
   }
   function createMovie(button, url, copy) {
     const media = document.createElement('video');
+    media.defaultMuted = true;
+    media.muted = true;
+    media.setAttribute('muted', '');
     media.className = 'inline-video-element';
     media.playsInline = true;
     media.setAttribute('playsinline', '');
@@ -139,8 +175,35 @@
     const status = document.createElement('span');
     status.className = 'inline-video-status';
     status.setAttribute('role', 'status');
-    const movie = { button, url: url.href, media, copy, status, fallback: null };
+    const seek = document.createElement('input');
+    seek.type = 'range';
+    seek.className = 'inline-video-seek';
+    seek.min = '0';
+    seek.step = 'any';
+    seek.value = '0';
+    seek.hidden = seek.disabled = true;
+    seek.setAttribute('aria-label', copy.seek + (button.dataset.videoLabel ? ' · ' + button.dataset.videoLabel : ''));
+    Object.assign(seek.style, {
+      left: button.style.left, width: button.style.width,
+      top: 'calc(' + button.style.top + ' + ' + button.style.height + ')'
+    });
+    button.after(seek);
+    const movie = { button, url: url.href, media, copy, status, seek, fallback: null };
     movies.set(button, movie);
+    seek.addEventListener('input', () => seekTo(movie, seek.valueAsNumber));
+    seek.addEventListener('keydown', event => {
+      const now = seek.valueAsNumber;
+      const step = event.shiftKey ? 5 : 1;
+      const moves = { ArrowLeft: now - step, ArrowDown: now - step, ArrowRight: now + step,
+        ArrowUp: now + step, Home: 0, End: media.duration,
+        PageDown: now - media.duration / 10, PageUp: now + media.duration / 10 };
+      if (!Object.hasOwn(moves, event.key)) return;
+      event.preventDefault();
+      seekTo(movie, moves[event.key]);
+    });
+    for (const event of ['durationchange', 'loadedmetadata', 'timeupdate', 'seeked', 'ended']) {
+      media.addEventListener(event, () => syncSeek(movie));
+    }
     const resumeAt = offsets.get(movie.url) || 0;
     if (resumeAt > 0) {
       media.addEventListener('loadedmetadata', () => {
@@ -175,7 +238,7 @@
     if (movie?.fallback) { removeMovie(movie); movie = null; }
     if (!movie) movie = createMovie(button, url, copy);
     const { media } = movie;
-    if (media.ended || button.dataset.videoState === 'ended') media.currentTime = 0;
+    if (media.ended || media.currentTime >= media.duration) media.currentTime = 0;
     playing = movie;
     label(button, 'loading');
     observer?.observe(button);
