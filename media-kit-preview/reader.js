@@ -3,9 +3,9 @@
 
   const baseURL = new URL('../media-kit/', document.currentScript.src);
   const words = {
-    ko: { play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상을 재생할 수 없습니다.', direct: '영상 링크 열기' },
-    ja: { play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '動画を再生できません。', direct: '動画リンクを開く' },
-    en: { play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'This video could not be played.', direct: 'Open video link' }
+    ko: { play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상 재생 오류', direct: '영상 링크 열기' },
+    ja: { play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '再生エラー', direct: '動画リンクを開く' },
+    en: { play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'Video error', direct: 'Open video link' }
   };
   function langKey(value) {
     const key = String(value || '').toLowerCase().split('-')[0];
