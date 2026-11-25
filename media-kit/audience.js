@@ -6,25 +6,43 @@
   // This dated snapshot matches the figures printed in the fallback slide images.
   const printed = {
     asOf: '2026-11-25',
-    followers: { '1club.kr': 313325, '1club.jp': 28635, myfirstkorea: 114259 },
-    koreaViews30d: { asOf: '2026-11-25', count: 18341401 }
+    followers: { '1club.kr': 313325, '1club.jp': 28635, myfirstkorea: 114259 }
   };
   const words = {
-    ko: { followers: '팔로워', heading: 'Instagram 팔로워', archive: '프로필 이미지는 과거 화면입니다.', historical: '그 외 독자 통계는 2026년 5월 기준입니다.', historyDetail: '연령·성별·활동 시간대 등은 2026년 5월 통계입니다. 25–34세 독자는 44.9%였습니다.', views: '최근 30일 조회수', date: d => d + ' 기준' },
-    ja: { followers: 'フォロワー', heading: 'Instagramフォロワー数', archive: 'プロフィールは過去の画面です。', historical: 'その他のオーディエンスデータは2026年5月時点のものです。', historyDetail: '年齢・性別・利用時間帯などは2026年5月のデータです。25〜34歳の読者は44.9%でした。', views: '過去30日間の閲覧数', date: d => d + '時点' },
-    en: { followers: 'Followers', heading: 'Instagram followers', archive: 'Profile screenshots are archival.', historical: 'Other audience charts show May 2026 data.', historyDetail: 'Age, gender and activity data are from May 2026, when 44.9% of readers were aged 25–34.', views: 'Views in the last 30 days', date: d => 'As of ' + d }
+    ko: {
+      followers: '팔로워', heading: 'Instagram 팔로워',
+      daily: '공식 일일 집계', archive: '프로필 이미지는 과거 화면입니다.',
+      historical: '팔로워 외 독자 통계는 2026년 5월 기준입니다.',
+      historyDetail: '2026년 5월 조회수는 일간 2,700,000회, 월간 81,000,000회입니다. 25–34세 독자는 44.9%입니다.'
+    },
+    ja: {
+      followers: 'フォロワー', heading: 'Instagramフォロワー数',
+      daily: '公式日次集計', archive: 'プロフィールは過去の画面です。',
+      historical: 'フォロワー数以外のデータは2026年5月時点のものです。',
+      historyDetail: '2026年5月の閲覧数は1日270万回、月間8,100万回です。25〜34歳の読者は44.9%です。'
+    },
+    en: {
+      followers: 'Followers', heading: 'Instagram followers',
+      daily: 'Official daily count', archive: 'Profile screenshots are archival.',
+      historical: 'Other audience charts show May 2026 data.',
+      historyDetail: 'In May 2026, daily views were 2,700,000 and monthly views were 81,000,000. Readers aged 25–34 accounted for 44.9%.'
+    }
   };
   const ns = 'http://www.w3.org/2000/svg';
   const ink = '#9aa3aa';
   const light = '#e4e7e9';
   const muted = '#a0a8af';
   let snapshot = printed;
+  let fetching = false;
   const rendered = new WeakMap();
 
   function validDate(value) {
     if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
     const time = Date.parse(value + 'T00:00:00Z');
     return Number.isFinite(time) && new Date(time).toISOString().slice(0, 10) === value;
+  }
+  function dayOf(data, channel) {
+    return data.observedOn ? data.observedOn[channel] : data.asOf;
   }
   function positiveInteger(number) {
     return Number.isSafeInteger(number) && number > 0;
@@ -44,6 +62,7 @@
     const item = svgElement('text', { x, y, fill, 'font-size': size, 'font-weight': weight, 'text-anchor': anchor });
     item.textContent = value;
     svg.append(item);
+    return item;
   }
   function caption(title, rows, detail) {
     const note = document.createElement('figcaption');
@@ -70,13 +89,15 @@
   function updateFigure(figure, locale, isChannels) {
     if (!figure || rendered.get(figure) === snapshot) return;
     const copy = words[locale];
-    const date = copy.date(formatDate(locale, snapshot.asOf));
+    const date = formatDate(locale, dayOf(snapshot, '1club.kr'));
+    const observation = copy.daily + ' · ' + date;
     const number = new Intl.NumberFormat(locale);
     const svg = svgElement('svg', { viewBox: '0 0 1680 945', class: 'audience-layer', 'aria-hidden': 'true', focusable: 'false' });
     let note;
     if (isChannels) {
       const centers = locale === 'en' ? [410, 874, 1339] : [372, 840, 1309];
-      const headline = copy.heading + '  ·  ' + date;
+      const sameDay = channels.every(channel => dayOf(snapshot, channel) === snapshot.asOf);
+      const headline = copy.heading + '  ·  ' + (sameDay ? observation : copy.daily);
       background(svg, 42, 186, 1597, 37);
       text(svg, 52, 211, headline, 22, light);
       text(svg, 1629, 211, copy.archive, 19, muted, 'end');
@@ -84,31 +105,29 @@
         const metric = number.format(snapshot.followers[channel]);
         // The strips are between the original screenshots and their account names.
         background(svg, centers[index] - 196, 760, 392, 36);
-        text(svg, centers[index], 790, metric, 34, light, 'middle', 500);
-        return ['@' + channel, metric];
+        const numberLabel = text(svg, centers[index], 790, metric, sameDay ? 34 : 31, light, 'middle', 500);
+        let account = '@' + channel;
+        if (!sameDay) {
+          const day = dayOf(snapshot, channel);
+          const stamp = svgElement('tspan', { dx: 10, 'font-size': 19, 'font-weight': 400, fill: muted });
+          stamp.textContent = day;
+          numberLabel.append(stamp);
+          account += ' · ' + formatDate(locale, day);
+        }
+        return [account, metric];
       });
       note = caption(headline, rows, copy.archive);
     } else {
-      const views = snapshot.koreaViews30d;
-      const viewsDate = copy.date(formatDate(locale, views.asOf));
       const followerCount = number.format(snapshot.followers['1club.kr']);
-      const viewCount = number.format(views.count);
       background(svg, 44, 190, 742, 47);
       text(svg, 49, 220, copy.historical, 22);
-      // Replace the historical daily and monthly figures in the original views panel.
-      background(svg, 586, 649, 519, 271);
-      text(svg, 591, 678, copy.views, 22, muted);
-      text(svg, 591, 711, '@1club.kr  ·  ' + viewsDate, 19);
-      text(svg, 844, 831, viewCount, 65, light, 'middle', 300);
-      // Leave the horizontal rule at y=281 and the neighboring demographic table intact.
-      background(svg, 46, 286, 522, 42);
-      text(svg, 53, 309, copy.followers + '  ·  @1club.kr  ·  ' + date, 21, muted);
+      // Preserve the original May charts and the horizontal rule above the follower label.
+      background(svg, 46, 286, 522, 64);
+      text(svg, 53, 310, copy.followers + '  ·  @1club.kr', 21, muted);
+      text(svg, 53, 337, observation, 19, muted);
       background(svg, 54, 371, 501, 213);
       text(svg, 303, 518, followerCount, 105, ink, 'middle', 300);
-      note = caption('@1club.kr', [
-        [copy.followers + ' · ' + date, followerCount],
-        [copy.views + ' · ' + viewsDate, viewCount]
-      ], copy.historyDetail);
+      note = caption('@1club.kr · ' + observation, [[copy.followers, followerCount]], copy.historyDetail);
     }
     figure.querySelector('.audience-layer')?.remove();
     figure.querySelector('.audience-note')?.remove();
@@ -122,20 +141,43 @@
     updateFigure(document.getElementById('slide-6'), locale, true);
     updateFigure(document.getElementById(locale === 'en' ? 'slide-9' : 'slide-8'), locale, false);
   }
+  async function refresh() {
+    if (fetching || document.hidden) return;
+    fetching = true;
+    try {
+      const source = new URL(url);
+      // Each minute gets a fresh CDN key while readers in that minute share a response.
+      source.searchParams.set('minute', String(Math.floor(Date.now() / 60000)));
+      const response = await fetch(source, { cache: 'no-store', credentials: 'same-origin' });
+      if (!response.ok) return;
+      const data = await response.json();
+      if (!data || !validDate(data.asOf) || data.asOf < snapshot.asOf ||
+          !channels.every(channel => positiveInteger(data.followers?.[channel]))) return;
+      if (Object.hasOwn(data, 'observedOn') &&
+          (!channels.every(channel => validDate(data.observedOn?.[channel]) && data.observedOn[channel] <= data.asOf) ||
+          !channels.some(channel => data.observedOn[channel] === data.asOf))) return;
+      const next = { asOf: data.asOf, followers: {}, observedOn: {} };
+      for (const channel of channels) {
+        // An out-of-order channel record must not roll back a newer observed date.
+        const sourceData = dayOf(data, channel) >= dayOf(snapshot, channel) ? data : snapshot;
+        next.observedOn[channel] = dayOf(sourceData, channel);
+        next.followers[channel] = sourceData.followers[channel];
+      }
+      if (channels.every(channel => next.followers[channel] === snapshot.followers[channel] &&
+          next.observedOn[channel] === dayOf(snapshot, channel))) return;
+      snapshot = next;
+      update();
+    } catch { /* Keep the last successful observation and its date. */ }
+    finally { fetching = false; }
+  }
   function load() {
     update();
     // Language switching synchronously replaces <main> after changing the document language.
     new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
-    fetch(url, { cache: 'no-cache', credentials: 'same-origin' })
-      .then(response => response.ok ? response.json() : null)
-      .then(data => {
-        if (!data || !validDate(data.asOf) || data.asOf < printed.asOf ||
-            !channels.every(channel => positiveInteger(data.followers?.[channel]))) return;
-        const views = data.koreaViews30d;
-        const validViews = views && validDate(views.asOf) && views.asOf >= printed.koreaViews30d.asOf && Number.isSafeInteger(views.count) && views.count >= 0;
-        snapshot = { asOf: data.asOf, followers: data.followers, koreaViews30d: validViews ? views : printed.koreaViews30d };
-        update();
-      }).catch(() => { /* Keep the printed snapshot with its actual observation dates. */ });
+    refresh();
+    window.setInterval(refresh, 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+    window.addEventListener('pageshow', event => { if (event.persisted) refresh(); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load, { once: true });
   else load();

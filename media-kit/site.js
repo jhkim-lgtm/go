@@ -6,7 +6,7 @@
   const reader = window.KitReader;
   const languages = ['ko', 'ja', 'en'];
   // Previously shared section links now lead to the matching slide in each edition.
-  const oldSections = { about: 2, services: 9, channels: 33, pricing: 45, process: 46, faq: 48 };
+  const oldSections = { about: 2, services: 9, channels: 33, pricing: 45, process: 46, faq: 48, contact: 49 };
   let requestId = 0;
   let lastSlide = null;
   reader.mount(document.documentElement.lang);
@@ -43,13 +43,11 @@
       url.hash = id;
       history.replaceState(history.state, '', url);
     }
-    scrollToId(id, history.state?.fraction || 0);
+    if (history.state?.end && id === 'slide-' + lastPage()) window.scrollTo(0, document.documentElement.scrollHeight);
+    else scrollToId(id, history.state?.fraction || 0);
   }
-  function atContact() {
-    const box = document.getElementById('contact').getBoundingClientRect();
-    // On tall screens the last section is shorter than the viewport and cannot reach the header.
-    const atBottom = Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight - 1;
-    return box.top <= site.querySelector('.mast').offsetHeight + 8 || (atBottom && box.top < window.innerHeight);
+  function lastPage() {
+    return Number(site.querySelector('#deck-host .flow-page:last-of-type').dataset.page);
   }
   async function switchLang(anchor) {
     const language = anchor.dataset.language;
@@ -64,22 +62,18 @@
       if (token !== requestId) return;
       if (next.documentElement.lang !== language || !next.querySelector('#deck-host .flow-page')) throw new Error('Wrong edition');
       const selected = lastSlide && Math.abs(lastSlide.scrollY - window.scrollY) <= 1 ? lastSlide : null;
-      const contact = !selected && atContact();
-      const position = selected || (window.scrollY < 2 || contact ? null : reader.getPosition());
+      const atEnd = Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight - 1;
+      const keepEnd = atEnd && (!selected || selected.page === lastPage());
+      const position = keepEnd ? {page: lastPage(), fraction: 0} : selected || (window.scrollY < 2 ? null : reader.getPosition());
       let destination = 'top';
       if (position) {
         const oldURL = new URL(location.href);
         oldURL.hash = 'slide-' + position.page;
-        history.replaceState({ fraction: position.fraction }, '', oldURL);
+        history.replaceState({ fraction: position.fraction, end: keepEnd }, '', oldURL);
         destination = 'slide-' + reader.translatePage(previous, position.page, language);
-      } else if (contact) {
-        destination = 'contact';
-        const oldURL = new URL(location.href);
-        oldURL.hash = destination;
-        history.replaceState({}, '', oldURL);
       }
       url.hash = destination === 'top' ? '' : destination;
-      history.pushState({ fraction: position?.fraction || 0 }, '', url);
+      history.pushState({ fraction: position?.fraction || 0, end: keepEnd }, '', url);
       document.documentElement.lang = language;
       document.title = next.title;
       for (const selector of ['meta[name="description"]', 'meta[property="og:title"]', 'meta[property="og:description"]', 'meta[property="og:url"]', 'link[rel="canonical"]']) {
@@ -89,7 +83,10 @@
         site.querySelector(selector).replaceWith(document.importNode(next.querySelector(selector), true));
       }
       reader.mount(language);
-      scrollToId(destination, position?.fraction || 0);
+      if (keepEnd) {
+        lastSlide = null;
+        window.scrollTo(0, document.documentElement.scrollHeight);
+      } else scrollToId(destination, position?.fraction || 0);
       site.querySelector('[data-language="' + language + '"]').focus({ preventScroll: true });
     } catch (_) {
       if (token === requestId) location.assign(url.href);
