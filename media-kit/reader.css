@@ -97,3 +97,16 @@
   #deck-host .flow-page + .flow-page { margin-top: 2px; }
   #deck-host .flow-icon { min-width: 16px; height: 16px; bottom: 1px; right: 1px; }
 }
+
+#deck-host .pricing-context {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 14px clamp(14px, 3vw, 36px);
+  background: #101113;
+  color: #ddd;
+  font-size: clamp(13px, 1.25vw, 16px);
+  line-height: 1.5;
+}
+#deck-host .pricing-context strong { color: #edc95a; }
+#deck-host .pricing-context a { text-decoration: underline; }
