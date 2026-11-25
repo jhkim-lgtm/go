@@ -325,10 +325,13 @@
     const figures = active?.figures;
     if (!figures?.length || !active.host.isConnected) return null;
     const anchor = anchorY();
+    // Use the first readable portion of the viewport when a sticky header leaves
+    // only the bottom strip of the previous slide visible.
+    const readingLine = anchor + Math.min(innerHeight * .16, 145);
     let lo = 0, hi = figures.length - 1;
     while (lo < hi) {
       const mid = Math.floor((lo + hi) / 2);
-      if (figures[mid].getBoundingClientRect().bottom > anchor) hi = mid;
+      if (figures[mid].getBoundingClientRect().bottom > readingLine) hi = mid;
       else lo = mid + 1;
     }
     const figure = figures[lo];
