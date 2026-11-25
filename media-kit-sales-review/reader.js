@@ -3,9 +3,9 @@
 
   const baseURL = new URL('../media-kit/', document.currentScript.src);
   const words = {
-    ko: { play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상 재생 오류', direct: '영상 링크 열기', seek: '재생 위치 조절', time: (now, total) => '전체 ' + total + ' 중 ' + now },
-    ja: { play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '再生エラー', direct: '動画リンクを開く', seek: '再生位置を変更', time: (now, total) => '全' + total + 'のうち' + now },
-    en: { play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'Video error', direct: 'Open video link', seek: 'Seek video', time: (now, total) => now + ' of ' + total }
+    ko: { full:'전체화면', exitFull:'전체화면 종료', mute:'소리 끄기', unmute:'소리 켜기', post:'Instagram 원문 열기', play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상 재생 오류', direct: '영상 링크 열기', seek: '재생 위치 조절', time: (now, total) => '전체 ' + total + ' 중 ' + now },
+    ja: { full:'全画面表示', exitFull:'全画面を終了', mute:'消音', unmute:'音声をオン', post:'Instagramの投稿を開く', play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '再生エラー', direct: '動画リンクを開く', seek: '再生位置を変更', time: (now, total) => '全' + total + 'のうち' + now },
+    en: { full:'Full screen', exitFull:'Exit full screen', mute:'Mute video', unmute:'Unmute video', post:'Open Instagram post', play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'Video error', direct: 'Open video link', seek: 'Seek video', time: (now, total) => now + ' of ' + total }
   };
   function langKey(value) {
     const key = String(value || '').toLowerCase().split('-')[0];
@@ -53,10 +53,10 @@
     }
     return catalogPromise;
   }
-  function safeURL(value, type) {
+  function safeURL(value, type, base = baseURL) {
     if (typeof value !== 'string' || !value.trim()) return null;
     try {
-      const url = new URL(value, baseURL);
+      const url = new URL(value, base);
       if (url.username || url.password) return null;
       if (url.protocol === 'https:' || (url.origin === location.origin && url.protocol === 'http:')) return url;
       if (type === 'link' && url.protocol === 'mailto:') return url;
@@ -65,42 +65,58 @@
   }
   const offsets = new Map();
   const movies = new Map();
+  let enlarged = null;
   const observer = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
     for (const entry of entries) {
-      if (playing?.button === entry.target && !entry.isIntersecting) pauseMovie();
+      if (playing?.frame === entry.target && enlarged !== playing && !entry.isIntersecting) pauseMovie();
     }
   }) : null;
 
-  function label(button, state) {
-    const copy = words[active.lang];
-    const action = { idle: copy.play, loading: copy.pause, playing: copy.pause,
-      paused: copy.resume, ended: copy.replay, error: copy.retry }[state];
-    const name = button.dataset.videoLabel;
-    button.dataset.videoState = state;
-    button.title = name ? action + ' · ' + name : action;
-    button.setAttribute('aria-label', button.title);
+  const icons = {
+    expand: 'M3 9V3h6m6 0h6v6m0 6v6h-6M9 21H3v-6',
+    collapse: 'M9 3v6H3m12-6v6h6m0 6h-6v6M3 15h6v6',
+    muted: 'M3 9h4l5-4v14l-5-4H3z M16 9l6 6m0-6l-6 6',
+    sound: 'M3 9h4l5-4v14l-5-4H3z M16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14'
+  };
+  function control(action, text, icon) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'inline-control inline-' + action;
+    button.title = text;
+    button.setAttribute('aria-label', text);
+    const ns = 'http://www.w3.org/2000/svg';
+    const symbol = document.createElementNS(ns, 'svg');
+    symbol.setAttribute('aria-hidden', 'true');
+    symbol.setAttribute('viewBox', '0 0 24 24');
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', icons[icon]);
+    symbol.append(path);
+    button.append(symbol);
+    return button;
+  }
+  function state(movie, key) {
+    movie.frame.dataset.videoState = key;
+    movie.button.dataset.videoState = key;
+    const action = {idle:'play',loading:'pause',playing:'pause',paused:'resume',ended:'replay',error:'retry'}[key];
+    movie.button.title = movie.copy[action] + (movie.name ? ' · ' + movie.name : '');
+    movie.button.setAttribute('aria-label', movie.button.title);
   }
   function saveOffset(movie) {
-    const { media, url } = movie;
-    if (media.ended) offsets.delete(url);
-    else if (media.readyState >= 1 && Number.isFinite(media.currentTime) && !media.error) {
-      offsets.set(url, media.currentTime);
-    }
+    const media = movie.media;
+    if (media?.ended) offsets.delete(movie.url);
+    else if (media?.readyState >= 1 && Number.isFinite(media.currentTime) && !media.error) offsets.set(movie.url, media.currentTime);
   }
   function clockTime(seconds) {
-    const whole = Math.floor(seconds);
-    const minutes = Math.floor(whole / 60);
+    const whole = Math.floor(seconds), minutes = Math.floor(whole / 60);
     const remainder = String(whole % 60).padStart(2, '0');
-    if (minutes < 60) return minutes + ':' + remainder;
-    return Math.floor(minutes / 60) + ':' + String(minutes % 60).padStart(2, '0') + ':' + remainder;
+    return minutes < 60 ? minutes + ':' + remainder : Math.floor(minutes / 60) + ':' + String(minutes % 60).padStart(2, '0') + ':' + remainder;
   }
   function syncSeek(movie) {
-    const { button, media, seek, copy } = movie;
-    if (movies.get(button) !== movie) return;
-    const duration = media.duration;
-    const available = Number.isFinite(duration) && duration > 0 && !media.error && !movie.fallback;
+    const {media, seek, frame, copy} = movie;
+    const duration = media?.duration;
+    const available = Number.isFinite(duration) && duration > 0 && !media.error;
     seek.hidden = seek.disabled = !available;
-    button.classList.toggle('has-seekbar', available);
+    frame.classList.toggle('has-seekbar', available);
     if (!available) return;
     seek.max = String(duration);
     if (!seek.matches(':active')) seek.value = String(media.currentTime);
@@ -109,142 +125,194 @@
     seek.setAttribute('aria-valuetext', copy.time(clockTime(now), clockTime(duration)));
   }
   function seekTo(movie, position) {
-    const { button, media, seek } = movie;
+    const {media, seek} = movie;
     if (seek.disabled || !Number.isFinite(position)) return;
     const next = Math.max(0, Math.min(media.duration, position));
     seek.value = String(next);
     media.currentTime = next;
-    if (button.dataset.videoState === 'ended' && next < media.duration) label(button, 'paused');
+    if (movie.frame.dataset.videoState === 'ended' && next < media.duration) state(movie, 'paused');
     syncSeek(movie);
   }
   function pauseMovie() {
     const movie = playing;
     if (!movie) return;
     playing = null;
-    observer?.unobserve(movie.button);
+    observer?.unobserve(movie.frame);
     movie.media.pause();
     saveOffset(movie);
-    label(movie.button, movie.media.ended ? 'ended' : 'paused');
+    state(movie, movie.media.ended ? 'ended' : 'paused');
   }
-  function removeMovie(movie) {
+  function audioState(movie) {
+    const enabled = !!movie.media && !movie.media.muted;
+    movie.sound.querySelector('path').setAttribute('d', enabled ? icons.sound : icons.muted);
+    movie.sound.title = enabled ? movie.copy.mute : movie.copy.unmute;
+    movie.sound.setAttribute('aria-label', movie.sound.title);
+    movie.sound.setAttribute('aria-pressed', String(enabled));
+  }
+  function fullState(movie, on) {
+    movie.full.title = on ? movie.copy.exitFull : movie.copy.full;
+    movie.full.setAttribute('aria-label', movie.full.title);
+    movie.full.setAttribute('aria-pressed', String(on));
+    movie.full.querySelector('path').setAttribute('d', on ? icons.collapse : icons.expand);
+    movie.frame.classList.toggle('inline-enlarged', on);
+  }
+  function resetFull(movie, restoreFocus = true) {
+    if (movie !== enlarged) return;
+    enlarged = null;
+    const fallback = movie.fallback;
+    if (fallback) {
+      movie.fallback = null;
+      const resume = playing === movie && !movie.media.paused;
+      fallback.marker.replaceWith(movie.frame);
+      if (resume) movie.media.play().catch(() => {});
+      fallback.dialog.close();
+      fallback.dialog.remove();
+    }
+    fullState(movie, false);
+    if (restoreFocus && movie.frame.isConnected) movie.full.focus({preventScroll:true});
+  }
+  function exitFull(movie, restoreFocus = true) {
+    if (movie !== enlarged) return;
+    if (!movie.fallback) {
+      if (document.fullscreenElement === movie.frame) document.exitFullscreen?.().catch(() => {});
+      else if (document.webkitFullscreenElement === movie.frame) document.webkitExitFullscreen?.();
+      else if (movie.media?.webkitDisplayingFullscreen) movie.media.webkitExitFullscreen?.();
+    }
+    resetFull(movie, restoreFocus);
+  }
+  function fallbackFull(movie) {
+    if (enlarged !== movie || !movie.frame.isConnected) return;
+    const dialog = document.createElement('dialog');
+    dialog.className = 'inline-theater';
+    dialog.setAttribute('aria-label', movie.name || movie.copy.full);
+    const marker = document.createComment('video');
+    movie.frame.before(marker);
+    // Keep the player's language and scoped deck styles when the modal enters the top layer.
+    marker.after(dialog);
+    const resume = playing === movie && !movie.media.paused;
+    dialog.append(movie.frame);
+    if (resume) movie.media.play().catch(() => {});
+    movie.fallback = {dialog,marker};
+    dialog.addEventListener('cancel', event => {event.preventDefault(); exitFull(movie);});
+    dialog.showModal();
+    movie.full.focus({preventScroll:true});
+  }
+  function toggleFull(movie) {
+    if (enlarged === movie) { exitFull(movie); return; }
+    if (enlarged) exitFull(enlarged, false);
+    const media = ensureMedia(movie);
+    media.preload = 'auto';
+    enlarged = movie;
+    fullState(movie, true);
+    const frame = movie.frame;
+    try {
+      if (frame.requestFullscreen && document.fullscreenEnabled) {
+        frame.requestFullscreen().catch(() => fallbackFull(movie));
+      } else if (frame.webkitRequestFullscreen && document.webkitFullscreenEnabled) {
+        frame.webkitRequestFullscreen();
+      } else if (movie.media?.webkitSupportsFullscreen && movie.media.readyState >= 1 && movie.media.webkitEnterFullscreen) {
+        movie.media.webkitEnterFullscreen();
+      } else fallbackFull(movie);
+    } catch { fallbackFull(movie); }
+  }
+  function fullChange() {
+    if (enlarged && !enlarged.fallback && !document.fullscreenElement && !document.webkitFullscreenElement && !enlarged.media?.webkitDisplayingFullscreen) resetFull(enlarged);
+  }
+  document.addEventListener('fullscreenchange', fullChange);
+  document.addEventListener('webkitfullscreenchange', fullChange);
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    if (enlarged) { event.preventDefault(); exitFull(enlarged); }
+    else if (playing) { const movie=playing; pauseMovie(); movie.button.focus({preventScroll:true}); }
+  });
+  function detachMedia(movie) {
+    if (!movie.media) return;
     if (playing === movie) pauseMovie();
     saveOffset(movie);
-    movies.delete(movie.button);
-    movie.fallback?.remove();
-    movie.media.pause();
-    movie.media.removeAttribute('src');
-    movie.media.load();
-    movie.media.remove();
-    movie.status.remove();
-    movie.seek.remove();
-    movie.button.classList.remove('has-seekbar');
+    const media = movie.media;
+    movie.media = null;
+    media.pause();
+    media.removeAttribute('src');
+    media.load();
+    media.remove();
   }
-  function showError(movie) {
-    if (movies.get(movie.button) !== movie || movie.fallback) return;
-    if (playing === movie) pauseMovie();
-    const { button, url, copy } = movie;
-    label(button, 'error');
-    movie.status.textContent = copy.failed;
-    const link = document.createElement('a');
-    link.className = 'inline-source-link';
-    link.href = url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = '↗';
-    link.title = copy.direct + (button.dataset.videoLabel ? ' · ' + button.dataset.videoLabel : '');
-    link.setAttribute('aria-label', link.title);
-    // Keep both the retry button and the source link inside the bounds of this thumbnail.
-    Object.assign(link.style, {
-      left: button.style.left, top: button.style.top,
-      width: 'min(32px,' + button.style.width + ')',
-      height: 'min(32px,' + button.style.height + ')'
-    });
-    button.after(link);
-    movie.fallback = link;
-    syncSeek(movie);
-  }
-  function createMovie(button, url, copy) {
+  function ensureMedia(movie) {
+    if (movie.media?.error) detachMedia(movie);
+    if (movie.media) return movie.media;
     const media = document.createElement('video');
-    media.defaultMuted = true;
-    media.muted = true;
-    media.setAttribute('muted', '');
+    movie.media = media;
     media.className = 'inline-video-element';
+    media.defaultMuted = media.muted = true;
+    media.setAttribute('muted','');
     media.playsInline = true;
-    media.setAttribute('playsinline', '');
-    media.setAttribute('aria-hidden', 'true');
+    media.setAttribute('playsinline','');
+    media.setAttribute('webkit-playsinline','');
+    media.setAttribute('aria-hidden','true');
     media.tabIndex = -1;
     media.preload = 'metadata';
-    const status = document.createElement('span');
-    status.className = 'inline-video-status';
-    status.setAttribute('role', 'status');
-    const seek = document.createElement('input');
-    seek.type = 'range';
-    seek.className = 'inline-video-seek';
-    seek.min = '0';
-    seek.step = 'any';
-    seek.value = '0';
-    seek.hidden = seek.disabled = true;
-    seek.setAttribute('aria-label', copy.seek + (button.dataset.videoLabel ? ' · ' + button.dataset.videoLabel : ''));
-    Object.assign(seek.style, {
-      left: button.style.left, width: button.style.width,
-      top: 'calc(' + button.style.top + ' + ' + button.style.height + ')'
-    });
-    button.after(seek);
-    const movie = { button, url: url.href, media, copy, status, seek, fallback: null };
-    movies.set(button, movie);
-    seek.addEventListener('input', () => seekTo(movie, seek.valueAsNumber));
-    seek.addEventListener('keydown', event => {
-      const now = seek.valueAsNumber;
-      const step = event.shiftKey ? 5 : 1;
-      const moves = { ArrowLeft: now - step, ArrowDown: now - step, ArrowRight: now + step,
-        ArrowUp: now + step, Home: 0, End: media.duration,
-        PageDown: now - media.duration / 10, PageUp: now + media.duration / 10 };
-      if (!Object.hasOwn(moves, event.key)) return;
-      event.preventDefault();
-      seekTo(movie, moves[event.key]);
-    });
-    for (const event of ['durationchange', 'loadedmetadata', 'timeupdate', 'seeked', 'ended']) {
-      media.addEventListener(event, () => syncSeek(movie));
+    if (!movie.poster) {
+      const image = movie.frame.closest('figure')?.querySelector('.flow-image');
+      if (image?.naturalWidth) {
+        const style = movie.frame.style;
+        const x = parseFloat(style.left) / 100 * image.naturalWidth, y = parseFloat(style.top) / 100 * image.naturalHeight;
+        const w = parseFloat(style.width) / 100 * image.naturalWidth, h = parseFloat(style.height) / 100 * image.naturalHeight;
+        if (w > 0 && h > 0) {
+          const canvas = document.createElement('canvas');
+          const scale = Math.min(1, 800 / Math.max(w,h));
+          canvas.width = Math.max(1,Math.round(w*scale)); canvas.height = Math.max(1,Math.round(h*scale));
+          try {
+            canvas.getContext('2d').drawImage(image,x,y,w,h,0,0,canvas.width,canvas.height);
+            movie.poster = canvas.toDataURL('image/jpeg', .88);
+          } catch { /* The media still works if this poster cannot be sampled. */ }
+        }
+      }
     }
+    if (movie.poster) media.poster = movie.poster;
+    const current = () => movie.media === media;
     const resumeAt = offsets.get(movie.url) || 0;
-    if (resumeAt > 0) {
-      media.addEventListener('loadedmetadata', () => {
-        if (movies.get(button) !== movie) return;
-        const duration = media.duration;
-        if (Number.isFinite(duration) && resumeAt >= duration) return;
-        media.currentTime = resumeAt;
-      }, { once: true });
+    media.addEventListener('loadedmetadata', () => {
+      if (current() && resumeAt > 0 && resumeAt < media.duration) media.currentTime = resumeAt;
+    }, {once:true});
+    for (const event of ['durationchange','loadedmetadata','timeupdate','seeked','ended']) {
+      media.addEventListener(event, () => { if (current()) syncSeek(movie); });
     }
     media.addEventListener('playing', () => {
-      if (playing === movie && !media.paused) label(button, 'playing');
+      if (!current() || media.paused) return;
+      // Native iOS fullscreen controls can also resume playback.
+      if (playing !== movie) { pauseMovie(); playing = movie; observer?.observe(movie.frame); }
+      state(movie,'playing');
     });
-    media.addEventListener('pause', () => {
-      if (playing === movie && media.paused) pauseMovie();
-    });
+    media.addEventListener('pause', () => { if (current() && playing === movie && media.paused) pauseMovie(); });
     media.addEventListener('ended', () => {
-      if (movies.get(button) !== movie || !media.ended) return;
+      if (!current() || !media.ended) return;
       if (playing === movie) pauseMovie();
       offsets.delete(movie.url);
-      label(button, 'ended');
+      state(movie,'ended');
     });
-    media.addEventListener('error', () => showError(movie));
-    button.prepend(media);
-    button.append(status);
+    media.addEventListener('volumechange', () => { if (current()) audioState(movie); });
+    media.addEventListener('webkitendfullscreen', () => { if (enlarged === movie) resetFull(movie); });
+    media.addEventListener('error', () => { if (current()) showError(movie); });
+    movie.frame.insertBefore(media, movie.button);
     media.src = movie.url;
-    return movie;
+    audioState(movie);
+    return media;
   }
-  function toggleMovie(button, url, copy) {
-    let movie = movies.get(button);
-    if (movie && movie === playing) { pauseMovie(); return; }
+  function showError(movie) {
+    if (playing === movie) pauseMovie();
+    state(movie,'error');
+    movie.status.textContent = movie.copy.failed;
+    movie.source.hidden = false;
+    syncSeek(movie);
+  }
+  function toggleMovie(movie) {
+    if (playing === movie) {pauseMovie(); return;}
     pauseMovie();
-    if (movie?.fallback) { removeMovie(movie); movie = null; }
-    if (!movie) movie = createMovie(button, url, copy);
-    const { media } = movie;
+    const media = ensureMedia(movie);
     if (media.ended || media.currentTime >= media.duration) media.currentTime = 0;
+    movie.status.textContent = '';
     playing = movie;
-    label(button, 'loading');
-    observer?.observe(button);
-    // Start in the original click/keyboard gesture, including when metadata is pending on iOS.
+    observer?.observe(movie.frame);
+    state(movie,'loading');
     const request = media.play();
     request?.catch(error => {
       if (playing !== movie || error.name === 'AbortError') return;
@@ -252,65 +320,165 @@
       else showError(movie);
     });
   }
-  document.addEventListener('visibilitychange', () => { if (document.hidden) pauseMovie(); });
-  window.addEventListener('pagehide', pauseMovie);
-
-  function target(item, copy) {
-    const isVideo = item.type === 'video';
-    if (!isVideo && item.type !== 'link') return null;
-    const url = safeURL(isVideo ? item.webAsset || item.url : item.url, item.type);
-    if (!url || ![item.x, item.y, item.w, item.h].every(Number.isFinite)) return null;
-    const left = Math.max(0, item.x), top = Math.max(0, item.y);
-    const right = Math.min(1, item.x + item.w), bottom = Math.min(1, item.y + item.h);
-    if (left >= right || top >= bottom) return null;
-    const el = document.createElement(isVideo ? 'button' : 'a');
-    el.className = 'flow-target';
-    let name = (isVideo ? copy.play : copy.link) + (item.label ? ' · ' + item.label : '');
-    if (isVideo) {
-      el.type = 'button';
-      el.classList.add('inline-video-target');
-      el.dataset.videoState = 'idle';
-      el.dataset.videoLabel = item.label || '';
-      el.addEventListener('click', () => toggleMovie(el, url, copy));
-    } else {
-      el.href = url.href;
-      if (url.protocol !== 'mailto:') {
-        el.target = '_blank';
-        el.rel = 'noopener noreferrer';
-        name += ' (' + copy.newTab + ')';
-      }
-    }
-    el.title = name;
-    el.setAttribute('aria-label', name);
-    Object.assign(el.style, {
-      left: left * 100 + '%', top: top * 100 + '%',
-      width: (right - left) * 100 + '%', height: (bottom - top) * 100 + '%'
-    });
+  document.addEventListener('visibilitychange', () => {if (document.hidden) pauseMovie();});
+  window.addEventListener('pagehide', () => {if (enlarged) exitFull(enlarged,false); pauseMovie();});
+  function player(frame, url, copy, name, poster = '', post = null) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'flow-target inline-video-target';
+    button.dataset.videoLabel = frame.dataset.videoLabel = name;
     const icon = document.createElement('span');
-    icon.className = 'flow-icon';
-    icon.setAttribute('aria-hidden', 'true');
-    if (isVideo) icon.classList.add('inline-video-icon');
-    else icon.textContent = '↗';
-    el.append(icon);
+    icon.className = 'flow-icon inline-video-icon';
+    icon.setAttribute('aria-hidden','true');
+    button.append(icon);
+    const sound = control('sound',copy.unmute,'muted');
+    const full = control('full',copy.full,'expand');
+    const source = document.createElement('a');
+    source.className = 'inline-source-link';
+    source.href = post?.href || url.href;
+    source.target = '_blank';
+    source.rel = 'noopener noreferrer';
+    source.textContent = '↗';
+    source.title = (post ? copy.post : copy.direct) + (name ? ' · ' + name : '');
+    source.setAttribute('aria-label',source.title);
+    source.hidden = !post;
+    const seek = document.createElement('input');
+    seek.type = 'range';
+    seek.className = 'inline-video-seek';
+    seek.min = '0'; seek.step = 'any'; seek.value = '0';
+    seek.hidden = seek.disabled = true;
+    seek.setAttribute('aria-label',copy.seek + (name ? ' · ' + name : ''));
+    const status = document.createElement('span');
+    status.className = 'inline-video-status';
+    status.setAttribute('role','status');
+    frame.classList.add('inline-player-frame');
+    frame.append(button, sound, full, source, seek, status);
+    const movie = {frame,button,media:null,url:url.href,name,poster,copy,sound,full,source,seek,status,fallback:null};
+    movies.set(frame,movie);
+    state(movie,'idle');
+    fullState(movie,false);
+    audioState(movie);
+    button.addEventListener('click', () => toggleMovie(movie));
+    full.addEventListener('click', () => toggleFull(movie));
+    sound.addEventListener('click', () => {
+      const media = ensureMedia(movie);
+      media.muted = !media.muted;
+      audioState(movie);
+    });
+    seek.addEventListener('input', () => seekTo(movie,seek.valueAsNumber));
+    seek.addEventListener('keydown', event => {
+      const now = seek.valueAsNumber, step = event.shiftKey ? 5 : 1, duration = movie.media?.duration;
+      const moves = {ArrowLeft:now-step,ArrowDown:now-step,ArrowRight:now+step,ArrowUp:now+step,Home:0,End:duration,PageDown:now-duration/10,PageUp:now+duration/10};
+      if (!Object.hasOwn(moves,event.key)) return;
+      event.preventDefault();
+      seekTo(movie,moves[event.key]);
+    });
+    return frame;
+  }
+  function setupCases(host, copy) {
+    for (const link of host.querySelectorAll('a.rv-case-link[data-video]')) {
+      if (link.closest('.inline-player-frame')) continue;
+      const post = safeURL(link.href,'link'), url = safeURL(link.dataset.video,'video',document.baseURI);
+      if (!post || !url) continue;
+      const frame = document.createElement('div');
+      frame.className = 'inline-case-frame';
+      const name = link.closest('.rv-case')?.querySelector('h3')?.textContent || '';
+      const img = link.querySelector('img');
+      link.before(frame);
+      frame.append(link);
+      link.tabIndex = -1;
+      link.setAttribute('aria-hidden','true');
+      player(frame,url,copy,name,img?.currentSrc || img?.src,post);
+    }
+  }
+  function target(item, copy) {
+    const video = item.type === 'video';
+    if (!video && item.type !== 'link') return null;
+    const url = safeURL(video ? item.webAsset || item.url : item.url,item.type);
+    if (!url || ![item.x,item.y,item.w,item.h].every(Number.isFinite)) return null;
+    const left = Math.max(0,item.x), top = Math.max(0,item.y);
+    const right = Math.min(1,item.x+item.w), bottom = Math.min(1,item.y+item.h);
+    if (left >= right || top >= bottom) return null;
+    let el;
+    if (video) {
+      el = player(document.createElement('div'),url,copy,item.label || '');
+      el.classList.add('inline-hotspot');
+    } else {
+      el = document.createElement('a');
+      el.className = 'flow-target';
+      el.href = url.href;
+      let name = copy.link + (item.label ? ' · ' + item.label : '');
+      if (url.protocol !== 'mailto:') {el.target='_blank';el.rel='noopener noreferrer';name += ' (' + copy.newTab + ')';}
+      el.title = name;
+      el.setAttribute('aria-label',name);
+      const icon = document.createElement('span');
+      icon.className = 'flow-icon';
+      icon.setAttribute('aria-hidden','true');
+      icon.textContent = item.showLabel ? item.label + ' ↗' : '↗';
+      if (item.showLabel) icon.classList.add('inline-channel-label');
+      el.append(icon);
+    }
+    Object.assign(el.style,{left:left*100+'%',top:top*100+'%',width:(right-left)*100+'%',height:(bottom-top)*100+'%'});
     return el;
   }
 
+  // Source poster bounds in the original 1920 × 1080 editions.
+  const posts = {
+    ice: ['DTKLMkoiajY','반얀트리 아이스링크','バンヤンツリーのアイスリンク','Banyan Tree ice rink'],
+    art: ['C8g_nNTJJLz','OPNNG 아트 다이닝','OPNNG アートダイニング','OPNNG art dining'],
+    watch: ['DFw8R3fPC2G','시계 오마카세','時計オマカセ','Watch omakase'],
+    wine: ['Cxkq0xZJCVG','프랑스 5대 샤또 와인 모임','フランス五大シャトーのワイン会','French wine tasting'],
+    whisky: ['C1wg8rbpM9D','발베니 클럽','バルヴェニー・クラブ','The Balvenie Club'],
+    tour: ['DLuUHxNvoJM','프라이빗 도슨트','プライベートギャラリーツアー','Private gallery tour'],
+    sigala: ['DMz8WIOP0h_','시갈라 내한 공연','シガーラ韓国公演','Sigala live in Seoul'],
+    exhibit: ['DRT6BkICZT-','서양미술 600년 전시','西洋美術600年展','Six centuries of Western art']
+  };
+  function memberPosts(lang, page) {
+    const first = [['art',111,382,390,509],['watch',527,382,390,509]];
+    const exhibit = ['exhibit',1490,337,236,357];
+    const broadcast = ['channel',1045,328,365,568];
+    let boxes=[];
+    if (lang === 'en') {
+      if (page === 42) boxes=[...first,broadcast,exhibit];
+    } else if (page === 36) boxes=[['channel',255,648,320,100],['ice',806,251,371,727]];
+    else if (page === 38) boxes=[...first,['wine',1040,382,392,509],['whisky',1458,382,392,509]];
+    else if (page === 39) boxes=[['tour',111,382,390,509],['sigala',527,382,390,509],broadcast,exhibit];
+    const col = {ko:1,ja:2,en:3}[lang];
+    const channelLabel = {ko:'Instagram 공지 채널 열기',ja:'Instagramのお知らせチャンネルを開く',en:'Open Instagram broadcast channel'};
+    return boxes.map(([id,x,y,w,h]) => {
+      const channel = id === 'channel';
+      const url = channel ? 'https://www.instagram.com/channel/AbblqxK2-APvcZMm/' : 'https://www.instagram.com/p/'+posts[id][0]+'/';
+      return {type:'link',url, label:channel ? channelLabel[lang] : posts[id][col],showLabel:channel,
+        x:x/1920,y:y/1080,w:w/1920,h:h/1080};
+    });
+  }
   function mount(locale) {
     const host = document.getElementById('deck-host');
     if (!host) return;
     const lang = langKey(locale || host.dataset.locale || document.documentElement.lang);
-    if (active?.host === host && active.lang === lang && active.ready) return active.ready;
-    for (const movie of movies.values()) removeMovie(movie);
+    const sameDocument = active?.host === host && active.lang === lang;
+    if (sameDocument && active.ready) return active.ready;
+    if (!sameDocument) {
+      if (enlarged) exitFull(enlarged, false);
+      for (const movie of movies.values()) detachMedia(movie);
+      movies.clear();
+    }
     const figures = Array.from(host.querySelectorAll('.flow-page[data-page]'));
     const pages = new Map(figures.map(el => [Number(el.dataset.page), el]));
     const state = { host, lang, figures, pages };
     active = state;
+    setupCases(host, words[lang]);
+    for (const [number, figure] of pages) {
+      const links = memberPosts(lang, number);
+      const targets = figure.querySelector('.flow-targets');
+      if (targets && links.length) targets.replaceChildren(...links.map(h => target(h, words[lang])));
+    }
     state.ready = catalog().then(data => {
       if (active !== state) return;
       const copy = words[lang];
       for (const page of data[lang] || []) {
         const targets = pages.get(page.page)?.querySelector('.flow-targets');
-        if (targets) targets.replaceChildren(...(page.hotspots || []).map(h => target(h, copy)).filter(Boolean));
+        if (targets) targets.replaceChildren(...[...(page.hotspots || []), ...memberPosts(lang, page.page)].map(h => target(h, copy)).filter(Boolean));
       }
     }).catch(() => {
       // The complete static document stays readable if the links file is unavailable.

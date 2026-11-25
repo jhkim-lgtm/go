@@ -19,19 +19,6 @@
   object-fit: cover;
   transform: scale(1.01);
 }
-/* The poster is baked into the slide. Cover both sides before compositing the movie. */
-#deck-host .inline-video-target[data-video-label="Versace Macau"]:has(video):not([data-video-state="error"]) {
-  background: #000;
-  box-shadow: -3px 0 #000, 3px 0 #000;
-  outline: none;
-}
-#deck-host .inline-video-target[data-video-label="Versace Macau"]:has(video):focus-visible .inline-video-icon {
-  outline: 2px solid #edc95a;
-  outline-offset: -2px;
-}
-#deck-host .inline-video-target[data-video-state="error"] .inline-video-element {
-  visibility: hidden;
-}
 #deck-host .inline-video-target .inline-video-icon {
   z-index: 1;
   right: 3px;
@@ -50,9 +37,6 @@
   margin-left: 2px;
   border-block: 5px solid transparent;
   border-left: 8px solid currentColor;
-}
-#deck-host .inline-video-target.has-seekbar .inline-video-icon {
-  bottom: calc(var(--inline-seek-height) + 2px);
 }
 #deck-host input.inline-video-seek {
   --played: 0%;
@@ -139,36 +123,137 @@
   overflow: hidden;
   clip-path: inset(50%);
 }
-#deck-host .inline-source-link {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  pointer-events: auto;
-  color: white;
-  background: #282425;
-  border-radius: 3px;
-  font: 700 16px/1 system-ui, sans-serif;
-  text-decoration: none;
-}
 #deck-host .inline-source-link:focus-visible,
 #deck-host .inline-video-target:focus-visible {
   outline: 2px solid #edc95a;
   outline-offset: -2px;
   z-index: 1;
 }
-#deck-host .inline-video-target[data-video-state="error"] .inline-video-status {
-  inset: 50% 2px auto;
+#deck-host .inline-player-frame {
+  --inline-seek-height: clamp(15px, 1.8vw, 24px);
+  --inline-control-size: clamp(18px, 2.5vw, 32px);
+  position: relative;
+  display: block;
+  isolation: isolate;
+  box-sizing: border-box;
+  padding: 0;
+  pointer-events: auto;
+}
+#deck-host .inline-hotspot { position: absolute; }
+#deck-host .inline-case-frame { margin: .6cqw 0 .65cqw; }
+#deck-host .inline-case-frame > .rv-case-link { margin: 0; }
+#deck-host .inline-player-frame .inline-video-target {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+#deck-host .inline-player-frame .inline-video-element { z-index: 0; }
+#deck-host .inline-player-frame .inline-video-target { z-index: 1; }
+#deck-host .inline-player-frame .inline-control,
+#deck-host .inline-player-frame .inline-source-link {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: var(--inline-control-size);
+  height: var(--inline-control-size);
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: rgb(8 10 13 / 83%);
+  color: #fff;
+  font: 600 clamp(15px, 1.7vw, 21px)/1 system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+#deck-host .inline-control svg {
+  width: 62%; height: 62%; fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+#deck-host .inline-player-frame .inline-full { right: 2px; top: 2px; }
+#deck-host .inline-player-frame .inline-sound { left: 2px; top: 2px; }
+#deck-host .inline-player-frame .inline-source-link { left: 2px; bottom: 2px; }
+#deck-host .inline-player-frame .inline-source-link[hidden] { display: none; }
+#deck-host .inline-player-frame .inline-control:focus-visible { outline: 2px solid #edc95a; outline-offset: -2px; }
+#deck-host .inline-player-frame input.inline-video-seek { left: 0; width: 100%; bottom: 0; transform: none; }
+#deck-host .inline-player-frame.has-seekbar .inline-video-icon,
+#deck-host .inline-player-frame.has-seekbar .inline-source-link { bottom: calc(var(--inline-seek-height) + 2px); }
+#deck-host .inline-player-frame[data-video-state="error"] .inline-video-element { visibility: hidden; }
+#deck-host .inline-player-frame[data-video-state="error"] .inline-video-status {
+  z-index: 2;
+  inset: 50% 3px auto;
   transform: translateY(-50%);
   width: auto;
   height: auto;
   padding: 2px;
   clip-path: none;
   overflow: visible;
-  border-radius: 3px;
-  background: rgb(8 10 13 / 90%);
-  color: white;
+  color: #fff;
+  background: rgb(8 10 13 / 88%);
+  text-align: center;
   font: 500 clamp(10px, 1vw, 13px)/1.25 system-ui, sans-serif;
+  pointer-events: none;
+}
+#deck-host .inline-player-frame[data-video-label="Versace Macau"]:has(video):not([data-video-state="error"]) {
+  background: #000;
+  box-shadow: -3px 0 #000, 3px 0 #000;
+}
+#deck-host .inline-theater {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #000;
+  color: #fff;
+}
+#deck-host .inline-theater::backdrop { background: #000; }
+#deck-host .inline-player-frame.inline-enlarged {
+  --inline-control-size: 44px;
+  --inline-seek-height: 38px;
+}
+#deck-host .inline-player-frame:fullscreen,
+#deck-host .inline-theater > .inline-player-frame {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0;
+  background: #000;
+}
+#deck-host .inline-player-frame:-webkit-full-screen {
+  inset: auto !important; width: 100% !important; height: 100% !important; margin: 0; background: #000;
+}
+#deck-host .inline-player-frame.inline-enlarged > .rv-case-link { width: 100%; height: 100%; }
+#deck-host .inline-player-frame.inline-enlarged video { object-fit: contain; transform: none; }
+#deck-host .inline-player-frame.inline-enlarged .inline-control { top: max(5px, env(safe-area-inset-top)); }
+#deck-host .inline-player-frame.inline-enlarged .inline-video-icon { width: 40px; height: 40px; }
+
+#deck-host .flow-icon.inline-channel-label {
+  inset: auto 2px 2px;
+  display: block;
+  width: fit-content;
+  max-width: calc(100% - 4px);
+  min-width: 0;
+  height: auto;
+  margin-left: auto;
+  padding: 3px 4px;
+  box-sizing: border-box;
+  background: rgb(8 10 13 / 90%);
+  color: #fff;
+  font: 550 clamp(8px, .95vw, 13px)/1.25 system-ui, sans-serif;
   text-align: center;
   overflow-wrap: anywhere;
-  pointer-events: none;
 }
