@@ -1,0 +1,51 @@
+#deck-host .rv-block, #deck-host .rv-cases {
+  color:#f4f4f0; background:#060707; font-family:inherit; line-height:1.5;
+  --rv-gold:#f0c62c; --rv-line:#414445; --rv-muted:#b5babc;
+}
+#deck-host .rv-block {padding:clamp(22px,3.2vw,48px) clamp(18px,4vw,58px);background:#101213}
+#deck-host .rv-block h3 {font-size:clamp(1.24rem,2.3vw,2.05rem);line-height:1.2;color:#faf9f1;letter-spacing:-.035em;margin:0}
+#deck-host .rv-channel-list,#deck-host .rv-plan-list,#deck-host .rv-case-list {display:grid;gap:clamp(14px,2vw,32px)}
+#deck-host .rv-channel-list {grid-template-columns:repeat(3,minmax(0,1fr));margin-top:22px}
+#deck-host .rv-channel-list article,#deck-host .rv-plan-list article {border-top:1px solid var(--rv-line);padding:15px 0 0;min-width:0}
+#deck-host .rv-block h4,#deck-host .rv-case-copy h3 {margin:0;line-height:1.18;letter-spacing:-.032em;color:#fff}
+#deck-host .rv-block h4 {font-weight:650;font-size:clamp(1.05rem,1.45vw,1.34rem)}
+#deck-host .rv-handle {margin:3px 0 12px;color:var(--rv-muted);font-size:.83rem}
+#deck-host .rv-task {font-size:clamp(.98rem,1.28vw,1.12rem);font-weight:600;line-height:1.5;margin:0 0 6px}
+#deck-host .rv-reader,#deck-host .rv-plan-head p,#deck-host .rv-terms {color:var(--rv-muted);font-size:.91rem;margin:0}
+#deck-host .rv-cases {padding:clamp(30px,4.8vw,66px) clamp(18px,4vw,58px);min-height:min(56vw,740px);display:flex;flex-direction:column;justify-content:center}
+#deck-host .rv-cases h2 {margin:0 0 clamp(22px,3vw,42px);color:var(--rv-gold);font-size:clamp(1.8rem,3.35vw,3.15rem);font-weight:680;line-height:1.16;letter-spacing:-.045em}
+#deck-host .rv-case-list,#deck-host .rv-plan-list {grid-template-columns:repeat(2,minmax(0,1fr))}
+#deck-host .rv-case {min-width:0;padding-top:18px;border-top:1px solid #65696a;display:flex;flex-direction:column}
+#deck-host .rv-case-main {display:grid;grid-template-columns: minmax(100px,.8fr) minmax(0,1.2fr);gap:clamp(12px,1.75vw,26px);align-items:center}
+#deck-host .rv-visual {aspect-ratio:4 / 5;display:grid;place-items:center;background:#101212;min-width:0}
+#deck-host .rv-visual img {width:100%;height:100%;object-fit:contain;display:block}
+#deck-host .rv-category {color:var(--rv-gold);font-size:.82rem;font-weight:640;line-height:1.4;margin:0 0 8px}
+#deck-host .rv-case-copy h3 {font-size:clamp(1.3rem,2.22vw,2rem)}
+#deck-host .rv-case-copy time {display:block;margin:7px 0 12px;color:var(--rv-muted);font-size:.8rem;letter-spacing:.035em}
+#deck-host .rv-desc {font-size:clamp(.91rem,1.14vw,1.06rem);line-height:1.63;color:#dddeda;margin:0}
+#deck-host .rv-results {display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 12px;border-block:1px solid var(--rv-line);padding:14px 0}
+#deck-host .rv-results dt {color:var(--rv-muted);font-size:.86rem}
+#deck-host .rv-results dd,#deck-host .rv-price {font-variant-numeric:tabular-nums;letter-spacing:-.04em;font-weight:620;line-height:1.2}
+#deck-host .rv-results dd {margin:3px 0 0;font-size:clamp(1.32rem,2.32vw,2.17rem)}
+#deck-host .rv-source {display:inline-flex;align-self:start;align-items:center;gap:9px;min-height:44px;color:#f5e6ab;text-decoration:underline;text-underline-offset:4px;font-size:.93rem}
+#deck-host .rv-date {color:var(--rv-muted);font-size:.8rem;margin:clamp(18px,2.5vw,36px) 0 0}
+#deck-host .rv-plan-head {display:flex;align-items:baseline;justify-content:space-between;gap:8px 24px;flex-wrap:wrap}
+#deck-host .rv-plan-list {margin:20px 0 18px}
+#deck-host .rv-price {display:block;color:var(--rv-gold);font-size:clamp(1.55rem,2.5vw,2.3rem);margin:8px 0}
+#deck-host .rv-plan-list p {font-size:.98rem;margin:5px 0}
+#deck-host .rv-plan-list .rv-bill {color:var(--rv-muted);font-size:.88rem}
+#deck-host .rv-block:lang(ja),#deck-host .rv-cases:lang(ja) {line-break:strict;overflow-wrap:break-word}
+@media(max-width:860px) {
+  #deck-host .rv-case-list {grid-template-columns:1fr}
+  #deck-host .rv-case-main {grid-template-columns:minmax(96px,.5fr) 1.5fr}
+  #deck-host .rv-cases {min-height:0}
+}
+@media(max-width:620px) {
+  #deck-host .rv-channel-list,#deck-host .rv-plan-list {grid-template-columns:1fr}
+  #deck-host .rv-channel-list {gap:14px}
+  #deck-host .rv-handle {margin-bottom:6px}
+  #deck-host .rv-case-main {grid-template-columns:minmax(80px,.72fr) minmax(0,1.28fr);align-items:start}
+  #deck-host .rv-visual {align-self:start}
+  #deck-host .rv-desc {line-height:1.52}
+  #deck-host .rv-results {margin-top:14px}
+}
