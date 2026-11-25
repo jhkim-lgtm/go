@@ -284,11 +284,6 @@
       left: left * 100 + '%', top: top * 100 + '%',
       width: (right - left) * 100 + '%', height: (bottom - top) * 100 + '%'
     });
-    // The Hotel poster extends past the source hotspot's fractional right edge.
-    // The scrubber reads this same width when it is mounted.
-    if (isVideo && item.label === 'Versace Macau') {
-      el.style.width = 'calc(' + el.style.width + ' + 1px)';
-    }
     const icon = document.createElement('span');
     icon.className = 'flow-icon';
     icon.setAttribute('aria-hidden', 'true');

@@ -17,6 +17,17 @@
 }
 #deck-host [data-video-label="Versace Macau"] .inline-video-element {
   object-fit: cover;
+  transform: scale(1.01);
+}
+/* The poster is baked into the slide. Cover both sides before compositing the movie. */
+#deck-host .inline-video-target[data-video-label="Versace Macau"]:has(video):not([data-video-state="error"]) {
+  background: #000;
+  box-shadow: -3px 0 #000, 3px 0 #000;
+  outline: none;
+}
+#deck-host .inline-video-target[data-video-label="Versace Macau"]:has(video):focus-visible .inline-video-icon {
+  outline: 2px solid #edc95a;
+  outline-offset: -2px;
 }
 #deck-host .inline-video-target[data-video-state="error"] .inline-video-element {
   visibility: hidden;
