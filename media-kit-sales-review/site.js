@@ -11,6 +11,11 @@
   let lastSlide = null;
   let observedPosition = null;
   let languagePress = null;
+  const loadedAssets = runtimeAssets(document);
+  function runtimeAssets(doc) {
+    return Array.from(doc.head.querySelectorAll('script[src],link[rel="stylesheet"]'),
+      node => node.getAttribute('src') || node.getAttribute('href')).join('|');
+  }
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   reader.mount(document.documentElement.lang);
 
@@ -38,7 +43,12 @@
     if (target?.matches('.flow-page')) {
       reader.goTo(Number(target.dataset.page), fraction);
       rememberSlide(target, fraction);
-    } else target?.scrollIntoView();
+    } else if (target) {
+      target.scrollIntoView();
+      if (id === 'channel-examples' && fraction > 0) {
+        window.scrollBy({top: target.getBoundingClientRect().height * fraction, behavior: 'instant'});
+      }
+    }
   }
   function followLocation() {
     let id = pageAnchor() || 'top';
@@ -58,7 +68,17 @@
     const atEnd = Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight - 1;
     const selected = lastSlide && Math.abs(lastSlide.scrollY - window.scrollY) <= 2 ? lastSlide : null;
     if (atEnd && (!selected || selected.page === lastPage())) return {page: lastPage(), fraction: 0, end: true};
-    return selected || (window.scrollY < 2 ? null : reader.getPosition());
+    const position = selected || (window.scrollY < 2 ? null : reader.getPosition());
+    if (position?.page === 6) {
+      const guide = document.getElementById('channel-examples');
+      const rect = guide?.getBoundingClientRect();
+      const margin = (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0)
+        + (guide ? parseFloat(getComputedStyle(guide).scrollMarginTop) || 0 : 0);
+      if (rect && rect.top <= margin + 2 && rect.bottom > margin) {
+        return {...position, section: guide.id, fraction: Math.max(0, (margin - rect.top) / rect.height)};
+      }
+    }
+    return position;
   }
   async function getEdition(url) {
     if (typeof window.loadReviewHtml === 'function') return window.loadReviewHtml(url);
@@ -82,12 +102,18 @@
       let destination = 'top';
       if (position) {
         const oldURL = new URL(location.href);
-        oldURL.hash = 'slide-' + position.page;
+        oldURL.hash = position.section || 'slide-' + position.page;
         history.replaceState({ fraction: position.fraction, end: keepEnd }, '', packedURL(oldURL));
-        destination = 'slide-' + reader.translatePage(previous, position.page, language);
+        destination = position.section || 'slide-' + reader.translatePage(previous, position.page, language);
       }
       url.hash = destination === 'top' ? '' : destination;
       history.pushState({ fraction: position?.fraction || 0, end: keepEnd }, '', packedURL(url));
+      // A tab can stay open across releases. Load the matching scripts and shared
+      // styles when their versions differ; same-release language changes stay inline.
+      if (runtimeAssets(next) !== loadedAssets) {
+        location.reload();
+        return;
+      }
       document.documentElement.lang = language;
       document.title = next.title;
       for (const selector of ['meta[name="description"]', 'meta[property="og:title"]', 'meta[property="og:description"]', 'meta[property="og:url"]', 'link[rel="canonical"]']) {
@@ -107,7 +133,7 @@
       site.querySelector('[data-language="' + language + '"]').focus({ preventScroll: true });
     } catch (_) {
       if (token === requestId) {
-        if (!url.hash && position) url.hash = 'slide-' + reader.translatePage(previous, position.page, language);
+        if (!url.hash && position) url.hash = position.section || 'slide-' + reader.translatePage(previous, position.page, language);
         location.assign(packedURL(url).href);
       }
     }
@@ -143,7 +169,8 @@
   window.addEventListener('pointerdown', event => {
     const anchor = event.target.closest?.('[data-language]');
     // Sticky controls can change the browser's scroll offset before focus/click is delivered.
-    languagePress = anchor ? {anchor, position: observedPosition || readingPosition()} : null;
+    const atPress = anchor ? readingPosition() : null;
+    languagePress = anchor ? {anchor, position: atPress?.section ? atPress : observedPosition || atPress} : null;
     if (event.clientX >= document.documentElement.clientWidth || event.button === 1) resumeReading();
   }, { passive: true });
   site.addEventListener('keydown', event => {

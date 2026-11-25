@@ -42,14 +42,13 @@
 }
 #deck-host .rv-slide:lang(ja) {
   font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Review Noto Sans JP", sans-serif;
-  font-weight: 300;
+  font-weight: inherit;
   line-break: strict;
 }
 #deck-host .rv-slide:lang(ko) { word-break: keep-all; }
 /* Match the neighboring chart labels in the original 1680-wide artwork. */
 #deck-host .audience-layer .audience-stat-label { font-size: 17.5px; transform: translateY(-3px); }
 #deck-host .audience-layer .audience-stat-date { font-size: 15.75px; transform: translateY(-5px); }
-#deck-host .audience-layer:lang(ja) .audience-stat-label { font-size: 15px; }
 #deck-host .audience-layer .audience-stat-count {
   fill: #939da6;
   font-family: "Review Audience Numerals", "Review Pretendard", sans-serif;
@@ -77,11 +76,12 @@
   letter-spacing: -.015em;
   line-height: 1.12;
 }
-#deck-host .rv-channels .rv-title, #deck-host .rv-plans .rv-title { left: 2.82%; top: 14%; }
-#deck-host .rv-channels .rv-title { color: #9aa3aa; font-size: 2.08cqw; font-weight: 500; }
-#deck-host .rv-channels:lang(en) .rv-title { left: 7%; right: 7%; max-width: none; top: 12.2%; color: #f1c219; text-align: center; }
-#deck-host .rv-plans:lang(en) .rv-title { color: #ededed; }
-#deck-host .rv-slide:lang(ja) .rv-bar, #deck-host .rv-slide:lang(ja) .rv-post-title, #deck-host .rv-slide:lang(ja) .rv-price, #deck-host .rv-slide:lang(ja) .rv-metrics dd { font-weight: 600; }
+/* An already-open edition can still have its previous stylesheet in the head.
+   Specify the shared title layout in full so the new slide also wins there. */
+#deck-host .rv-slide.rv-channels .rv-title, #deck-host .rv-slide.rv-plans .rv-title {
+  left: 2.82%; right: auto; top: 14%; max-width: 88%; text-align: left; color: #f1c219;
+}
+#deck-host .rv-slide.rv-channels .rv-title { color: #9aa3aa; font-size: 2.08cqw; font-weight: 500; }
 #deck-host .rv-grid {
   position: absolute;
   display: grid;
@@ -171,7 +171,7 @@
 #deck-host .rv-use-title { font-weight: 500; font-size: 1.12cqw; line-height: 1.32; white-space: nowrap; }
 @media (max-width: 700px) {
   #deck-host .rv-slide.rv-channels { aspect-ratio: auto; padding: 46px 6% 27px; }
-  #deck-host .rv-channels .rv-title, #deck-host .rv-channels:lang(en) .rv-title {
+  #deck-host .rv-slide.rv-channels .rv-title {
     position: static; max-width: none; text-align: left; font-size: clamp(18px,4.3vw,26px);
   }
   #deck-host .rv-channel-grid { position: static; grid-template-columns: minmax(0,1fr); gap: 24px; margin-top: 18px; }
@@ -214,6 +214,37 @@
 #deck-host .rv-saving { display: block; margin-top: .35cqw; color: #d5be67; font-size: .95cqw; }
 #deck-host .rv-saving s { color: #a9afb4; }
 #deck-host .rv-slide .rv-plan-note { position: absolute; bottom: 7%; left: 4.3%; right: 4.3%; font-size: .96cqw; color: #bac0c4; }
+/* Match the two source rate cards in their own coordinate systems. */
+#deck-host .review-artwork { container-type: inline-size; }
+#deck-host .rv-agency-heading {
+  position: absolute; margin: 0; padding: 0; background: #000; text-align: left;
+  letter-spacing: 0; pointer-events: none; white-space: nowrap;
+}
+#deck-host .rv-agency-ko {
+  left: 69.375%; top: 75.8%; min-width: 5.2%; color: #f2c11a;
+  font: 600 1.666667cqw/1.1 "Review Pretendard", "Apple SD Gothic Neo", sans-serif;
+}
+#deck-host .rv-agency-en {
+  left: 68.253%; top: 65.54%; color: #efc324;
+  font: 700 1.488095cqw/1.15 Arial, sans-serif;
+}
+#deck-host .rv-agency-panel {
+  container-type: inline-size; background: #000; color: #eee;
+  font-family: Arial, "Hiragino Kaku Gothic ProN", "Review Noto Sans JP", sans-serif;
+}
+#deck-host .rv-agency-panel > div { margin: 0 2.86%; padding: 1.05cqw 1.72cqw 1.75cqw; border: 1px solid #4a4a48; border-radius: .48cqw; }
+#deck-host .rv-agency-panel h3 { margin: 0 0 .6cqw; color: #f4c51d; font-size: 1.845238cqw; font-weight: 700; line-height: 1.27; }
+#deck-host .rv-agency-panel dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 3cqw; }
+#deck-host .rv-agency-panel dl div { display: flex; justify-content: space-between; gap: .85cqw; padding: .65cqw 0; border-top: 1px solid #393939; }
+#deck-host .rv-agency-panel :is(dt,dd) { margin: 0; font-size: 1.14cqw; line-height: 1.4; }
+#deck-host .rv-agency-panel dd { flex: none; color: #c2c2bf; }
+@media (max-width: 700px) {
+  #deck-host .rv-agency-panel > div { padding: 10px 12px; }
+  #deck-host .rv-agency-panel h3 { font-size: 14px; margin-bottom: 5px; }
+  #deck-host .rv-agency-panel dl { grid-template-columns: 1fr; }
+  #deck-host .rv-agency-panel dl div { padding: 5px 0; }
+  #deck-host .rv-agency-panel :is(dt,dd) { font-size: 11px; }
+}
 #deck-host .rv-med-posts { position: absolute; left: 7.1%; top: 26%; width: 50%; display: grid; grid-template-columns: 1fr 1fr; gap: 1.6cqw; }
 #deck-host .rv-med-post { position: relative; display: block; color: #fff; }
 #deck-host .rv-med-crop { position: relative; display: block; overflow: hidden; aspect-ratio: 148 / 242; }
@@ -226,6 +257,8 @@
 #deck-host .rv-slide .rv-outcome { margin: .65cqw 0 .55cqw; font-size: 1.72cqw; color: #fff; font-weight: 500; line-height: 1.36; }
 #deck-host .rv-outcome strong { font-weight: 630; }
 #deck-host .rv-med-copy h4 { border-top: .065cqw solid #4b5156; margin: 1.22cqw 0 .42cqw; padding-top: .8cqw; color: #f0f1f2; font-size: var(--rv-subhead); font-weight: 580; }
+#deck-host .rv-med-criteria { list-style: disc; margin: .25cqw 0 0; padding-inline-start: 1.35em; }
+#deck-host .rv-med-criteria li + li { margin-top: .22em; }
 #deck-host .rv-case-grid {
   top: 23.6%;
   left: 0;
@@ -253,7 +286,7 @@
   object-fit: contain;
 }
 #deck-host .rv-case-link:focus-visible { outline: .15cqw solid #f1c219; outline-offset: .14cqw; }
-#deck-host .rv-slide .rv-post-title {
+#deck-host .rv-slide.rv-cases .rv-post-title {
   font-size: 1.12cqw;
   line-height: 1.28;
   letter-spacing: -.012em;
@@ -270,7 +303,7 @@
 }
 #deck-host .rv-metrics > div + div { border-left: .065cqw solid #51575b; }
 #deck-host .rv-metrics dt { color: #b6bec4; font-size: 1cqw; font-weight: 500; }
-#deck-host .rv-slide .rv-metrics dd {
+#deck-host .rv-slide.rv-cases .rv-metrics dd {
   margin-top: .16cqw;
   color: #fff;
   font-size: 1.42cqw;
@@ -281,4 +314,17 @@
 }
 @media print {
   #deck-host .rv-slide { break-inside: avoid; print-color-adjust: exact; }
+}
+
+#deck-host .rv-film-credit-page { container-type: inline-size; }
+#deck-host .rv-film-credit {
+  position: absolute;
+  left: 18%;
+  top: 89.9%;
+  width: 19%;
+  color: white;
+  background: black;
+  text-align: center;
+  font: 400 1.03cqw/1.25 Arial,sans-serif;
+  pointer-events: none;
 }

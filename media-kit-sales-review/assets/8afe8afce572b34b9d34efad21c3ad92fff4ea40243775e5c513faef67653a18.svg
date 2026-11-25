@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="-36.81 -23.84 891.62 196.68">
-  <rect x="-36.81" y="-23.84" width="891.62" height="196.68" fill="white"/><defs>
+<defs>
     <style>
       .cls-1 {
+        fill: #fff;
         stroke-width: 0px;
       }
     </style>

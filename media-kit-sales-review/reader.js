@@ -3,9 +3,9 @@
 
   const baseURL = new URL('../media-kit/', document.currentScript.src);
   const words = {
-    ko: { full:'전체화면', exitFull:'전체화면 종료', mute:'소리 끄기', unmute:'소리 켜기', post:'Instagram 원문 열기', play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상 재생 오류', direct: '영상 링크 열기', seek: '재생 위치 조절', time: (now, total) => '전체 ' + total + ' 중 ' + now },
-    ja: { full:'全画面表示', exitFull:'全画面を終了', mute:'消音', unmute:'音声をオン', post:'Instagramの投稿を開く', play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '再生エラー', direct: '動画リンクを開く', seek: '再生位置を変更', time: (now, total) => '全' + total + 'のうち' + now },
-    en: { full:'Full screen', exitFull:'Exit full screen', mute:'Mute video', unmute:'Unmute video', post:'Open Instagram post', play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'Video error', direct: 'Open video link', seek: 'Seek video', time: (now, total) => now + ' of ' + total }
+    ko: { silent:'원본 음원 없음', embed:'Instagram 플레이어 열기', close:'닫기', full:'전체화면', exitFull:'전체화면 종료', mute:'소리 끄기', unmute:'소리 켜기', youtube:'YouTube 원본 영상 열기', post:'Instagram 원문 열기', play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상 재생 오류', direct: '영상 링크 열기', seek: '재생 위치 조절', time: (now, total) => '전체 ' + total + ' 중 ' + now },
+    ja: { silent:'音声なし', embed:'Instagramプレーヤーを開く', close:'閉じる', full:'全画面表示', exitFull:'全画面を終了', mute:'消音', unmute:'音声をオン', youtube:'YouTubeの元動画を開く', post:'Instagramの投稿を開く', play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '再生エラー', direct: '動画リンクを開く', seek: '再生位置を変更', time: (now, total) => '全' + total + 'のうち' + now },
+    en: { silent:'No original audio', embed:'Open Instagram player', close:'Close', full:'Full screen', exitFull:'Exit full screen', mute:'Mute video', unmute:'Unmute video', youtube:'Open original on YouTube', post:'Open Instagram post', play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'Video error', direct: 'Open video link', seek: 'Seek video', time: (now, total) => now + ' of ' + total }
   };
   function langKey(value) {
     const key = String(value || '').toLowerCase().split('-')[0];
@@ -66,6 +66,7 @@
   const offsets = new Map();
   const movies = new Map();
   let enlarged = null;
+  let instagramDialog = null;
   const observer = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
     for (const entry of entries) {
       if (playing?.frame === entry.target && enlarged !== playing && !entry.isIntersecting) pauseMovie();
@@ -143,7 +144,15 @@
     state(movie, movie.media.ended ? 'ended' : 'paused');
   }
   function audioState(movie) {
-    const enabled = !!movie.media && !movie.media.muted;
+    if (movie.silentOriginal) {
+      movie.sound.disabled = true;
+      movie.sound.title = movie.copy.silent;
+      movie.sound.setAttribute('aria-label', movie.copy.silent);
+      movie.sound.textContent = movie.copy.silent;
+      return;
+    }
+    if (movie.media) movie.muted = movie.media.muted;
+    const enabled = !movie.muted;
     movie.sound.querySelector('path').setAttribute('d', enabled ? icons.sound : icons.muted);
     movie.sound.title = enabled ? movie.copy.mute : movie.copy.unmute;
     movie.sound.setAttribute('aria-label', movie.sound.title);
@@ -221,7 +230,7 @@
   document.addEventListener('fullscreenchange', fullChange);
   document.addEventListener('webkitfullscreenchange', fullChange);
   document.addEventListener('keydown', event => {
-    if (event.key !== 'Escape') return;
+    if (event.key !== 'Escape' || instagramDialog) return;
     if (enlarged) { event.preventDefault(); exitFull(enlarged); }
     else if (playing) { const movie=playing; pauseMovie(); movie.button.focus({preventScroll:true}); }
   });
@@ -242,8 +251,7 @@
     const media = document.createElement('video');
     movie.media = media;
     media.className = 'inline-video-element';
-    media.defaultMuted = media.muted = true;
-    media.setAttribute('muted','');
+    media.muted = movie.muted;
     media.playsInline = true;
     media.setAttribute('playsinline','');
     media.setAttribute('webkit-playsinline','');
@@ -320,9 +328,9 @@
       else showError(movie);
     });
   }
-  document.addEventListener('visibilitychange', () => {if (document.hidden) pauseMovie();});
-  window.addEventListener('pagehide', () => {if (enlarged) exitFull(enlarged,false); pauseMovie();});
-  function player(frame, url, copy, name, poster = '', post = null) {
+  document.addEventListener('visibilitychange', () => {if (document.hidden) { pauseMovie(); instagramDialog?.close(); }});
+  window.addEventListener('pagehide', () => {instagramDialog?.close(); if (enlarged) exitFull(enlarged,false); pauseMovie();});
+  function player(frame, url, copy, name, poster = '', post = null, silentOriginal = false) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'flow-target inline-video-target';
@@ -331,7 +339,7 @@
     icon.className = 'flow-icon inline-video-icon';
     icon.setAttribute('aria-hidden','true');
     button.append(icon);
-    const sound = control('sound',copy.unmute,'muted');
+    const sound = control('sound',copy.mute,'sound');
     const full = control('full',copy.full,'expand');
     const source = document.createElement('a');
     source.className = 'inline-source-link';
@@ -339,9 +347,11 @@
     source.target = '_blank';
     source.rel = 'noopener noreferrer';
     source.textContent = '↗';
-    source.title = (post ? copy.post : copy.direct) + (name ? ' · ' + name : '');
+    const youtube = post && /(^|\.)(youtube\.com|youtu\.be)$/.test(post.hostname);
+    const action = post ? (youtube ? copy.youtube : copy.post) : copy.direct;
+    source.title = action + (name ? ' · ' + name : '');
     source.setAttribute('aria-label',source.title);
-    source.hidden = !post;
+    source.hidden = false;
     const seek = document.createElement('input');
     seek.type = 'range';
     seek.className = 'inline-video-seek';
@@ -353,7 +363,8 @@
     status.setAttribute('role','status');
     frame.classList.add('inline-player-frame');
     frame.append(button, sound, full, source, seek, status);
-    const movie = {frame,button,media:null,url:url.href,name,poster,copy,sound,full,source,seek,status,fallback:null};
+    if (silentOriginal) frame.dataset.silentOriginal = 'true';
+    const movie = {frame,button,media:null,muted:silentOriginal,silentOriginal,url:url.href,name,poster,copy,sound,full,source,seek,status,fallback:null};
     movies.set(frame,movie);
     state(movie,'idle');
     fullState(movie,false);
@@ -361,8 +372,8 @@
     button.addEventListener('click', () => toggleMovie(movie));
     full.addEventListener('click', () => toggleFull(movie));
     sound.addEventListener('click', () => {
-      const media = ensureMedia(movie);
-      media.muted = !media.muted;
+      movie.muted = !(movie.media?.muted ?? movie.muted);
+      if (movie.media) movie.media.muted = movie.muted;
       audioState(movie);
     });
     seek.addEventListener('input', () => seekTo(movie,seek.valueAsNumber));
@@ -375,7 +386,87 @@
     });
     return frame;
   }
+  function openInstagramPlayer(link, post, copy) {
+    instagramDialog?.close();
+    pauseMovie();
+    const dialog = document.createElement('dialog');
+    dialog.className = 'instagram-player-dialog';
+    const card = link.closest('.rv-case');
+    const title = card?.querySelector('.rv-post-title')?.textContent || copy.embed;
+    dialog.setAttribute('aria-label', title);
+    const panel = document.createElement('div');
+    panel.className = 'instagram-player-panel';
+    const toolbar = document.createElement('div');
+    toolbar.className = 'instagram-player-toolbar';
+    const source = document.createElement('a');
+    source.href = post.href;
+    source.target = '_blank';
+    source.rel = 'noopener noreferrer';
+    source.textContent = copy.post + ' ↗';
+    const full = control('full',copy.full,'expand');
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.textContent = copy.close;
+    const iframe = document.createElement('iframe');
+    iframe.title = title + ' · Instagram';
+    iframe.referrerPolicy = 'no-referrer';
+    iframe.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
+    iframe.allowFullscreen = true;
+    iframe.src = new URL(post.pathname.replace(/\/?$/, '/') + 'embed/', post.origin).href;
+    toolbar.append(source,full,close);
+    panel.append(toolbar,iframe);
+    dialog.append(panel);
+    link.closest('#deck-host').append(dialog);
+    instagramDialog = dialog;
+
+    function size(on) {
+      panel.classList.toggle('is-expanded', on);
+      full.setAttribute('aria-pressed', String(on));
+      full.title = on ? copy.exitFull : copy.full;
+      full.setAttribute('aria-label', full.title);
+      full.querySelector('path').setAttribute('d', on ? icons.collapse : icons.expand);
+    }
+    const syncSize = () => size(document.fullscreenElement === panel);
+    // The viewport-sized panel is also available on devices without element fullscreen.
+    full.addEventListener('click', () => {
+      if (document.fullscreenElement === panel) document.exitFullscreen().catch(() => size(false));
+      else if (panel.classList.contains('is-expanded')) size(false);
+      else if (document.fullscreenEnabled && panel.requestFullscreen) panel.requestFullscreen().catch(() => size(true));
+      else size(true);
+    });
+    close.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+    dialog.addEventListener('close', () => {
+      iframe.remove();
+      document.removeEventListener('fullscreenchange',syncSize);
+      dialog.remove();
+      if (instagramDialog === dialog) {
+        instagramDialog = null;
+        if (link.isConnected) link.focus({preventScroll:true});
+      }
+    }, {once:true});
+    document.addEventListener('fullscreenchange',syncSize);
+    size(false);
+    dialog.showModal();
+    close.focus({preventScroll:true});
+  }
+
   function setupCases(host, copy) {
+    if (typeof HTMLDialogElement !== 'undefined' && HTMLDialogElement.prototype.showModal) {
+      for (const link of host.querySelectorAll('a.rv-case-link[data-instagram-embed]')) {
+        const post = safeURL(link.href,'link');
+        if (!post || post.origin !== 'https://www.instagram.com' || !/^\/(reel|p)\/[\w-]+\/?$/.test(post.pathname) || link.hasAttribute('aria-haspopup')) continue;
+        link.setAttribute('aria-haspopup','dialog');
+        link.title = copy.embed;
+        const name = link.closest('.rv-case')?.querySelector('.rv-post-title')?.textContent || '';
+        link.setAttribute('aria-label',copy.embed + (name ? ' · ' + name : ''));
+        link.addEventListener('click', event => {
+          if (event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+          event.preventDefault();
+          openInstagramPlayer(link,post,copy);
+        });
+      }
+    }
     for (const link of host.querySelectorAll('a.rv-case-link[data-video]')) {
       if (link.closest('.inline-player-frame')) continue;
       const post = safeURL(link.href,'link'), url = safeURL(link.dataset.video,'video',document.baseURI);
@@ -388,7 +479,8 @@
       frame.append(link);
       link.tabIndex = -1;
       link.setAttribute('aria-hidden','true');
-      player(frame,url,copy,name,img?.currentSrc || img?.src,post);
+      player(frame,url,copy,name,img?.currentSrc || img?.src,post,
+        link.hasAttribute('data-silent-original') || /\/(DOa8Pm7CUZ7|DPWCMuCiQd_)\/?$/.test(post.pathname));
     }
   }
   function target(item, copy) {
@@ -401,7 +493,9 @@
     if (left >= right || top >= bottom) return null;
     let el;
     if (video) {
-      el = player(document.createElement('div'),url,copy,item.label || '');
+      const post = item.postURL ? safeURL(item.postURL,'link') : null;
+      const silentOriginal = /\/(6f40c6a4-e4a5-4198-b22c-0c3cbc19b260|e256e43b-1d82-4539-bd41-6100cc0cbeb3)\.mp4$/.test(url.pathname);
+      el = player(document.createElement('div'),url,copy,item.label || '','',post,silentOriginal);
       el.classList.add('inline-hotspot');
     } else {
       el = document.createElement('a');
@@ -452,6 +546,30 @@
         x:x/1920,y:y/1080,w:w/1920,h:h/1080};
     });
   }
+  function articleTargets(items, originals) {
+    const replaced = new Map();
+    const links = [];
+    for (const original of originals) {
+      const [x,y,w,h] = original.rect;
+      if (original.kind !== 'video') {
+        links.push({type:'link',label:original.label,url:original.url,x,y,w,h});
+        continue;
+      }
+      const candidates = items.filter(item => item.type === 'video');
+      const distance = item => Math.hypot(item.x + item.w/2 - x-w/2, item.y + item.h/2 - y-h/2);
+      const closest = candidates.sort((a,b) => distance(a) - distance(b))[0];
+      if (closest && distance(closest) < .16) replaced.set(closest,original);
+    }
+    const base = items.filter(item => item.type === 'video' || !links.some(link => {
+      const cx = item.x + item.w/2, cy = item.y + item.h/2;
+      return cx >= link.x && cx <= link.x + link.w && cy >= link.y && cy <= link.y + link.h;
+    })).map(item => {
+      const original = replaced.get(item);
+      return original ? {...item,postURL:original.url,label:original.label} : item;
+    });
+    // Put playable controls above any source thumbnail links in the same area.
+    return [...links,...base];
+  }
   function mount(locale) {
     const host = document.getElementById('deck-host');
     if (!host) return;
@@ -459,17 +577,19 @@
     const sameDocument = active?.host === host && active.lang === lang;
     if (sameDocument && active.ready) return active.ready;
     if (!sameDocument) {
+      instagramDialog?.close();
       if (enlarged) exitFull(enlarged, false);
       for (const movie of movies.values()) detachMedia(movie);
       movies.clear();
     }
     const figures = Array.from(host.querySelectorAll('.flow-page[data-page]'));
     const pages = new Map(figures.map(el => [Number(el.dataset.page), el]));
+    const originals = JSON.parse(host.querySelector("#rv-original-posts")?.textContent || "{}");
     const state = { host, lang, figures, pages };
     active = state;
     setupCases(host, words[lang]);
     for (const [number, figure] of pages) {
-      const links = memberPosts(lang, number);
+      const links = articleTargets(memberPosts(lang, number), originals[number] || []);
       const targets = figure.querySelector('.flow-targets');
       if (targets && links.length) targets.replaceChildren(...links.map(h => target(h, words[lang])));
     }
@@ -478,7 +598,7 @@
       const copy = words[lang];
       for (const page of data[lang] || []) {
         const targets = pages.get(page.page)?.querySelector('.flow-targets');
-        if (targets) targets.replaceChildren(...[...(page.hotspots || []), ...memberPosts(lang, page.page)].map(h => target(h, copy)).filter(Boolean));
+        if (targets) targets.replaceChildren(...articleTargets([...(page.hotspots || []), ...memberPosts(lang, page.page)], originals[page.page] || []).map(h => target(h, copy)).filter(Boolean));
       }
     }).catch(() => {
       // The complete static document stays readable if the links file is unavailable.
