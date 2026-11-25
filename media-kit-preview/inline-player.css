@@ -15,6 +15,9 @@
   background: #060709;
   pointer-events: none;
 }
+#deck-host [data-video-label="Versace Macau"] .inline-video-element {
+  object-fit: cover;
+}
 #deck-host .inline-video-target[data-video-state="error"] .inline-video-element {
   visibility: hidden;
 }
