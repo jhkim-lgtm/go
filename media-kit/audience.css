@@ -1,0 +1,40 @@
+#deck-host .audience-layer {
+  position: absolute;
+  inset: 0 0 auto;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  pointer-events: none;
+  font-family: "Helvetica Neue", "Hiragino Sans", "Apple SD Gothic Neo", Arial, sans-serif;
+}
+#deck-host .audience-note {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+@media (max-width: 600px) {
+  #deck-host .audience-note {
+    position: static;
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    padding: 11px 12px;
+    color: #fafafa;
+    background: #111316;
+    font: 500 12px/1.45 system-ui, sans-serif;
+  }
+  #deck-host .audience-note p, #deck-host .audience-note dl, #deck-host .audience-note dd { margin: 0; }
+  #deck-host .audience-note dl {
+    display: flex;
+    gap: 5px 13px;
+    flex-wrap: wrap;
+    margin: 5px 0;
+  }
+  #deck-host .audience-note dt, #deck-host .audience-note .audience-detail { color: #b4bdc5; }
+  #deck-host .audience-note dd { font-weight: 650; font-size: 16px; }
+}

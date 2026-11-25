@@ -2,147 +2,134 @@
   'use strict';
   const base = document.querySelector('base');
   base.href = new URL(base.getAttribute('href'), location.href).href;
-  const site = document.querySelector('#site');
-  let requestId = 0;
-  const sectionIds = ['top','about','services','channels','pricing','process','faq','contact'];
-  const languages = ['ko','ja','en'];
-  function selectTab(key) {
-    const tab = document.getElementById('tab-' + key);
-    if (!tab) return;
-    site.querySelectorAll('[role="tab"]').forEach(el => {
-      const active = el === tab;
-      el.setAttribute('aria-selected', String(active));
-      el.tabIndex = active ? 0 : -1;
-    });
-    site.querySelectorAll('.panel').forEach(el => {el.hidden = el.id !== 'panel-' + key;});
-  }
-  function cardIndex(grid) {
-    const left=grid.getBoundingClientRect().left;
-    if(grid.scrollWidth-grid.clientWidth-grid.scrollLeft<3 && grid.scrollLeft>0)return grid.children.length-1;
-    return Array.from(grid.children).reduce((best,card,i,all)=>Math.abs(card.getBoundingClientRect().left-left)<Math.abs(all[best].getBoundingClientRect().left-left)?i:best,0);
-  }
-  function goCard(grid,index,behavior='instant'){
-    const card=grid.children[index];
-    if(card)grid.scrollTo({left:grid.scrollLeft+card.getBoundingClientRect().left-grid.getBoundingClientRect().left,behavior});
-  }
-  function bindCards(index=0){
-    const grid=site.querySelector('#brand-posts');
-    const controls=site.querySelector('.card-controls');
-    const refresh=()=>{const i=cardIndex(grid);controls.querySelector('.brand-count').textContent=(i+1)+' / '+grid.children.length;controls.querySelector('[data-cardstep="-1"]').disabled=i===0;controls.querySelector('[data-cardstep="1"]').disabled=i===grid.children.length-1;};
-    grid.addEventListener('scroll',refresh,{passive:true});
-    if(index)goCard(grid,index);
-    refresh();
-  }
-  bindCards();
+  const site = document.getElementById('site');
   const reader = window.KitReader;
+  const languages = ['ko', 'ja', 'en'];
+  // Previously shared section links now lead to the matching slide in each edition.
+  const oldSections = { about: 2, services: 9, channels: 33, pricing: 45, process: 46, faq: 48 };
+  let requestId = 0;
+  let lastSlide = null;
   reader.mount(document.documentElement.lang);
+
   function menu(open) {
     site.querySelector('.menubtn').setAttribute('aria-expanded', String(open));
     site.querySelector('#mobile-nav').hidden = !open;
   }
-  function visibleSection() {
-    const line = (site.querySelector('.mast')?.offsetHeight || 68) + 40;
-    const nodes = sectionIds.map(id=>document.getElementById(id));
-    return nodes.filter(el=>el.getBoundingClientRect().top <= line).pop() || nodes[0];
-  }
-  function scrollToId(id) {
-    if (id === 'top' || id === 'main') window.scrollTo(0,0);
-    else {
-      const target = document.getElementById(id);
-      if (target?.matches('.flow-page')) reader.goTo(Number(target.dataset.page));
-      else target?.scrollIntoView();
+  function rememberSlide(target, fraction) {
+    // At the document end a short slide can be visible but cannot align to the top.
+    const box = target.getBoundingClientRect();
+    const header = site.querySelector('.mast').getBoundingClientRect().bottom + 8;
+    if (box.top > header + 2 && box.top < innerHeight && window.scrollY + innerHeight >= document.documentElement.scrollHeight - 1) {
+      lastSlide = {page: Number(target.dataset.page), fraction, scrollY: window.scrollY};
     }
   }
-  function updateEdition(next) {
-    for (const selector of ['.skip', '.mast', 'footer']) {
-      site.querySelector(selector).replaceWith(document.importNode(next.querySelector(selector), true));
+  function scrollToId(id, fraction = 0) {
+    lastSlide = null;
+    if (id === 'top' || id === 'main') {
+      window.scrollTo(0, 0);
+      return;
     }
-    for (const section of next.querySelectorAll('main > section')) {
-      document.getElementById(section.id).replaceWith(document.importNode(section, true));
+    const target = document.getElementById(id);
+    if (target?.matches('.flow-page')) {
+      reader.goTo(Number(target.dataset.page), fraction);
+      rememberSlide(target, fraction);
+    } else target?.scrollIntoView();
+  }
+  function followLocation() {
+    let id = location.hash.slice(1) || 'top';
+    if (Object.hasOwn(oldSections, id)) {
+      id = 'slide-' + reader.translatePage('ko', oldSections[id], document.documentElement.lang);
+      const url = new URL(location.href);
+      url.hash = id;
+      history.replaceState(history.state, '', url);
     }
+    scrollToId(id, history.state?.fraction || 0);
+  }
+  function atContact() {
+    const box = document.getElementById('contact').getBoundingClientRect();
+    // On tall screens the last section is shorter than the viewport and cannot reach the header.
+    const atBottom = Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight - 1;
+    return box.top <= site.querySelector('.mast').offsetHeight + 8 || (atBottom && box.top < window.innerHeight);
   }
   async function switchLang(anchor) {
     const language = anchor.dataset.language;
-    if (!languages.includes(language)) return;
     const token = ++requestId;
-    if (document.documentElement.lang === language) return;
-    const previousLanguage = document.documentElement.lang;
-    const url = new URL(anchor.getAttribute('href'),base.href);
+    const previous = document.documentElement.lang;
+    if (!languages.includes(language) || previous === language) return;
+    const url = new URL(anchor.getAttribute('href'), base.href);
     try {
-      const response = await fetch(url.href,{credentials:'same-origin',cache:'reload'});
-      if(!response.ok)throw new Error('Missing language edition');
-      const next = new DOMParser().parseFromString(await response.text(),'text/html');
-      if(token!==requestId)return;
-      if(next.documentElement.lang!==language||!next.querySelector('#deck-host .flow-page'))throw new Error('Wrong edition');
-      const currentSection = visibleSection();
-      const id = currentSection.id;
-      const position = id === 'top' ? reader.getPosition() : null;
-      const atStart = window.scrollY < 2;
-      const mapped = position ? reader.translatePage(previousLanguage,position.page,language) : null;
-      const activeCard = cardIndex(site.querySelector('#brand-posts'));
-      const tabKey = site.querySelector('[aria-selected="true"][data-tab]')?.dataset.tab;
-      const meta = Array.from(site.querySelectorAll('#pricing details,#faq details')).map(d=>d.open);
-      const inset = site.querySelector('.mast').offsetHeight + 10;
-      const offset = Math.max(0, Math.min(1, (inset-currentSection.getBoundingClientRect().top) / Math.max(1,currentSection.offsetHeight)));
-      if (position && !atStart) {
+      const response = await fetch(url.href, { credentials: 'same-origin', cache: 'reload' });
+      if (!response.ok) throw new Error('Missing language edition');
+      const next = new DOMParser().parseFromString(await response.text(), 'text/html');
+      if (token !== requestId) return;
+      if (next.documentElement.lang !== language || !next.querySelector('#deck-host .flow-page')) throw new Error('Wrong edition');
+      const selected = lastSlide && Math.abs(lastSlide.scrollY - window.scrollY) <= 1 ? lastSlide : null;
+      const contact = !selected && atContact();
+      const position = selected || (window.scrollY < 2 || contact ? null : reader.getPosition());
+      let destination = 'top';
+      if (position) {
         const oldURL = new URL(location.href);
         oldURL.hash = 'slide-' + position.page;
-        history.replaceState({kit:true, fraction:position.fraction},'',oldURL);
-        url.hash = 'slide-' + mapped;
-      } else if (id !== 'top') url.hash = id;
-      history.pushState({kit:true},'',url);
-      document.documentElement.lang=language;
-      document.title=next.title;
-      ['meta[name="description"]','meta[property="og:title"]','meta[property="og:description"]','meta[property="og:url"]','link[rel="canonical"]'].forEach(sel=>{
-        document.querySelector(sel)?.replaceWith(next.querySelector(sel).cloneNode(true));
-      });
-      updateEdition(next);
-      reader.mount(language);
-      bindCards(activeCard);
-      selectTab(tabKey || 'production');
-      site.querySelectorAll('#pricing details,#faq details').forEach((el,i)=>{if(i<meta.length)el.open=meta[i];});
-      if (position && !atStart) reader.goTo(mapped,position.fraction);
-      else if (id==='top') window.scrollTo(0,0);
-      else {
-        const same=document.getElementById(id);
-        const header=site.querySelector('.mast').offsetHeight;
-        window.scrollTo(0,same.getBoundingClientRect().top+window.scrollY-header-10+offset*same.offsetHeight);
+        history.replaceState({ fraction: position.fraction }, '', oldURL);
+        destination = 'slide-' + reader.translatePage(previous, position.page, language);
+      } else if (contact) {
+        destination = 'contact';
+        const oldURL = new URL(location.href);
+        oldURL.hash = destination;
+        history.replaceState({}, '', oldURL);
       }
-      site.querySelector('[data-language="'+language+'"]').focus({preventScroll:true});
-    } catch (_) {if(token===requestId)location.assign(url.href);}
+      url.hash = destination === 'top' ? '' : destination;
+      history.pushState({ fraction: position?.fraction || 0 }, '', url);
+      document.documentElement.lang = language;
+      document.title = next.title;
+      for (const selector of ['meta[name="description"]', 'meta[property="og:title"]', 'meta[property="og:description"]', 'meta[property="og:url"]', 'link[rel="canonical"]']) {
+        document.querySelector(selector)?.replaceWith(next.querySelector(selector).cloneNode(true));
+      }
+      for (const selector of ['.skip', '.mast', 'main']) {
+        site.querySelector(selector).replaceWith(document.importNode(next.querySelector(selector), true));
+      }
+      reader.mount(language);
+      scrollToId(destination, position?.fraction || 0);
+      site.querySelector('[data-language="' + language + '"]').focus({ preventScroll: true });
+    } catch (_) {
+      if (token === requestId) location.assign(url.href);
+    }
   }
-  site.addEventListener('click',e=>{
-    const action=e.target.closest('a,button');
-    if(!action || e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
-    if(action.dataset.cardstep){const grid=site.querySelector('#brand-posts');goCard(grid,cardIndex(grid)+Number(action.dataset.cardstep));return;}
-    if(action.dataset.language){e.preventDefault();switchLang(action);return;}
-    if(action.dataset.anchor){
-      e.preventDefault();menu(false);
-      const url=new URL(location.href);url.hash=action.dataset.anchor==='top'?'':action.dataset.anchor;
-      if(url.href!==location.href)history.pushState({kit:true},'',url);
-      scrollToId(action.dataset.anchor);return;
+  site.addEventListener('click', event => {
+    const action = event.target.closest('a,button');
+    if (!action || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (action.dataset.language) {
+      event.preventDefault();
+      switchLang(action);
+    } else if (action.dataset.anchor) {
+      event.preventDefault();
+      menu(false);
+      const id = action.dataset.anchor;
+      const url = new URL(location.href);
+      url.hash = id === 'top' ? '' : id;
+      if (url.href !== location.href) history.pushState({}, '', url);
+      const target = document.getElementById(id);
+      lastSlide = null;
+      if (target?.matches('.flow-page')) {
+        reader.open(document.documentElement.lang, Number(target.dataset.page), action);
+        rememberSlide(target, 0);
+      } else scrollToId(id);
+    } else if (action.matches('.menubtn')) {
+      menu(action.getAttribute('aria-expanded') !== 'true');
     }
-    if(action.matches('.menubtn')){menu(action.getAttribute('aria-expanded')!=='true');return;}
-    if(action.dataset.tab){selectTab(action.dataset.tab);return;}
-    if(action.dataset.slide){
-      const page = Number(action.dataset.slide);
-      const url=new URL(location.href);
-      url.hash='slide-'+page;
-      if(url.href!==location.href)history.pushState({kit:true},'',url);
-      reader.open(document.documentElement.lang,page,action);
-    }
   });
-  site.addEventListener('keydown',e=>{
-    if(e.key==='Escape'){menu(false);return;}
-    const tab=e.target.closest('button[data-tab]');if(!tab)return;
-    const tabs=Array.from(site.querySelectorAll('button[data-tab]'));const i=tabs.indexOf(tab);
-    const next=e.key==='ArrowRight'?(i+1)%tabs.length:e.key==='ArrowLeft'?(i+tabs.length-1)%tabs.length:e.key==='Home'?0:e.key==='End'?tabs.length-1:null;
-    if(next!==null){e.preventDefault();selectTab(tabs[next].dataset.tab);tabs[next].focus();}
+  function resumeReading() { lastSlide = null; }
+  window.addEventListener('wheel', resumeReading, { passive: true });
+  window.addEventListener('touchmove', resumeReading, { passive: true });
+  site.addEventListener('keydown', event => {
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) resumeReading();
+    if (event.key === 'Escape') menu(false);
   });
-  window.addEventListener('popstate',()=>{
-    const path=location.pathname.replace(/index\.html$/,'').replace(/\/+$/,'');
-    const lang=path.endsWith('/ja')?'ja':path.endsWith('/en')?'en':'ko';
-    if(document.documentElement.lang!==lang){location.reload();return;}
-    scrollToId(location.hash.slice(1)||'top');
+  window.addEventListener('popstate', () => {
+    const path = location.pathname.replace(/index\.html$/, '').replace(/\/+$/, '');
+    const lang = path.endsWith('/ja') ? 'ja' : path.endsWith('/en') ? 'en' : 'ko';
+    if (document.documentElement.lang !== lang) location.reload();
+    else followLocation();
   });
+  if (location.hash) followLocation();
 })();
