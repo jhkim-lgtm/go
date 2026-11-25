@@ -3,9 +3,9 @@
 
   const baseURL = new URL('../media-kit/', document.currentScript.src);
   const words = {
-    ko: { silent:'원본 음원 없음', embed:'Instagram 플레이어 열기', close:'닫기', full:'전체화면', exitFull:'전체화면 종료', mute:'소리 끄기', unmute:'소리 켜기', youtube:'YouTube 원본 영상 열기', post:'Instagram 원문 열기', play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상 재생 오류', direct: '영상 링크 열기', seek: '재생 위치 조절', time: (now, total) => '전체 ' + total + ' 중 ' + now },
-    ja: { silent:'音声なし', embed:'Instagramプレーヤーを開く', close:'閉じる', full:'全画面表示', exitFull:'全画面を終了', mute:'消音', unmute:'音声をオン', youtube:'YouTubeの元動画を開く', post:'Instagramの投稿を開く', play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '再生エラー', direct: '動画リンクを開く', seek: '再生位置を変更', time: (now, total) => '全' + total + 'のうち' + now },
-    en: { silent:'No original audio', embed:'Open Instagram player', close:'Close', full:'Full screen', exitFull:'Exit full screen', mute:'Mute video', unmute:'Unmute video', youtube:'Open original on YouTube', post:'Open Instagram post', play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'Video error', direct: 'Open video link', seek: 'Seek video', time: (now, total) => now + ' of ' + total }
+    ko: { silent:'원본 음원 없음', embed:'Instagram 게시물 미리보기', originalPlay:'Instagram에서 재생', close:'닫기', full:'전체화면', exitFull:'전체화면 종료', mute:'소리 끄기', unmute:'소리 켜기', youtube:'YouTube 원본 영상 열기', post:'Instagram 원문 열기', play: '영상 재생', pause: '일시정지', resume: '이어서 재생', replay: '다시 재생', retry: '다시 시도', link: '링크 열기', newTab: '새 탭', failed: '영상 재생 오류', direct: '영상 링크 열기', seek: '재생 위치 조절', time: (now, total) => '전체 ' + total + ' 중 ' + now },
+    ja: { silent:'音声なし', embed:'Instagramの投稿をプレビュー', originalPlay:'Instagramで再生', close:'閉じる', full:'全画面表示', exitFull:'全画面を終了', mute:'消音', unmute:'音声をオン', youtube:'YouTubeの元動画を開く', post:'Instagramの投稿を開く', play: '動画を再生', pause: '一時停止', resume: '続きを再生', replay: '最初から再生', retry: '再試行', link: 'リンクを開く', newTab: '新しいタブ', failed: '再生エラー', direct: '動画リンクを開く', seek: '再生位置を変更', time: (now, total) => '全' + total + 'のうち' + now },
+    en: { silent:'No original audio', embed:'Preview Instagram post', originalPlay:'Play on Instagram', close:'Close', full:'Full screen', exitFull:'Exit full screen', mute:'Mute video', unmute:'Unmute video', youtube:'Open original on YouTube', post:'Open Instagram post', play: 'Play video', pause: 'Pause video', resume: 'Resume video', replay: 'Replay video', retry: 'Retry video', link: 'Open link', newTab: 'new tab', failed: 'Video error', direct: 'Open video link', seek: 'Seek video', time: (now, total) => now + ' of ' + total }
   };
   function langKey(value) {
     const key = String(value || '').toLowerCase().split('-')[0];
@@ -402,7 +402,7 @@
     source.href = post.href;
     source.target = '_blank';
     source.rel = 'noopener noreferrer';
-    source.textContent = copy.post + ' ↗';
+    source.textContent = copy.originalPlay + ' ↗';
     const full = control('full',copy.full,'expand');
     const close = document.createElement('button');
     close.type = 'button';
