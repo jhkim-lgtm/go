@@ -1,7 +1,9 @@
 (() => {
   'use strict';
 
-  const url = new URL('data/audience.json', document.currentScript.src);
+  const script = document.currentScript;
+  const url = new URL(script.dataset.source || 'data/audience.json', script.src);
+  const showChannelTotals = script.dataset.channelTotals !== 'off';
   const channels = ['1club.kr', '1club.jp', 'myfirstkorea'];
   // This dated snapshot matches the figures printed in the fallback slide images.
   const printed = {
@@ -123,10 +125,10 @@
       text(svg, 49, 220, copy.historical, 22);
       // Preserve the original May charts and the horizontal rule above the follower label.
       background(svg, 46, 286, 522, 64);
-      text(svg, 53, 310, copy.followers + '  ·  @1club.kr', 21, muted);
-      text(svg, 53, 337, observation, 19, muted);
+      text(svg, 53, 310, copy.followers + '  ·  @1club.kr', 21, muted).classList.add('audience-stat-label');
+      text(svg, 53, 337, observation, 19, muted).classList.add('audience-stat-date');
       background(svg, 54, 371, 501, 213);
-      text(svg, 303, 518, followerCount, 105, ink, 'middle', 300);
+      text(svg, 303, 518, followerCount, 105, ink, 'middle', 300).classList.add('audience-stat-count');
       note = caption('@1club.kr · ' + observation, [[copy.followers, followerCount]], copy.historyDetail);
     }
     figure.querySelector('.audience-layer')?.remove();
@@ -138,7 +140,7 @@
   function update() {
     const locale = (document.documentElement.lang || '').split('-')[0];
     if (!Object.hasOwn(words, locale)) return;
-    updateFigure(document.getElementById('slide-6'), locale, true);
+    if (showChannelTotals) updateFigure(document.getElementById('slide-6'), locale, true);
     updateFigure(document.getElementById(locale === 'en' ? 'slide-9' : 'slide-8'), locale, false);
   }
   async function refresh() {
