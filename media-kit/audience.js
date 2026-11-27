@@ -140,13 +140,16 @@
   function update() {
     const locale = (document.documentElement.lang || '').split('-')[0];
     if (!Object.hasOwn(words, locale)) return;
-    const profileCount = document.querySelector('[data-profile-followers="1club.kr"]');
-    if (profileCount) {
+    const layer = document.querySelector('.rv-profile-live');
+    if (layer) {
       const followers = snapshot.followers['1club.kr'];
-      profileCount.textContent = locale === 'en'
-        ? Math.round(followers / 1000) + 'K'
-        : (followers / 10000).toFixed(1) + '만';
-      profileCount.setAttribute('aria-label', '@1club.kr · ' + words[locale].followers + ' ' + followers.toLocaleString(locale));
+      const formatted = locale === 'en' ? Math.round(followers / 1000) + 'K'
+        : (followers / 10000).toFixed(1) + (locale === 'ja' ? '万' : '만');
+      const updated = formatted !== layer.dataset.printedProfile;
+      layer.querySelector('[data-profile-followers]').textContent = formatted;
+      layer.toggleAttribute('data-updated', updated);
+      const art = layer.parentElement;
+      art.querySelector('.flow-image').alt = art.dataset.profileDescription + formatted;
     }
     if (showChannelTotals) updateFigure(document.getElementById('slide-6'), locale, true);
     updateFigure(document.getElementById(locale === 'en' ? 'slide-9' : 'slide-8'), locale, false);
