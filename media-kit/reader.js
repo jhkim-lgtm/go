@@ -29,7 +29,7 @@
   function translatePage(oldLang, raw, newLang) {
     const n = Number(raw) || 1;
     // The paid case section uses the same numbered slides for all three editions.
-    if (n >= 57 && document.querySelector('#slide-' + n + '.rv-cases')) return n;
+    if (n >= 57 && document.querySelector('#slide-' + n + '.flow-page')) return n;
     const from = langKey(oldLang) === 'en' ? 1 : 0;
     const to = langKey(newLang) === 'en' ? 1 : 0;
     if (from === to) return n;
